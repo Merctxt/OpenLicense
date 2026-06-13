@@ -6,3 +6,4 @@ node
 bin
 obj
 package-lock.json
+migrations
