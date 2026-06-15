@@ -41,6 +41,16 @@ namespace OpenLicenseApi
             #endregion
 
             #region OpenAPI Setup
+            /* - Apenas os Endpoints de Licença devem aparecer na documentação pública da API,
+            pois são usados para a integração direta com os clientes. 
+            Os Endpoints de Produto e Auth são usados apenas internamente pelo dashboard, 
+            então não precisam aparecer na documentação pública.
+            builder.Services.AddOpenApi("public", options =>
+            {
+                options.ShouldInclude = description =>
+                    description.GroupName == "public";
+            }); */
+
             builder.Services.AddOpenApi(options =>
             {
                 options.AddDocumentTransformer((document, _, _) =>
@@ -114,6 +124,7 @@ namespace OpenLicenseApi
             #endregion
             
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
             var app = builder.Build();
 
