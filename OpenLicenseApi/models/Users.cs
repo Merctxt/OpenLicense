@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-
+using System.Text.Json.Serialization;
 namespace OpenLicenseApi.Models
 {
     public class Users
@@ -14,6 +14,7 @@ namespace OpenLicenseApi.Models
         [EmailAddress]
         public string Email { get; set; } = null!;
         [Required]
+        [JsonIgnore]
         public string PasswordHash { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public int ProductLimit { get; set; } = 3;
