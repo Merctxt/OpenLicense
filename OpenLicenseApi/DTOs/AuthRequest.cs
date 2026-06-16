@@ -45,4 +45,25 @@ using System.ComponentModel.DataAnnotations;
           [MinLength(8, ErrorMessage = "A senha deve conter pelo menos 8 caracteres.")]
           public string? Password { get; set; }
       }
+
+    public class CreateApiKeyRequest
+    {
+        [Required]
+        public string Name { get; set; } = string.Empty;
+    }
+
+    public class DeleteApiKeyRequest
+    {
+        [Required]
+        public Guid ApiKeyId { get; set; }
+    }
+
+    public class CreateApiKeyResponse
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string ApiKey { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public bool IsActive { get; set; }
+    }
   }
