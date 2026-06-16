@@ -9,15 +9,20 @@ namespace OpenLicenseApi.Models
     {
         [Key]
         public Guid Id { get; set; }
+
         [Required]
-        public Guid ProductId { get; set; }
+        public Guid UserId { get; set; }
+
         [JsonIgnore]
-        public Product Product { get; set; } = null!;
+        public Users User { get; set; } = null!;
+
         [Required]
         public string Name { get; set; } = null!;
+
         [Required]
         [JsonIgnore]
         public string KeyHash { get; set; } = null!;
+
         public DateTime CreatedAt { get; set; }
         public DateTime? LastUsedAt { get; set; }
         public bool IsActive { get; set; } = true;

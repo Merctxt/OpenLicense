@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace OpenLicenseApi.Models
 {
@@ -11,6 +12,8 @@ namespace OpenLicenseApi.Models
 
         [Required]
         public Guid ProductId { get; set; }
+
+        [JsonIgnore]
         [Required]
         public Product Product { get; set; } = null!;
 
@@ -20,7 +23,7 @@ namespace OpenLicenseApi.Models
         public string LicenseKey { get; set; } = null!;
 
         [Required]
-        public LicenseStatus Status { get; set; }
+        public bool Status { get; set; } = true;
 
         [Required]
         public DateTime CreatedAt { get; set; }
@@ -29,14 +32,7 @@ namespace OpenLicenseApi.Models
 
         public int MaxActivations { get; set; }
 
+        [JsonIgnore]
         public ICollection<Activation> Activations { get; set; } = new List<Activation>();
-    }
-
-    public enum LicenseStatus
-    {
-        Active,
-        Suspended,
-        Expired,
-        Revoked
     }
 }

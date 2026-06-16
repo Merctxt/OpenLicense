@@ -20,6 +20,7 @@ namespace OpenLicenseApi.Models
         public int ProductLimit { get; set; } = 3;
         public int LicenseLimit { get; set; } = 450;
         public ICollection<Product> Products { get; set; } = new List<Product>();
+        public ICollection<ApiKey> ApiKeys { get; set; } = new List<ApiKey>();
 
     }
 }
