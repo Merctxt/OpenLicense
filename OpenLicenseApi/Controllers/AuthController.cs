@@ -7,6 +7,9 @@ GET    /api/auth/me <- retorna os dados do usuário autenticado.
 PUT    /api/auth <- atualizar os dados do usuário autenticado, deve receber nome, email e/ou senha. Retorna os dados atualizados do usuário ou um erro se o email já estiver em uso por outro usuário.
 DELETE /api/auth <- deletar o usuário autenticado.
 
+POST   /api/auth/apikey <- criar uma nova chave de API para o usuário autenticado.
+DELETE /api/auth/apikey <- deletar uma chave de API do usuário autenticado.
+
 JWT do usuário do dashboard.
 */
 
@@ -19,11 +22,12 @@ using System.Security.Claims;
 namespace OpenLicenseApi.Controllers
 {
     [ApiController]
-    //[ApiExplorerSettings(GroupName = "internal")] <-  Endpoints de autenticação não devem aparecer na documentação pública da API, pois são usados apenas internamente pelo dashboard.
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+
         public AuthController(IAuthService authService)
         {
             _authService = authService;
@@ -56,7 +60,7 @@ namespace OpenLicenseApi.Controllers
                 return Unauthorized(new { message = ex.Message });
             }
         }
-     
+        
         [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> Me()
@@ -112,6 +116,48 @@ namespace OpenLicenseApi.Controllers
                 }
 
                 await _authService.DeleteAsync(userId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpPost("apikey")]
+        public async Task<IActionResult> CreateApiKey([FromBody] CreateApiKeyRequest request)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!Guid.TryParse(userIdClaim, out var userId))
+                {
+                    return Unauthorized(new { message = "Invalid token user id." });
+                }
+
+                var apiKey = await _authService.CreateApiKeyAsync(userId, request);
+                return Ok(apiKey);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("apikey")]
+        public async Task<IActionResult> DeleteApiKey([FromBody] DeleteApiKeyRequest request)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!Guid.TryParse(userIdClaim, out var userId))
+                {
+                    return Unauthorized(new { message = "Invalid token user id." });
+                }
+
+                await _authService.DeleteApiKeyAsync(userId, request.ApiKeyId);
                 return NoContent();
             }
             catch (Exception ex)
