@@ -22,5 +22,8 @@ namespace OpenLicenseApi.Services
             string? password);
 
         Task DeleteAsync(Guid userId);
+
+        Task<CreateApiKeyResponse> CreateApiKeyAsync(Guid userId, CreateApiKeyRequest request);
+        Task DeleteApiKeyAsync(Guid userId, Guid apiKeyId);
     }
 }
