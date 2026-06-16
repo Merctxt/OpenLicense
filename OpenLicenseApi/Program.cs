@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenLicenseApi.Services;
 using DotNetEnv;
 using OpenLicenseApi.Security;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
@@ -41,15 +42,6 @@ namespace OpenLicenseApi
             #endregion
 
             #region OpenAPI Setup
-            /* - Apenas os Endpoints de Licença devem aparecer na documentação pública da API,
-            pois são usados para a integração direta com os clientes. 
-            Os Endpoints de Produto e Auth são usados apenas internamente pelo dashboard, 
-            então não precisam aparecer na documentação pública.
-            builder.Services.AddOpenApi("public", options =>
-            {
-                options.ShouldInclude = description =>
-                    description.GroupName == "public";
-            }); */
 
             builder.Services.AddOpenApi(options =>
             {
@@ -66,6 +58,14 @@ namespace OpenLicenseApi
                         Description = "Use: Bearer {seu_token_jwt}"
                     };
 
+                    document.Components.SecuritySchemes["ApiKey"] = new OpenApiSecurityScheme
+                    {
+                        Type = SecuritySchemeType.ApiKey,
+                        In = ParameterLocation.Header,
+                        Name = ApiKeyAuthenticationHandler.HeaderName,
+                        Description = "Use: X-Api-Key: {sua_api_key}"
+                    };
+
                     return Task.CompletedTask;
                 });
 
@@ -80,7 +80,31 @@ namespace OpenLicenseApi
                         return Task.CompletedTask;
                     }
 
+                    var authSchemes = context.Description.ActionDescriptor.EndpointMetadata
+                        .OfType<IAuthorizeData>()
+                        .SelectMany(data => (data.AuthenticationSchemes ?? string.Empty)
+                            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
                     operation.Security ??= new List<OpenApiSecurityRequirement>();
+
+                    if (authSchemes.Count == 1 && authSchemes.Contains(ApiKeyAuthenticationHandler.SchemeName))
+                    {
+                        operation.Security.Add(new OpenApiSecurityRequirement
+                        {
+                            [new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Id = "ApiKey",
+                                    Type = ReferenceType.SecurityScheme
+                                }
+                            }] = Array.Empty<string>()
+                        });
+
+                        return Task.CompletedTask;
+                    }
+
                     operation.Security.Add(new OpenApiSecurityRequirement
                     {
                         [new OpenApiSecurityScheme
@@ -88,6 +112,18 @@ namespace OpenLicenseApi
                             Reference = new OpenApiReference
                             {
                                 Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        }] = Array.Empty<string>()
+                    });
+
+                    operation.Security.Add(new OpenApiSecurityRequirement
+                    {
+                        [new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "ApiKey",
                                 Type = ReferenceType.SecurityScheme
                             }
                         }] = Array.Empty<string>()
@@ -103,8 +139,32 @@ namespace OpenLicenseApi
             var jwtAudience = builder.Configuration["Jwt:Audience"];
 
             builder.Services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+                .AddAuthentication(options =>
+                {
+                    options.DefaultScheme = "SmartAuth";
+                    options.DefaultAuthenticateScheme = "SmartAuth";
+                    options.DefaultChallengeScheme = "SmartAuth";
+                })
+                .AddPolicyScheme("SmartAuth", "JWT or API Key", options =>
+                {
+                    options.ForwardDefaultSelector = context =>
+                    {
+                        var authorization = context.Request.Headers.Authorization.ToString();
+                        if (!string.IsNullOrWhiteSpace(authorization)
+                            && authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return JwtBearerDefaults.AuthenticationScheme;
+                        }
+
+                        if (context.Request.Headers.ContainsKey(ApiKeyAuthenticationHandler.HeaderName))
+                        {
+                            return ApiKeyAuthenticationHandler.SchemeName;
+                        }
+
+                        return JwtBearerDefaults.AuthenticationScheme;
+                    };
+                })
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -117,7 +177,11 @@ namespace OpenLicenseApi
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.Zero
                     };
-                });
+                })
+                .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(
+                    ApiKeyAuthenticationHandler.SchemeName,
+                    _ => { }
+                );
 
             builder.Services.AddAuthorization();
 
@@ -125,6 +189,7 @@ namespace OpenLicenseApi
             
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ILicenseService, LicensesService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
             var app = builder.Build();
 
