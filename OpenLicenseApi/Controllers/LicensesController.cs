@@ -190,6 +190,27 @@ namespace OpenLicenseApi.Controllers
             }
         }
 
+        [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpPost("deactivate-by-jwt")]
+        public async Task<IActionResult> DeactivateLicenseByJwt([FromBody] DeactivateLicenseRequest request)
+        {
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                {
+                    return Unauthorized(new { message = "Invalid token user id." });
+                }
+
+                await _licenseService.DeactivateLicenseAsync(userId, null, request);
+                return Ok(new { message = "License deactivated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         private bool TryGetUserId(out Guid userId)
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
