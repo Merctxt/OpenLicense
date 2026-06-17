@@ -1,0 +1,77 @@
+.account-page {}
+
+.profile-view {}
+
+.profile-row {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.profile-row:last-child {
+  border-bottom: none;
+}
+
+.profile-label {
+  font-weight: 600;
+  width: 160px;
+  flex-shrink: 0;
+  color: var(--color-text-light);
+  font-size: 13px;
+}
+
+.api-key-hint {
+  font-size: 13px;
+  color: var(--color-text-light);
+  margin-bottom: 12px;
+}
+
+.no-api-keys {
+  color: var(--color-text-light);
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+.limits-grid {
+  display: flex;
+  gap: 24px;
+}
+
+.limit-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.limit-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.limit-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.danger-zone {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius);
+  background: #fdf7f7;
+}
+
+.danger-zone h3 {
+  color: var(--color-danger);
+  margin-bottom: 8px;
+}
+
+.danger-zone p {
+  font-size: 13px;
+  color: var(--color-text-light);
+  margin-bottom: 12px;
+}
