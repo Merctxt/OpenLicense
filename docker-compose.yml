@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  # .NET API
+  api:
+    build:
+      context: ./OpenLicenseApi
+      dockerfile: Dockerfile
+    container_name: openlicense_api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - ASPNETCORE_URLS=http://+:8080
+      - database_connection=${DATABASE_CONNECTION}
+      - Jwt__SecretKey=${JWT_SECRET_KEY}
+      - Jwt__Issuer=${JWT_ISSUER:-OpenLicenseApi}
+      - Jwt__Audience=${JWT_AUDIENCE:-OpenLicenseApiUsers}
+    ports:
+      - "${API_PORT:-8080}:8080"
+    networks:
+      - openlicense_network
+    restart: unless-stopped
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./OpenLicenseWeb
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+    container_name: openlicense_web
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      - api
+    networks:
+      - openlicense_network
+    restart: unless-stopped
+
+networks:
+  openlicense_network:
+    driver: bridge
