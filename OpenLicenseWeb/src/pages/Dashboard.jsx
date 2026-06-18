@@ -12,6 +12,12 @@ export default function Dashboard() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
+  // Licenses filtering & pagination state
+  const [licSearch, setLicSearch] = useState('')
+  const [licStatusFilter, setLicStatusFilter] = useState('all')
+  const [licPage, setLicPage] = useState(1)
+  const [licPageSize, setLicPageSize] = useState(5)
+
   const clearMsg = () => { setError(''); setSuccess('') }
 
   const load = useCallback(async () => {
@@ -26,6 +32,7 @@ export default function Dashboard() {
   }, [])
 
   useEffect(() => { load() }, [load])
+
 
   const handleCreateProduct = async (e) => {
     e.preventDefault()
@@ -134,6 +141,9 @@ export default function Dashboard() {
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id)
+    setLicSearch('')
+    setLicStatusFilter('all')
+    setLicPage(1)
   }
 
   if (loading) return <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-light)' }}>Loading...</div>
@@ -172,52 +182,167 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {expandedId === product.id && (
-                <div className="product-licenses">
-                  <div className="licenses-header">
-                    <h4>Licenses</h4>
-                    <button className="btn btn-primary btn-sm" onClick={() => setLicenseModal({ mode: 'create', productId: product.id })}>+ Add License</button>
-                  </div>
+              {expandedId === product.id && (() => {
+                const licenses = product.licenses || [];
+                const hasLicenses = licenses.length > 0;
+                
+                if (!hasLicenses) {
+                  return (
+                    <div className="product-licenses">
+                      <div className="licenses-header">
+                        <h4>Licenses</h4>
+                        <button className="btn btn-primary btn-sm" onClick={() => setLicenseModal({ mode: 'create', productId: product.id })}>+ Add License</button>
+                      </div>
+                      <p className="no-licenses">No licenses for this product.</p>
+                    </div>
+                  );
+                }
 
-                  {(!product.licenses || product.licenses.length === 0) ? (
-                    <p className="no-licenses">No licenses for this product.</p>
-                  ) : (
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Key</th>
-                          <th>Status</th>
-                          <th>Max Activations</th>
-                          <th>Expires</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {product.licenses.map((lic) => (
-                          <tr key={lic.id}>
-                            <td>{lic.name}</td>
-                            <td><code className="code-box">{lic.licenseKey}</code></td>
-                            <td>
-                              {lic.status ? (
-                                <span className="badge badge-success">Active</span>
-                              ) : (
-                                <span className="badge badge-danger">Suspended</span>
-                              )}
-                            </td>
-                            <td>{lic.maxActivations}</td>
-                            <td>{lic.expiresAt ? new Date(lic.expiresAt).toLocaleDateString() : 'Never'}</td>
-                            <td className="license-actions">
-                              <button className="btn-link btn-sm" onClick={() => setLicenseModal({ mode: 'edit', license: lic, productId: product.id })}>Edit</button>
-                              <button className="btn-link btn-danger-link btn-sm" onClick={() => handleDeleteLicense(lic.id)}>Delete</button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-                </div>
-              )}
+                const filtered = licenses.filter(lic => {
+                  const term = licSearch.toLowerCase();
+                  const nameMatch = lic.name ? lic.name.toLowerCase().includes(term) : false;
+                  const keyMatch = lic.licenseKey ? lic.licenseKey.toLowerCase().includes(term) : false;
+                  
+                  let statusMatch = true;
+                  if (licStatusFilter === 'active') statusMatch = lic.status === true;
+                  else if (licStatusFilter === 'suspended') statusMatch = lic.status === false;
+                  
+                  return (!licSearch || nameMatch || keyMatch) && statusMatch;
+                });
+                
+                const totalItems = filtered.length;
+                const totalPages = Math.max(1, Math.ceil(totalItems / licPageSize));
+                const activePage = Math.min(licPage, totalPages);
+                const startIndex = (activePage - 1) * licPageSize;
+                const displayLicenses = filtered.slice(startIndex, startIndex + licPageSize);
+
+                return (
+                  <div className="product-licenses">
+                    <div className="licenses-header">
+                      <h4>Licenses</h4>
+                      <button className="btn btn-primary btn-sm" onClick={() => setLicenseModal({ mode: 'create', productId: product.id })}>+ Add License</button>
+                    </div>
+
+                    {/* Filter Bar */}
+                    <div className="license-filters">
+                      <div className="filter-search-wrapper">
+                        <input 
+                          type="text" 
+                          placeholder="Search by name or key..." 
+                          value={licSearch} 
+                          onChange={(e) => { setLicSearch(e.target.value); setLicPage(1); }} 
+                          className="filter-search"
+                        />
+                        {licSearch && (
+                          <button className="filter-clear-btn" onClick={() => { setLicSearch(''); setLicPage(1); }}>&times;</button>
+                        )}
+                      </div>
+                      
+                      <div className="filter-status-wrapper">
+                        <label>Status:</label>
+                        <select 
+                          value={licStatusFilter} 
+                          onChange={(e) => { setLicStatusFilter(e.target.value); setLicPage(1); }}
+                          className="filter-status-select"
+                        >
+                          <option value="all">All</option>
+                          <option value="active">Active</option>
+                          <option value="suspended">Suspended</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {filtered.length === 0 ? (
+                      <p className="no-licenses">No licenses match the search filters.</p>
+                    ) : (
+                      <>
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Key</th>
+                              <th>Status</th>
+                              <th>Max Activations</th>
+                              <th>Expires</th>
+                              <th style={{ textAlign: 'right', paddingRight: '16px' }}>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {displayLicenses.map((lic) => (
+                              <tr key={lic.id}>
+                                <td>{lic.name}</td>
+                                <td><code className="code-box">{lic.licenseKey}</code></td>
+                                <td>
+                                  {lic.status ? (
+                                    <span className="badge badge-success">Active</span>
+                                  ) : (
+                                    <span className="badge badge-danger">Suspended</span>
+                                  )}
+                                </td>
+                                <td>{lic.maxActivations}</td>
+                                <td>{lic.expiresAt ? new Date(lic.expiresAt).toLocaleDateString() : 'Never'}</td>
+                                <td>
+                                  <div className="license-actions">
+                                    <button className="btn-link" onClick={() => setLicenseModal({ mode: 'edit', license: lic, productId: product.id })}>Edit</button>
+                                    <button className="btn-link btn-danger-link" onClick={() => handleDeleteLicense(lic.id)}>Delete</button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+
+                        {/* Pagination Footer */}
+                        <div className="license-pagination">
+                          <span className="pagination-info">
+                            Showing {startIndex + 1} to {Math.min(startIndex + licPageSize, totalItems)} of {totalItems} licenses
+                          </span>
+                          
+                          <div className="pagination-buttons">
+                            <button 
+                              className="btn btn-default btn-xs pagination-btn" 
+                              disabled={activePage === 1}
+                              onClick={() => setLicPage(prev => Math.max(1, prev - 1))}
+                            >
+                              &lsaquo; Previous
+                            </button>
+                            
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                              <button
+                                key={pageNum}
+                                className={`btn btn-xs pagination-btn ${activePage === pageNum ? 'btn-primary active' : 'btn-default'}`}
+                                onClick={() => setLicPage(pageNum)}
+                              >
+                                {pageNum}
+                              </button>
+                            ))}
+                            
+                            <button 
+                              className="btn btn-default btn-xs pagination-btn" 
+                              disabled={activePage === totalPages}
+                              onClick={() => setLicPage(prev => Math.min(totalPages, prev + 1))}
+                            >
+                              Next &rsaquo;
+                            </button>
+                          </div>
+
+                          <div className="pagination-limit">
+                            <select 
+                              value={licPageSize} 
+                              onChange={(e) => { setLicPageSize(Number(e.target.value)); setLicPage(1); }}
+                              className="pagination-select"
+                            >
+                              <option value={5}>5 / page</option>
+                              <option value={10}>10 / page</option>
+                              <option value={20}>20 / page</option>
+                            </select>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           ))}
         </div>

@@ -88,11 +88,120 @@
 
 .license-actions {
   display: flex;
-  gap: 8px;
-  white-space: nowrap;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .license-key-col {
   font-family: var(--font-mono);
   font-size: 13px;
+}
+
+/* Filters styling */
+.license-filters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+  background: var(--color-bg);
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border-light);
+}
+
+.filter-search-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.filter-search {
+  padding-left: 28px;
+  padding-right: 28px;
+  height: 34px;
+}
+
+.filter-clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--color-text-light);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-clear-btn:hover {
+  color: var(--color-text);
+}
+
+.filter-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-status-wrapper label {
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.filter-status-select {
+  width: 130px;
+  height: 34px;
+  padding: 6px 10px;
+}
+
+/* Pagination styling */
+.license-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.pagination-info {
+  font-size: 12px;
+  color: var(--color-text-light);
+}
+
+.pagination-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.pagination-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.pagination-btn.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary-dark);
+}
+
+.pagination-limit {
+  display: flex;
+  align-items: center;
+}
+
+.pagination-select {
+  height: 28px;
+  padding: 2px 6px;
+  font-size: 12px;
+  width: auto;
 }
