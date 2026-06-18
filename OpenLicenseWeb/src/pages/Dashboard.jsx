@@ -256,6 +256,7 @@ export default function Dashboard() {
                       <p className="no-licenses">No licenses match the search filters.</p>
                     ) : (
                       <>
+                      <div className="table-responsive">
                         <table className="table">
                           <thead>
                             <tr>
@@ -291,6 +292,7 @@ export default function Dashboard() {
                             ))}
                           </tbody>
                         </table>
+                      </div>
 
                         {/* Pagination Footer */}
                         <div className="license-pagination">

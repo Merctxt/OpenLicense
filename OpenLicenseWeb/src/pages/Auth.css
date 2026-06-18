@@ -42,3 +42,16 @@
   font-size: 13px;
   color: var(--color-text-light);
 }
+
+/* ── Responsive ── */
+@media (max-width: 420px) {
+  .auth-page {
+    padding: 12px;
+    align-items: flex-start;
+    padding-top: 32px;
+  }
+
+  .auth-card {
+    padding: 20px 16px;
+  }
+}

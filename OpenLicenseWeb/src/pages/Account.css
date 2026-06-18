@@ -75,3 +75,27 @@
   color: var(--color-text-light);
   margin-bottom: 12px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 540px) {
+  /* Profile label + value stack vertically */
+  .profile-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .profile-label {
+    width: auto;
+  }
+
+  /* Limits wrap to two columns on mobile */
+  .limits-grid {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .limit-item {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 100px;
+  }
+}

@@ -205,3 +205,89 @@
   font-size: 12px;
   width: auto;
 }
+
+/* ── Responsive ── */
+
+/* Tablet: tighten the filter bar */
+@media (max-width: 768px) {
+  .license-filters {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .filter-search-wrapper {
+    min-width: 0;
+    flex: 1 1 200px;
+  }
+
+  .filter-status-wrapper {
+    flex: 1 1 140px;
+  }
+
+  .filter-status-select {
+    width: 100%;
+  }
+
+  /* Pagination wraps into two rows */
+  .license-pagination {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .pagination-info {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+
+  .pagination-buttons {
+    justify-content: center;
+  }
+
+  .pagination-limit {
+    justify-content: center;
+    flex: 1 1 100%;
+  }
+}
+
+/* Mobile: product row stacks brand + actions vertically */
+@media (max-width: 540px) {
+  .product-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .product-info {
+    flex-wrap: wrap;
+  }
+
+  .product-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  /* Licenses header stacks on very small screens */
+  .licenses-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* Filter bar becomes single column */
+  .license-filters {
+    flex-direction: column;
+  }
+
+  .filter-search-wrapper,
+  .filter-status-wrapper {
+    width: 100%;
+    flex: unset;
+  }
+
+  /* page-title row stacks */
+  .page-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
