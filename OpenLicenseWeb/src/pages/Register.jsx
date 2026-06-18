@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { register } from '../api/endpoints'
+import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { register, login } from '../api/endpoints'
 import { useAuth } from '../context/AuthContext'
 import './Auth.css'
 
@@ -9,9 +9,17 @@ export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { saveToken, loadUser } = useAuth()
+  const [submitting, setSubmitting] = useState(false)
+  const { user, loading, saveToken, loadUser } = useAuth()
   const navigate = useNavigate()
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-light)' }}>Loading...</div>
+  }
+
+  if (user) {
+    return <Navigate to="/" replace />
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -20,17 +28,14 @@ export default function Register() {
       setError('Password must be at least 8 characters')
       return
     }
-    setLoading(true)
+    setSubmitting(true)
     try {
       await register({ name, email, password })
-      const loginRes = await login({ email, password })
-      saveToken(loginRes.data.token)
-      await loadUser()
-      navigate('/')
+      navigate('/login', { state: { successMessage: 'Account created successfully! Please sign in.' } })
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed')
     } finally {
-      setLoading(false)
+      setSubmitting(false)
     }
   }
 
@@ -55,8 +60,8 @@ export default function Register() {
             <label>Password</label>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
           </div>
-          <button type="submit" className="btn btn-primary auth-btn" disabled={loading}>
-            {loading ? 'Creating account...' : 'Create Account'}
+          <button type="submit" className="btn btn-primary auth-btn" disabled={submitting}>
+            {submitting ? 'Creating account...' : 'Create Account'}
           </button>
         </form>
         <div className="auth-footer">
