@@ -71,7 +71,6 @@ namespace OpenLicenseApi
 
             #region Middleware Setup
 
-            app.UseHttpsRedirection();
             app.UseCors(options =>
             {
                 options.AllowAnyOrigin()
