@@ -3,6 +3,7 @@ import './Footer.css'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const VITE_STATUS_URL = import.meta.env.VITE_STATUS_URL
 
   return (
     <footer className="app-footer-global">
@@ -11,7 +12,7 @@ export default function Footer() {
         <nav className="footer-links">
           <Link to="/docs" className="footer-link">API Docs</Link>
           <span className="footer-separator">•</span>
-          <Link to="/status" className="footer-link">System Status</Link>
+          <a href={VITE_STATUS_URL} className="footer-link" target="_blank" rel="noopener noreferrer">System Status</a>
           <span className="footer-separator">•</span>
           <Link to="/terms" className="footer-link">Terms of Use</Link>
         </nav>

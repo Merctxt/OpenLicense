@@ -8,7 +8,6 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Account from './pages/Account'
 import Docs from './pages/Docs'
-import Status from './pages/Status'
 import Terms from './pages/Terms'
 
 export default function App() {
@@ -24,7 +23,6 @@ export default function App() {
                 <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
                 <Route path="/docs" element={<Docs />} />
-                <Route path="/status" element={<Status />} />
                 <Route path="/terms" element={<Terms />} />
               </Route>
               <Route path="*" element={<Navigate to="/" replace />} />
