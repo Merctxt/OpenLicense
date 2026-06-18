@@ -350,3 +350,16 @@ label {
 .close-btn:hover {
   color: var(--color-text);
 }
+
+.global-app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.global-app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
