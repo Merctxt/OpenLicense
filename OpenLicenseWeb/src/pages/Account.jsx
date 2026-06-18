@@ -24,7 +24,7 @@ export default function Account() {
     e.preventDefault()
     clearMsg()
     try {
-      await updateAccount({ userId: user.id, name, email, password: password || undefined })
+      await updateAccount({ name, email, password: password || undefined })
       await loadUser()
       setEditing(false)
       setSuccess('Profile updated')

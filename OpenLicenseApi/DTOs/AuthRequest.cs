@@ -34,9 +34,6 @@ using System.ComponentModel.DataAnnotations;
 
       public class UpdateRequest
       {
-          [Required]
-          public int UserId { get; set; }
-
           public string? Name { get; set; }
 
           [EmailAddress] // Valida formato de e-mail automaticamente
