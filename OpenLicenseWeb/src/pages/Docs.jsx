@@ -1,8 +1,8 @@
 import './Docs.css'
 
 export default function Docs() {
-  const scalarUrl = import.meta.env.VITE_SCALAR_URL || '/scalar/v1'
-  const apiUrl = import.meta.env.VITE_API_URL || ''
+  const scalarUrl = import.meta.env.VITE_API_URL + '/scalar/v1'
+  const apiUrl = import.meta.env.VITE_API_URL
 
   return (
     <div className="docs-page">
@@ -49,8 +49,6 @@ export default function Docs() {
               </tr>
             </thead>
             <tbody>
-              <tr><td>/api/products/all</td><td>GET</td><td>Bearer / ApiKey</td><td>List all products</td></tr>
-              <tr><td>/api/products/create</td><td>POST</td><td>Bearer / ApiKey</td><td>Create a product</td></tr>
               <tr><td>/api/licenses</td><td>GET</td><td>Bearer / ApiKey</td><td>List licenses for a product</td></tr>
               <tr><td>/api/licenses</td><td>POST</td><td>Bearer / ApiKey</td><td>Create a license</td></tr>
               <tr><td>/api/licenses/validate</td><td>POST</td><td>ApiKey</td><td>Validate a license key</td></tr>

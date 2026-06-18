@@ -94,13 +94,21 @@ export default function Dashboard() {
     const fd = new FormData(e.target)
     try {
       const payload = { licenseId: licenseModal.license.id }
+      const statusAtual = licenseModal.license.status;
       const name = fd.get('name')
       const maxAct = fd.get('maxActivations')
-      const status = fd.get('status')
+      const statusRaw = fd.get('status')
       const expires = fd.get('expiresAt')
       if (name) payload.name = name
       if (maxAct) payload.maxActivations = parseInt(maxAct)
-      if (status !== '') payload.status = status === 'true'
+      if (statusRaw !== '' && statusRaw !== null) {
+      const novoStatus = statusRaw === 'true'; 
+      if (novoStatus === statusAtual) {
+        payload.status = null;
+      } else {
+        payload.status = novoStatus;
+      }
+    } 
       if (expires) payload.expiresAt = new Date(expires).toISOString()
       await updateLicense(payload)
       setLicenseModal(null)
@@ -261,7 +269,7 @@ export default function Dashboard() {
           {licenseModal.createdKey ? (
             <div>
               <div className="alert alert-success">License created successfully!</div>
-              <label>License Key <small>(save this - it won't be shown again)</small></label>
+              <label>License Key</label>
               <div className="code-box" style={{ display: 'block', marginTop: 4, userSelect: 'all' }}>{licenseModal.createdKey}</div>
             </div>
           ) : (
