@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using OpenLicenseApi.Extensions;
+using Microsoft.AspNetCore.HttpOverrides;
 namespace OpenLicenseApi
 {
     public class Program
@@ -70,6 +71,11 @@ namespace OpenLicenseApi
             }
 
             #region Middleware Setup
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UseCors(options =>
             {
