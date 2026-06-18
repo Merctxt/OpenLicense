@@ -59,9 +59,20 @@ export default function Docs() {
       </div>
 
       <div className="panel">
-        <div className="panel-heading">How i can get the hardware ID?</div>
+        <div className="panel-heading">How can I get the hardware ID?</div>
         <div className="panel-body">
-          <p className="panel-text">The hardware ID is a unique identifier for the device where the software is installed. It can be generated using various methods depending on the platform:</p>
+          <p className="panel-text">
+            The hardware ID is a unique identifier used to lock a license to a specific client, installation, or device. 
+            While commonly referred to as a "hardware ID", it does <strong>not</strong> strictly have to be a hardware hash. 
+            You can use any unique and stable identifier of the client or user environment (e.g., an installation UUID, a MAC address, or a hashed combination of system characteristics).
+          </p>
+
+          <div className="alert alert-info" style={{ marginTop: 8, marginBottom: 16 }}>
+            <strong>Implementation Note:</strong> It is the client application's responsibility to keep the collection logic consistent. 
+            Ensure that your code generates the exact same identifier across subsequent executions on the same environment to prevent activation verification failures.
+          </div>
+
+          <p className="panel-text">If you choose to generate it from hardware properties, here are common methods depending on the platform:</p>
 
           <ul className="panel-text list">
             <li><strong>Windows:</strong> Use the <code>wmic</code> command to get the UUID: <code>wmic csproduct get uuid</code>.</li>
