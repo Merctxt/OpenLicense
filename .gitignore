@@ -5,6 +5,7 @@ env
 node
 bin
 obj
-package-lock.json
 migrations
-OpenLicenseApi\appsettings.json
+package-lock.json
+appsettings.json
+launch.json
