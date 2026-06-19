@@ -61,27 +61,31 @@ namespace OpenLicenseApi
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ILicenseService, LicensesService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+            
             var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            app.MapOpenApi();
-            app.MapScalarApiReference();
 
             #region Middleware Setup
 
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            var forwardedHeadersOptions = new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
+            };
+            forwardedHeadersOptions.KnownNetworks.Clear();
+            forwardedHeadersOptions.KnownProxies.Clear();
 
+            app.UseForwardedHeaders(forwardedHeadersOptions);
+
+            app.MapOpenApi();
+            app.MapScalarApiReference();    
+            
             app.UseCors(options =>
             {
                 options.AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             });
-            app.UseAuthentication();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
