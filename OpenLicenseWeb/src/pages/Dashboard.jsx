@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
-import { getProducts, createProduct, updateProduct, deleteProduct, createLicense, updateLicense, deleteLicense } from '../api/endpoints'
+import React, { useState, useEffect, useCallback } from 'react'
+import { getProducts, createProduct, updateProduct, deleteProduct, createLicense, updateLicense, deleteLicense, getLicenseActivations, deactivateLicense } from '../api/endpoints'
 import Modal from '../components/Modal'
 import './Dashboard.css'
 
@@ -11,6 +11,12 @@ export default function Dashboard() {
   const [licenseModal, setLicenseModal] = useState(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+
+  // Activation panel state
+  const [activeActivationLicense, setActiveActivationLicense] = useState(null)
+  const [activationsData, setActivationsData] = useState({})
+  const [activationsLoading, setActivationsLoading] = useState({})
+  const [activationsError, setActivationsError] = useState({})
 
   // Licenses filtering & pagination state
   const [licSearch, setLicSearch] = useState('')
@@ -144,6 +150,40 @@ export default function Dashboard() {
     setLicSearch('')
     setLicStatusFilter('all')
     setLicPage(1)
+    setActiveActivationLicense(null)
+  }
+
+  const handleViewActivations = async (licenseId, licenseKey) => {
+    if (activeActivationLicense === licenseId) {
+      setActiveActivationLicense(null)
+      return
+    }
+    clearMsg()
+    setActiveActivationLicense(licenseId)
+    setActivationsLoading(prev => ({ ...prev, [licenseId]: true }))
+    setActivationsError(prev => ({ ...prev, [licenseId]: '' }))
+    try {
+      const res = await getLicenseActivations(licenseId)
+      setActivationsData(prev => ({ ...prev, [licenseId]: res.data }))
+    } catch (err) {
+      setActivationsError(prev => ({ ...prev, [licenseId]: err.response?.data?.message || 'Failed to load activations' }))
+    } finally {
+      setActivationsLoading(prev => ({ ...prev, [licenseId]: false }))
+    }
+  }
+
+  const handleRemoveActivation = async (licenseKey, hardwareId, licenseId) => {
+    if (!confirm(`Remove activation for hardware "${hardwareId}"?`)) return
+    clearMsg()
+    try {
+      await deactivateLicense({ licenseKey, hardwareId })
+      // Refresh activations list
+      const res = await getLicenseActivations(licenseId)
+      setActivationsData(prev => ({ ...prev, [licenseId]: res.data }))
+      setSuccess('Activation removed successfully')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to remove activation')
+    }
   }
 
   if (loading) return <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-light)' }}>Loading...</div>
@@ -270,7 +310,8 @@ export default function Dashboard() {
                           </thead>
                           <tbody>
                             {displayLicenses.map((lic) => (
-                              <tr key={lic.id}>
+                              <React.Fragment key={lic.id}>
+                              <tr>
                                 <td>{lic.name}</td>
                                 <td><code className="code-box">{lic.licenseKey}</code></td>
                                 <td>
@@ -285,10 +326,66 @@ export default function Dashboard() {
                                 <td>
                                   <div className="license-actions">
                                     <button className="btn-link" onClick={() => setLicenseModal({ mode: 'edit', license: lic, productId: product.id })}>Edit</button>
+                                    <button className="btn-link" onClick={() => handleViewActivations(lic.id, lic.licenseKey)}>
+                                      {activeActivationLicense === lic.id ? 'Hide' : 'Activations'}
+                                    </button>
                                     <button className="btn-link btn-danger-link" onClick={() => handleDeleteLicense(lic.id)}>Delete</button>
                                   </div>
                                 </td>
                               </tr>
+                              {activeActivationLicense === lic.id && (
+                                <tr className="activation-panel-row">
+                                  <td colSpan={6} style={{ padding: 0 }}>
+                                    <div className="activation-panel">
+                                      <div className="activation-panel-header">
+                                        <h5>Activations for {lic.name}</h5>
+                                        <span className="badge badge-default">{activationsData[lic.id]?.length || 0} / {lic.maxActivations}</span>
+                                      </div>
+                                      {activationsLoading[lic.id] ? (
+                                        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--color-text-light)' }}>Loading activations...</div>
+                                      ) : activationsError[lic.id] ? (
+                                        <div className="alert alert-error" style={{ margin: 0 }}>{activationsError[lic.id]}</div>
+                                      ) : !activationsData[lic.id] || activationsData[lic.id].length === 0 ? (
+                                        <p className="no-activations">No activations yet.</p>
+                                      ) : (
+                                        <div className="table-responsive">
+                                          <table className="table table-compact">
+                                            <thead>
+                                              <tr>
+                                                <th>Activated At</th>
+                                                <th>Last Seen</th>
+                                                <th>Status</th>
+                                                <th style={{ textAlign: 'right' }}>Actions</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {activationsData[lic.id].map((act) => (
+                                                <tr key={act.id}>
+                                                  <td>{new Date(act.activatedAt).toLocaleString()}</td>
+                                                  <td>{act.lastSeenAt ? new Date(act.lastSeenAt).toLocaleString() : '-'}</td>
+                                                  <td>
+                                                    {act.isActive ? (
+                                                      <span className="badge badge-success">Active</span>
+                                                    ) : (
+                                                      <span className="badge badge-danger">Inactive</span>
+                                                    )}
+                                                  </td>
+                                                  <td>
+                                                    <div className="license-actions">
+                                                      <button className="btn-link btn-danger-link" onClick={() => handleRemoveActivation(lic.licenseKey, act.hardwareId, lic.id)}>Remove</button>
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              ))}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                              </React.Fragment>
                             ))}
                           </tbody>
                         </table>

@@ -59,3 +59,11 @@ export function updateLicense(data) {
 export function deleteLicense(data) {
   return api.delete('/api/licenses', { data })
 }
+
+export function getLicenseActivations(licenseId) {
+  return api.get('/api/licenses/activations', { params: { licenseId } })
+}
+
+export function deactivateLicense(data) {
+  return api.post('/api/licenses/deactivate-by-jwt', data)
+}
