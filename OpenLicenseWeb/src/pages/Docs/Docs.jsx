@@ -1,8 +1,8 @@
+import useDocs from './useDocs'
 import './Docs.css'
 
 export default function Docs() {
-  const scalarUrl = import.meta.env.VITE_API_URL + '/scalar/v1'
-  const apiUrl = import.meta.env.VITE_API_URL
+  const { scalarUrl, apiUrl } = useDocs()
 
   return (
     <div className="docs-page">

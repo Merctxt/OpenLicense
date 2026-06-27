@@ -1,17 +1,16 @@
-import { useState } from 'react'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
-import { register, login } from '../api/endpoints'
-import { useAuth } from '../context/AuthContext'
-import './Auth.css'
+import { Link, Navigate } from 'react-router-dom'
+import useRegister from './useRegister'
+import '../Auth.css'
 
 export default function Register() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const { user, loading, saveToken, loadUser } = useAuth()
-  const navigate = useNavigate()
+  const {
+    name, setName,
+    email, setEmail,
+    password, setPassword,
+    error, submitting,
+    user, loading,
+    handleSubmit,
+  } = useRegister()
 
   if (loading) {
     return <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-light)' }}>Loading...</div>
@@ -19,24 +18,6 @@ export default function Register() {
 
   if (user) {
     return <Navigate to="/" replace />
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters')
-      return
-    }
-    setSubmitting(true)
-    try {
-      await register({ name, email, password })
-      navigate('/login', { state: { successMessage: 'Account created successfully! Please sign in.' } })
-    } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed')
-    } finally {
-      setSubmitting(false)
-    }
   }
 
   return (

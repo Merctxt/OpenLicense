@@ -3,12 +3,12 @@ import { AuthProvider } from './context/AuthContext'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Footer from './components/Footer'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Dashboard from './pages/Dashboard'
-import Account from './pages/Account'
-import Docs from './pages/Docs'
-import Terms from './pages/Terms'
+import Login from './pages/Login/Login'
+import Register from './pages/Register/Register'
+import Dashboard from './pages/Dashboard/Dashboard'
+import Account from './pages/Account/Account'
+import Docs from './pages/Docs/Docs'
+import Terms from './pages/Terms/Terms'
 
 export default function App() {
   return (
