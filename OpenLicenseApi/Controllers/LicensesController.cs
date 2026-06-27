@@ -7,6 +7,7 @@ PUT    /api/licenses <- atualizar os dados da licença (incluindo status bool: t
 
 DELETE /api/licenses <- deletar a licença, só se a licença pertencer a um produto do usuário autenticado (com chave de api)
 
+GET    /api/licenses/activations <- lista as ativações da licença, só se a licença pertencer a um produto do usuário autenticado (com chave de api)
 -------------
 
 POST /api/licenses/validate <- validar se a licença é válida, ativa e pertence ao produto, deve receber a chave de api do produto o código da licença e o hardware id do cliente. 
@@ -143,6 +144,27 @@ namespace OpenLicenseApi.Controllers
 
                 await _licenseService.DeleteLicenseAsync(userId, request.LicenseId);
                 return Ok(new { message = "License deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet("activations")]
+        public async Task<IActionResult> GetLicenseActivations([FromQuery] Guid licenseId)
+        {
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                {
+                    return Unauthorized(new { message = "Invalid token user id." });
+                }
+
+                var activations = await _licenseService.GetLicenseActivationsAsync(userId, licenseId);
+                return Ok(activations);
             }
             catch (Exception ex)
             {

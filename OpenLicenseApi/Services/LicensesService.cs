@@ -130,6 +130,22 @@ namespace OpenLicenseApi.Services
             _dbContext.Licenses.Remove(license);
             await _dbContext.SaveChangesAsync();
         }
+    
+        public async Task<IEnumerable<Activation>> GetLicenseActivationsAsync(Guid userId, Guid licenseId)
+        {
+            var license = await _dbContext.Licenses
+                .Include(l => l.Product)
+                .FirstOrDefaultAsync(l => l.Id == licenseId && l.Product.UserId == userId);
+
+            if (license == null)
+            {
+                throw new KeyNotFoundException("License not found.");
+            }
+
+            return await _dbContext.Activations
+                .Where(a => a.LicenseId == licenseId)
+                .ToListAsync();
+        }
 
         public async Task<bool> LicenseBelongsToScopeAsync(Guid userId, Guid licenseId, Guid? productId)
         {
