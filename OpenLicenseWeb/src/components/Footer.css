@@ -34,7 +34,7 @@
 }
 
 .footer-separator {
-  color: var(--color-text-lighter);
+  color: var(--border-strong);
   user-select: none;
 }
 
