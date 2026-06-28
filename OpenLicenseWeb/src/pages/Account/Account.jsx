@@ -84,6 +84,7 @@ export default function Account() {
           {(!user.apiKeys || user.apiKeys.length === 0) ? (
             <p className="no-api-keys">No API keys yet.</p>
           ) : (
+            <div className="table-responsive">
             <table className="table">
               <thead>
                 <tr>
@@ -114,6 +115,7 @@ export default function Account() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       </div>

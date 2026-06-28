@@ -59,7 +59,6 @@ export default function Dashboard() {
                 <div className="product-actions" onClick={(e) => e.stopPropagation()}>
                   <button className="btn btn-sm btn-default" onClick={() => setProductModal({ mode: 'edit', product })}>Edit</button>
                   <button className="btn btn-sm btn-danger" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
-                  <span className="expand-icon">{expandedId === product.id ? '\u25BC' : '\u25B8'}</span>
                 </div>
               </div>
 

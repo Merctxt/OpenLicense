@@ -39,12 +39,13 @@ export default function Docs() {
       <div className="panel">
         <div className="panel-heading">Quick Reference</div>
         <div className="panel-body">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Endpoint</th>
-                <th>Method</th>
-                <th>Auth</th>
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Endpoint</th>
+                  <th>Method</th>
+                  <th>Auth</th>
                 <th>Description</th>
               </tr>
             </thead>
@@ -55,6 +56,7 @@ export default function Docs() {
               <tr><td>/api/licenses/deactivate</td><td>POST</td><td>Bearer / ApiKey</td><td>Deactivate a license</td></tr>
             </tbody>
           </table>
+        </div>
         </div>
       </div>
 
