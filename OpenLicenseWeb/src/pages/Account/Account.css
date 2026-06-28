@@ -16,18 +16,18 @@
   font-weight: 600;
   width: 160px;
   flex-shrink: 0;
-  color: var(--color-text-light);
+  color: var(--muted);
   font-size: 13px;
 }
 
 .api-key-hint {
   font-size: 13px;
-  color: var(--color-text-light);
+  color: var(--muted);
   margin-bottom: 12px;
 }
 
 .no-api-keys {
-  color: var(--color-text-light);
+  color: var(--muted);
   font-size: 13px;
   padding: 8px 0;
 }
@@ -46,7 +46,7 @@
 .limit-label {
   font-size: 12px;
   text-transform: uppercase;
-  color: var(--color-text-light);
+  color: var(--muted);
   font-weight: 600;
   letter-spacing: 0.5px;
 }
@@ -54,7 +54,7 @@
 .limit-value {
   font-size: 20px;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--fg);
 }
 
 .danger-zone {

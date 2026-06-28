@@ -1,10 +1,10 @@
 .app-footer-global {
-  background: var(--color-white);
+  background: var(--bg);
   border-top: 1px solid var(--color-border-light);
   padding: 16px 20px;
   width: 100%;
   font-size: 13px;
-  color: var(--color-text-light);
+  color: var(--muted);
   margin-top: auto; /* Ensures footer sticks to the bottom */
 }
 
@@ -23,13 +23,13 @@
 }
 
 .footer-link {
-  color: var(--color-text-light);
+  color: var(--muted);
   font-weight: 500;
   transition: color 0.2s ease-in-out;
 }
 
 .footer-link:hover {
-  color: var(--color-primary);
+  color: var(--accent);
   text-decoration: none;
 }
 

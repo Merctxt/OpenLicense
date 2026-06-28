@@ -27,7 +27,7 @@
 }
 
 .product-row:hover {
-  background: var(--color-bg);
+  background: var(--surface);
 }
 
 .product-info {
@@ -44,7 +44,7 @@
 }
 
 .product-desc {
-  color: var(--color-text-light);
+  color: var(--muted);
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -59,7 +59,7 @@
 
 .expand-icon {
   font-size: 12px;
-  color: var(--color-text-light);
+  color: var(--muted);
   width: 20px;
   text-align: center;
 }
@@ -81,7 +81,7 @@
 }
 
 .no-licenses {
-  color: var(--color-text-light);
+  color: var(--muted);
   font-size: 13px;
   padding: 10px 0;
 }
@@ -104,9 +104,9 @@
   gap: 16px;
   align-items: center;
   margin-bottom: 16px;
-  background: var(--color-bg);
+  background: var(--surface);
   padding: 12px;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--color-border-light);
 }
 
@@ -129,7 +129,7 @@
   background: none;
   border: none;
   font-size: 16px;
-  color: var(--color-text-light);
+  color: var(--muted);
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -138,7 +138,7 @@
 }
 
 .filter-clear-btn:hover {
-  color: var(--color-text);
+  color: var(--fg);
 }
 
 .filter-status-wrapper {
@@ -170,7 +170,7 @@
 
 .pagination-info {
   font-size: 12px;
-  color: var(--color-text-light);
+  color: var(--muted);
 }
 
 .pagination-buttons {
@@ -189,9 +189,9 @@
 }
 
 .pagination-btn.active {
-  background: var(--color-primary);
+  background: var(--accent);
   color: white;
-  border-color: var(--color-primary-dark);
+  border-color: var(--accent-active);
 }
 
 .pagination-limit {
@@ -212,7 +212,7 @@
 }
 
 .activation-panel {
-  background: var(--color-bg);
+  background: var(--surface);
   border-top: 1px solid var(--color-border-light);
   border-bottom: 1px solid var(--color-border-light);
   padding: 12px 16px;
@@ -233,7 +233,7 @@
 }
 
 .no-activations {
-  color: var(--color-text-light);
+  color: var(--muted);
   font-size: 13px;
   padding: 8px 0;
   margin: 0;

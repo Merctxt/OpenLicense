@@ -44,7 +44,7 @@
 .header-nav a {
   color: #bdc3c7;
   padding: 6px 12px;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 500;
 }

@@ -4,13 +4,13 @@
   justify-content: center;
   flex: 1;
   padding: 20px;
-  background: var(--color-bg);
+  background: var(--surface);
 }
 
 .auth-card {
-  background: var(--color-white);
+  background: var(--bg);
   border: 1px solid var(--color-border-light);
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   width: 100%;
   max-width: 380px;
   padding: 24px;
@@ -27,7 +27,7 @@
 }
 
 .auth-header p {
-  color: var(--color-text-light);
+  color: var(--muted);
   font-size: 13px;
 }
 
@@ -40,7 +40,7 @@
   text-align: center;
   margin-top: 16px;
   font-size: 13px;
-  color: var(--color-text-light);
+  color: var(--muted);
 }
 
 /* ── Responsive ── */

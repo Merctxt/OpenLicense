@@ -8,15 +8,15 @@
 .docs-page h4 {
   margin-top: 16px;
   margin-bottom: 6px;
-  color: var(--color-text);
+  color: var(--fg);
 }
 
 .auth-method {
   margin-bottom: 16px;
   padding: 12px;
-  background: var(--color-bg);
+  background: var(--surface);
   border: 1px solid var(--color-border-light);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
 }
 
 .auth-method h4 {
@@ -26,13 +26,13 @@
 
 .auth-method p {
   font-size: 13px;
-  color: var(--color-text-light);
+  color: var(--muted);
   margin-bottom: 8px;
 }
 
 .panel-text {
   font-size: 14px;
-  color: var(--color-text);
+  color: var(--fg);
   margin-bottom: 12px;
 }
 
@@ -47,7 +47,7 @@
   font-size: 13px;
   background: #2c3e50;
   color: #ecf0f1;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   padding: 12px 14px;
   overflow-x: auto;
   white-space: pre-wrap;
