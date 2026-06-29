@@ -1,8 +1,11 @@
 import Modal from '../../components/Modal'
+import { useTheme } from '../../context/ThemeContext'
 import useAccount from './useAccount'
 import './Account.css'
 
 export default function Account() {
+  const { theme, setTheme } = useTheme()
+
   const {
     user,
     error, success,
@@ -85,12 +88,12 @@ export default function Account() {
             <p className="no-api-keys">No API keys yet.</p>
           ) : (
             <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Created</th>
-                  <th>Last Used</th>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Created</th>
+                    <th>Last Used</th>
                   <th>Status</th>
                   <th></th>
                 </tr>
@@ -114,7 +117,7 @@ export default function Account() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+             </table>
             </div>
           )}
         </div>
@@ -170,6 +173,32 @@ export default function Account() {
               <span className="limit-label">API Key Limit</span>
               <span className="limit-value">3</span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="panel">
+        <div className="panel-heading">
+          <span>Theme</span>
+        </div>
+        <div className="panel-body">
+          <p className="api-key-hint">Choose your preferred appearance for the dashboard.</p>
+          <div className="theme-options">
+            <label className="theme-option">
+              <input type="radio" name="theme" value="system" checked={theme === 'system'} onChange={() => setTheme('system')} />
+              <span className="theme-option-label">System</span>
+              <span className="theme-option-desc">Follows your browser or device setting</span>
+            </label>
+            <label className="theme-option">
+              <input type="radio" name="theme" value="light" checked={theme === 'light'} onChange={() => setTheme('light')} />
+              <span className="theme-option-label">Light</span>
+              <span className="theme-option-desc">Light background with dark text</span>
+            </label>
+            <label className="theme-option">
+              <input type="radio" name="theme" value="dark" checked={theme === 'dark'} onChange={() => setTheme('dark')} />
+              <span className="theme-option-label">Dark</span>
+              <span className="theme-option-desc">Dark background with light text</span>
+            </label>
           </div>
         </div>
       </div>

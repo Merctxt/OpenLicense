@@ -7,7 +7,7 @@
 .app-header {
   background: var(--color-header-bg);
   color: var(--color-header-text);
-  border-bottom: 1px solid #1a252f;
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -26,12 +26,13 @@
 .header-brand {
   font-size: 16px;
   font-weight: 700;
-  color: #ecf0f1;
+  color: var(--color-header-text);
   letter-spacing: -0.3px;
 }
 
 .header-brand:hover {
-  color: #fff;
+  color: var(--color-header-text);
+  opacity: 0.85;
   text-decoration: none;
 }
 
@@ -42,15 +43,18 @@
 }
 
 .header-nav a {
-  color: #bdc3c7;
+  color: var(--color-header-text);
+  opacity: 0.7;
   padding: 6px 12px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 500;
+  transition: opacity var(--motion-fast) var(--ease-standard),
+              background var(--motion-fast) var(--ease-standard);
 }
 
 .header-nav a:hover {
-  color: #fff;
+  opacity: 1;
   background: rgba(255, 255, 255, 0.08);
   text-decoration: none;
 }

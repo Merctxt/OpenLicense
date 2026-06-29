@@ -76,6 +76,53 @@
   margin-bottom: 12px;
 }
 
+[data-theme="dark"] .danger-zone {
+  background: rgba(248, 113, 113, 0.08);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+/* ── Theme Options ── */
+
+.theme-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--motion-fast) var(--ease-standard),
+              border-color var(--motion-fast) var(--ease-standard);
+}
+.theme-option:hover {
+  background: var(--surface);
+  border-color: var(--color-border);
+}
+.theme-option input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.theme-option-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-text);
+  min-width: 52px;
+}
+
+.theme-option-desc {
+  font-size: 13px;
+  color: var(--muted);
+}
+
 /* ── Responsive ── */
 @media (max-width: 540px) {
   /* Profile label + value stack vertically */

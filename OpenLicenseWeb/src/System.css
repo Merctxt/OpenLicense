@@ -58,6 +58,101 @@
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 }
 
+/* ── Dark mode (system preference fallback — before JS loads) ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --surface: #1a1d23;
+    --fg: #e4e6ea;
+    --muted: #8b8f96;
+    --border: rgba(255, 255, 255, 0.08);
+    --accent: #4d8cff;
+    --accent-hover: #6ba1ff;
+    --accent-active: #3370e0;
+    --color-primary: var(--accent);
+    --color-primary-dark: var(--accent-active);
+    --color-primary-light: #1a2a4a;
+    --color-danger: #f87171;
+    --color-danger-dark: #ef4444;
+    --color-success: #4ade80;
+    --color-warning: #fbbf24;
+    --color-bg: #0f1115;
+    --color-white: #1a1d23;
+    --color-text: var(--fg);
+    --color-text-light: var(--muted);
+    --color-text-lighter: #6b6f76;
+    --color-border: var(--border);
+    --color-border-light: rgba(255, 255, 255, 0.06);
+    --color-header-bg: #141820;
+    --color-header-text: #e4e6ea;
+    --border-strong: #4a4d54;
+    --elev-raised: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --focus-ring: 0 0 0 2px var(--accent);
+  }
+}
+
+/* ── Explicit dark override (JS-driven) ── */
+[data-theme="dark"] {
+  --bg: #0f1115;
+  --surface: #1a1d23;
+  --fg: #e4e6ea;
+  --muted: #8b8f96;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #4d8cff;
+  --accent-hover: #6ba1ff;
+  --accent-active: #3370e0;
+  --color-primary: var(--accent);
+  --color-primary-dark: var(--accent-active);
+  --color-primary-light: #1a2a4a;
+  --color-danger: #f87171;
+  --color-danger-dark: #ef4444;
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-bg: #0f1115;
+  --color-white: #1a1d23;
+  --color-text: var(--fg);
+  --color-text-light: var(--muted);
+  --color-text-lighter: #6b6f76;
+  --color-border: var(--border);
+  --color-border-light: rgba(255, 255, 255, 0.06);
+  --color-header-bg: #141820;
+  --color-header-text: #e4e6ea;
+  --border-strong: #4a4d54;
+  --elev-raised: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --focus-ring: 0 0 0 2px var(--accent);
+}
+
+/* ── Explicit light override (JS-driven, after system default) ── */
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #eef0f3;
+  --fg: #0a0b0d;
+  --muted: #5b616e;
+  --border: rgba(91, 97, 110, 0.2);
+  --accent: #0052ff;
+  --accent-hover: #578bfa;
+  --accent-active: #0667d0;
+  --color-primary: var(--accent);
+  --color-primary-dark: var(--accent-active);
+  --color-primary-light: #edf2ff;
+  --color-danger: #dc2626;
+  --color-danger-dark: #b91c1c;
+  --color-success: #16a34a;
+  --color-warning: #eab308;
+  --color-bg: #FBFBF9;
+  --color-white: var(--bg);
+  --color-text: var(--fg);
+  --color-text-light: var(--muted);
+  --color-text-lighter: #8b8f96;
+  --color-border: var(--border);
+  --color-border-light: rgba(91, 97, 110, 0.12);
+  --color-header-bg: #1f2d49;
+  --color-header-text: #ffffff;
+  --border-strong: var(--muted);
+  --elev-raised: 0 1px 3px rgba(10, 11, 13, 0.08);
+  --focus-ring: 0 0 0 2px var(--fg);
+}
+
 body {
   font-family: var(--font-body);
   font-size: 14px;
@@ -421,6 +516,57 @@ label {
 }
 
 .close-btn:hover { color: var(--color-text); }
+
+/* ── Dark mode — component overrides ── */
+[data-theme="dark"] .alert-error {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.25);
+  color: #fca5a5;
+}
+[data-theme="dark"] .alert-success {
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.25);
+  color: #86efac;
+}
+[data-theme="dark"] .alert-info {
+  background: rgba(77, 140, 255, 0.1);
+  border-color: rgba(77, 140, 255, 0.25);
+  color: #93c5fd;
+}
+[data-theme="dark"] .badge-success {
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+}
+[data-theme="dark"] .badge-danger {
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+}
+[data-theme="dark"] .badge-warning {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+[data-theme="dark"] .badge-default {
+  background: var(--surface);
+  color: var(--muted);
+}
+[data-theme="dark"] .code-box {
+  background: var(--surface);
+  border-color: var(--border);
+}
+[data-theme="dark"] .modal {
+  background: var(--surface);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+[data-theme="dark"] .modal-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .modal-footer {
+  border-color: var(--border);
+}
+[data-theme="dark"] .noise-overlay {
+  opacity: 0.06;
+}
 
 /* ── App Shell ── */
 

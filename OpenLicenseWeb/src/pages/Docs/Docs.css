@@ -54,3 +54,7 @@
   word-break: break-all;
   line-height: 1.5;
 }
+[data-theme="dark"] .code-block {
+  background: #0f1115;
+  border: 1px solid var(--border);
+}
