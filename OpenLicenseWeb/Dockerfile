@@ -24,6 +24,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 # Install serve package to serve the built app
 RUN npm install -g serve
 
