@@ -79,6 +79,10 @@ namespace OpenLicenseApi
 
             app.UseForwardedHeaders(forwardedHeadersOptions);
 
+            // Simple health check endpoint for Docker/Coolify — always returns 200 if the process is alive
+            app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
+                .ExcludeFromDescription();
+
             app.MapOpenApi();
             app.MapScalarApiReference();    
             
