@@ -7,7 +7,6 @@ services:
     build:
       context: ./OpenLicenseApi
       dockerfile: Dockerfile
-    container_name: openlicense_api
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
       - ASPNETCORE_URLS=http://+:5000
@@ -17,8 +16,6 @@ services:
       - Jwt__Audience=${JWT_AUDIENCE:-OpenLicenseApiUsers}
     ports:
       - "${API_PORT:-5000}:5000"
-    networks:
-      - openlicense_network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
@@ -34,16 +31,9 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL}
-    container_name: openlicense_web
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     depends_on:
       api:
         condition: service_healthy
-    networks:
-      - openlicense_network
     restart: unless-stopped
-
-networks:
-  openlicense_network:
-    driver: bridge
