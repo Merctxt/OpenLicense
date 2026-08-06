@@ -11,7 +11,7 @@ export function ThemeProvider({ children }) {
     localStorage.setItem('ol_theme', theme)
 
     const apply = (isDark) => {
-      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
+      document.documentElement.setAttribute('data-bs-theme', isDark ? 'dark' : 'light')
     }
 
     if (theme === 'system') {

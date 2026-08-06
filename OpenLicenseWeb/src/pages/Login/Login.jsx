@@ -1,6 +1,5 @@
 import { Link, Navigate } from 'react-router-dom'
 import useLogin from './useLogin'
-import '../Auth.css'
 
 export default function Login() {
   const {
@@ -13,7 +12,13 @@ export default function Login() {
   } = useLogin()
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-light)' }}>Loading...</div>
+    return (
+      <div className="d-flex justify-content-center align-items-center min-vh-100">
+        <div className="spinner-border text-secondary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    )
   }
 
   if (user) {
@@ -21,29 +26,31 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h1>OpenLicense</h1>
-          <p>Sign in to your account</p>
-        </div>
-        {success && <div className="alert alert-success">{success}</div>}
-        {error && <div className="alert alert-error">{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-body-tertiary">
+      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
+        <div className="card-body p-4">
+          <div className="text-center mb-4">
+            <h1 className="h4 fw-bold">OpenLicense</h1>
+            <p className="text-body-secondary mb-0">Sign in to your account</p>
           </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          {success && <div className="alert alert-success py-2">{success}</div>}
+          {error && <div className="alert alert-danger py-2">{error}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="form-label">Email</label>
+              <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Password</label>
+              <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            </div>
+            <button type="submit" className="btn btn-primary w-100" disabled={submitting}>
+              {submitting ? 'Signing in...' : 'Sign In'}
+            </button>
+          </form>
+          <div className="text-center mt-3">
+            <span className="text-body-secondary small">Don't have an account? <Link to="/register">Create one</Link></span>
           </div>
-          <button type="submit" className="btn btn-primary auth-btn" disabled={submitting}>
-            {submitting ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-        <div className="auth-footer">
-          Don't have an account? <Link to="/register">Create one</Link>
         </div>
       </div>
     </div>

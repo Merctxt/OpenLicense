@@ -1,7 +1,6 @@
 import { Fragment } from 'react'
 import Modal from '../../components/Modal'
 import useDashboard from './useDashboard'
-import './Dashboard.css'
 
 export default function Dashboard() {
   const {
@@ -27,53 +26,66 @@ export default function Dashboard() {
     handleRemoveActivation,
   } = useDashboard()
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-light)' }}>Loading...</div>
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center py-5">
+        <div className="spinner-border text-secondary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="dashboard">
-      <div className="page-title-row">
-        <h1>Products</h1>
+    <div>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h1 className="h4 mb-0">Products</h1>
         <button className="btn btn-primary btn-sm" onClick={() => setProductModal({ mode: 'create' })}>+ New Product</button>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
+      {error && <div className="alert alert-danger py-2">{error}</div>}
+      {success && <div className="alert alert-success py-2">{success}</div>}
 
       {products.length === 0 ? (
-        <div className="panel">
-          <div className="empty-state">
-            <p>No products yet. Create your first product to start managing licenses.</p>
+        <div className="card text-center">
+          <div className="card-body py-5">
+            <p className="text-body-secondary mb-3">No products yet. Create your first product to start managing licenses.</p>
             <button className="btn btn-primary" onClick={() => setProductModal({ mode: 'create' })}>Create Product</button>
           </div>
         </div>
       ) : (
-        <div className="product-list">
+        <div className="d-flex flex-column gap-0">
           {products.map((product) => (
-            <div className="panel" key={product.id}>
-              <div className="product-row" onClick={() => toggleExpand(product.id)}>
-                <div className="product-info">
-                  <span className="product-name">{product.name}</span>
-                  {product.description && <span className="product-desc">{product.description}</span>}
-                  <span className="badge badge-default">{(product.licenses || []).length} licenses</span>
+            <div className="card mb-3" key={product.id}>
+              <div
+                className="card-body d-flex justify-content-between align-items-center py-3"
+                role="button"
+                onClick={() => toggleExpand(product.id)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="d-flex align-items-center gap-3 flex-wrap">
+                  <span className="fw-semibold">{product.name}</span>
+                  {product.description && <span className="text-body-secondary small d-none d-sm-inline">{product.description}</span>}
+                  <span className="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle">{(product.licenses || []).length} licenses</span>
                 </div>
-                <div className="product-actions" onClick={(e) => e.stopPropagation()}>
-                  <button className="btn btn-sm btn-default" onClick={() => setProductModal({ mode: 'edit', product })}>Edit</button>
-                  <button className="btn btn-sm btn-danger" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+                <div className="d-flex gap-1" onClick={(e) => e.stopPropagation()}>
+                  <button className="btn btn-outline-secondary btn-sm" onClick={() => setProductModal({ mode: 'edit', product })}>Edit</button>
+                  <button className="btn btn-outline-danger btn-sm" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
                 </div>
               </div>
 
               {expandedId === product.id && (() => {
                 const licenses = product.licenses || [];
                 const hasLicenses = licenses.length > 0;
-                
+
                 if (!hasLicenses) {
                   return (
-                    <div className="product-licenses">
-                      <div className="licenses-header">
-                        <h4>Licenses</h4>
+                    <div className="border-top p-3">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <h5 className="mb-0">Licenses</h5>
                         <button className="btn btn-primary btn-sm" onClick={() => setLicenseModal({ mode: 'create', productId: product.id })}>+ Add License</button>
                       </div>
-                      <p className="no-licenses">No licenses for this product.</p>
+                      <p className="text-body-secondary small mb-0">No licenses for this product.</p>
                     </div>
                   );
                 }
@@ -82,14 +94,14 @@ export default function Dashboard() {
                   const term = licSearch.toLowerCase();
                   const nameMatch = lic.name ? lic.name.toLowerCase().includes(term) : false;
                   const keyMatch = lic.licenseKey ? lic.licenseKey.toLowerCase().includes(term) : false;
-                  
+
                   let statusMatch = true;
                   if (licStatusFilter === 'active') statusMatch = lic.status === true;
                   else if (licStatusFilter === 'suspended') statusMatch = lic.status === false;
-                  
+
                   return (!licSearch || nameMatch || keyMatch) && statusMatch;
                 });
-                
+
                 const totalItems = filtered.length;
                 const totalPages = Math.max(1, Math.ceil(totalItems / licPageSize));
                 const activePage = Math.min(licPage, totalPages);
@@ -97,33 +109,32 @@ export default function Dashboard() {
                 const displayLicenses = filtered.slice(startIndex, startIndex + licPageSize);
 
                 return (
-                  <div className="product-licenses">
-                    <div className="licenses-header">
-                      <h4>Licenses</h4>
+                  <div className="border-top p-3">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h5 className="mb-0">Licenses</h5>
                       <button className="btn btn-primary btn-sm" onClick={() => setLicenseModal({ mode: 'create', productId: product.id })}>+ Add License</button>
                     </div>
 
-                    {/* Filter Bar */}
-                    <div className="license-filters">
-                      <div className="filter-search-wrapper">
-                        <input 
-                          type="text" 
-                          placeholder="Search by name or key..." 
-                          value={licSearch} 
-                          onChange={(e) => { setLicSearch(e.target.value); setLicPage(1); }} 
-                          className="filter-search"
+                    <div className="d-flex flex-wrap gap-2 mb-3 bg-body-tertiary p-3 rounded border">
+                      <div className="flex-grow-1 position-relative">
+                        <input
+                          type="text"
+                          className="form-control form-control-sm"
+                          placeholder="Search by name or key..."
+                          value={licSearch}
+                          onChange={(e) => { setLicSearch(e.target.value); setLicPage(1); }}
                         />
                         {licSearch && (
-                          <button className="filter-clear-btn" onClick={() => { setLicSearch(''); setLicPage(1); }}>&times;</button>
+                          <button className="btn btn-sm position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent text-body-secondary" onClick={() => { setLicSearch(''); setLicPage(1); }}>&times;</button>
                         )}
                       </div>
-                      
-                      <div className="filter-status-wrapper">
-                        <label>Status:</label>
-                        <select 
-                          value={licStatusFilter} 
+                      <div className="d-flex align-items-center gap-2">
+                        <label className="form-label mb-0 small text-nowrap">Status:</label>
+                        <select
+                          className="form-select form-select-sm"
+                          style={{ width: '130px' }}
+                          value={licStatusFilter}
                           onChange={(e) => { setLicStatusFilter(e.target.value); setLicPage(1); }}
-                          className="filter-status-select"
                         >
                           <option value="all">All</option>
                           <option value="active">Active</option>
@@ -133,131 +144,126 @@ export default function Dashboard() {
                     </div>
 
                     {filtered.length === 0 ? (
-                      <p className="no-licenses">No licenses match the search filters.</p>
+                      <p className="text-body-secondary small mb-0">No licenses match the search filters.</p>
                     ) : (
                       <>
-                      <div className="table-responsive">
-                        <table className="table">
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-                              <th>Key</th>
-                              <th>Status</th>
-                              <th>Max Activations</th>
-                              <th>Expires</th>
-                              <th style={{ textAlign: 'right', paddingRight: '16px' }}>Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {displayLicenses.map((lic) => (
-                              <Fragment key={lic.id}>
+                        <div className="table-responsive">
+                          <table className="table table-sm align-middle mb-0">
+                            <thead>
                               <tr>
-                                <td>{lic.name}</td>
-                                <td><code className="code-box">{lic.licenseKey}</code></td>
-                                <td>
-                                  {lic.status ? (
-                                    <span className="badge badge-success">Active</span>
-                                  ) : (
-                                    <span className="badge badge-danger">Suspended</span>
-                                  )}
-                                </td>
-                                <td>{lic.maxActivations}</td>
-                                <td>{lic.expiresAt ? new Date(lic.expiresAt).toLocaleDateString() : 'Never'}</td>
-                                <td>
-                                  <div className="license-actions">
-                                    <button className="btn-link" onClick={() => setLicenseModal({ mode: 'edit', license: lic, productId: product.id })}>Edit</button>
-                                    <button className="btn-link" onClick={() => handleViewActivations(lic.id, lic.licenseKey)}>
-                                      {activeActivationLicense === lic.id ? 'Hide' : 'Activations'}
-                                    </button>
-                                    <button className="btn-link btn-danger-link" onClick={() => handleDeleteLicense(lic.id)}>Delete</button>
-                                  </div>
-                                </td>
+                                <th>Name</th>
+                                <th>Key</th>
+                                <th>Status</th>
+                                <th>Max Activations</th>
+                                <th>Expires</th>
+                                <th className="text-end">Actions</th>
                               </tr>
-                              {activeActivationLicense === lic.id && (
-                                <tr className="activation-panel-row">
-                                  <td colSpan={6} style={{ padding: 0 }}>
-                                    <div className="activation-panel">
-                                      <div className="activation-panel-header">
-                                        <h5>Activations for {lic.name}</h5>
-                                        <span className="badge badge-default">{activationsData[lic.id]?.length || 0} / {lic.maxActivations}</span>
-                                      </div>
-                                      {activationsLoading[lic.id] ? (
-                                        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--color-text-light)' }}>Loading activations...</div>
-                                      ) : activationsError[lic.id] ? (
-                                        <div className="alert alert-error" style={{ margin: 0 }}>{activationsError[lic.id]}</div>
-                                      ) : !activationsData[lic.id] || activationsData[lic.id].length === 0 ? (
-                                        <p className="no-activations">No activations yet.</p>
+                            </thead>
+                            <tbody>
+                              {displayLicenses.map((lic) => (
+                                <Fragment key={lic.id}>
+                                  <tr>
+                                    <td>{lic.name}</td>
+                                    <td><code className="font-mono small bg-body-tertiary px-2 py-1 rounded border text-break">{lic.licenseKey}</code></td>
+                                    <td>
+                                      {lic.status ? (
+                                        <span className="badge bg-success-subtle text-success-emphasis border border-success-subtle">Active</span>
                                       ) : (
-                                        <div className="table-responsive">
-                                          <table className="table table-compact">
-                                            <thead>
-                                              <tr>
-                                                <th>Activated At</th>
-                                                <th>Last Seen</th>
-                                                <th>Status</th>
-                                                <th style={{ textAlign: 'right' }}>Actions</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              {activationsData[lic.id].map((act) => (
-                                                <tr key={act.id}>
-                                                  <td>{new Date(act.activatedAt).toLocaleString()}</td>
-                                                  <td>{act.lastSeenAt ? new Date(act.lastSeenAt).toLocaleString() : '-'}</td>
-                                                  <td>
-                                                    {act.isActive ? (
-                                                      <span className="badge badge-success">Active</span>
-                                                    ) : (
-                                                      <span className="badge badge-danger">Inactive</span>
-                                                    )}
-                                                  </td>
-                                                  <td>
-                                                    <div className="license-actions">
-                                                      <button className="btn-link btn-danger-link" onClick={() => handleRemoveActivation(lic.licenseKey, act.hardwareId, lic.id)}>Remove</button>
-                                                    </div>
-                                                  </td>
-                                                </tr>
-                                              ))}
-                                            </tbody>
-                                          </table>
-                                        </div>
+                                        <span className="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle">Suspended</span>
                                       )}
-                                    </div>
-                                  </td>
-                                </tr>
-                              )}
-                              </Fragment>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                                    </td>
+                                    <td>{lic.maxActivations}</td>
+                                    <td>{lic.expiresAt ? new Date(lic.expiresAt).toLocaleDateString() : 'Never'}</td>
+                                    <td>
+                                      <div className="d-flex gap-2 justify-content-end">
+                                        <button className="btn btn-link btn-sm text-decoration-none p-0" onClick={() => setLicenseModal({ mode: 'edit', license: lic, productId: product.id })}>Edit</button>
+                                        <button className="btn btn-link btn-sm text-decoration-none p-0" onClick={() => handleViewActivations(lic.id, lic.licenseKey)}>
+                                          {activeActivationLicense === lic.id ? 'Hide' : 'Activations'}
+                                        </button>
+                                        <button className="btn btn-link btn-sm text-decoration-none text-danger p-0" onClick={() => handleDeleteLicense(lic.id)}>Delete</button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  {activeActivationLicense === lic.id && (
+                                    <tr>
+                                      <td colSpan={6} className="p-0 border-bottom-0">
+                                        <div className="p-3 bg-body-tertiary border rounded m-1">
+                                          <div className="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 className="mb-0">Activations for {lic.name}</h6>
+                                            <span className="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle">{(activationsData[lic.id] || []).length} / {lic.maxActivations}</span>
+                                          </div>
+                                          {activationsLoading[lic.id] ? (
+                                            <div className="text-center py-3 text-body-secondary">Loading activations...</div>
+                                          ) : activationsError[lic.id] ? (
+                                            <div className="alert alert-danger py-2 mb-0">{activationsError[lic.id]}</div>
+                                          ) : !activationsData[lic.id] || activationsData[lic.id].length === 0 ? (
+                                            <p className="text-body-secondary small mb-0">No activations yet.</p>
+                                          ) : (
+                                            <div className="table-responsive">
+                                              <table className="table table-sm align-middle mb-0">
+                                                <thead>
+                                                  <tr>
+                                                    <th>Activated At</th>
+                                                    <th>Last Seen</th>
+                                                    <th>Status</th>
+                                                    <th className="text-end">Actions</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  {activationsData[lic.id].map((act) => (
+                                                    <tr key={act.id}>
+                                                      <td>{new Date(act.activatedAt).toLocaleString()}</td>
+                                                      <td>{act.lastSeenAt ? new Date(act.lastSeenAt).toLocaleString() : '-'}</td>
+                                                      <td>
+                                                        {act.isActive ? (
+                                                          <span className="badge bg-success-subtle text-success-emphasis border border-success-subtle">Active</span>
+                                                        ) : (
+                                                          <span className="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle">Inactive</span>
+                                                        )}
+                                                      </td>
+                                                      <td className="text-end">
+                                                        <button className="btn btn-link btn-sm text-decoration-none text-danger p-0" onClick={() => handleRemoveActivation(lic.licenseKey, act.hardwareId, lic.id)}>Remove</button>
+                                                      </td>
+                                                    </tr>
+                                                  ))}
+                                                </tbody>
+                                              </table>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )}
+                                </Fragment>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
 
-                        {/* Pagination Footer */}
-                        <div className="license-pagination">
-                          <span className="pagination-info">
+                        <div className="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-2 border-top gap-2">
+                          <span className="text-body-secondary small">
                             Showing {startIndex + 1} to {Math.min(startIndex + licPageSize, totalItems)} of {totalItems} licenses
                           </span>
-                          
-                          <div className="pagination-buttons">
-                            <button 
-                              className="btn btn-default btn-xs pagination-btn" 
+
+                          <div className="d-flex gap-1">
+                            <button
+                              className="btn btn-outline-secondary btn-sm"
                               disabled={activePage === 1}
                               onClick={() => setLicPage(prev => Math.max(1, prev - 1))}
                             >
-                              &lsaquo; Previous
+                              &lsaquo; Prev
                             </button>
-                            
                             {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
                               <button
                                 key={pageNum}
-                                className={`btn btn-xs pagination-btn ${activePage === pageNum ? 'btn-primary active' : 'btn-default'}`}
+                                className={`btn btn-sm ${activePage === pageNum ? 'btn-primary' : 'btn-outline-secondary'}`}
                                 onClick={() => setLicPage(pageNum)}
                               >
                                 {pageNum}
                               </button>
                             ))}
-                            
-                            <button 
-                              className="btn btn-default btn-xs pagination-btn" 
+                            <button
+                              className="btn btn-outline-secondary btn-sm"
                               disabled={activePage === totalPages}
                               onClick={() => setLicPage(prev => Math.min(totalPages, prev + 1))}
                             >
@@ -265,17 +271,16 @@ export default function Dashboard() {
                             </button>
                           </div>
 
-                          <div className="pagination-limit">
-                            <select 
-                              value={licPageSize} 
-                              onChange={(e) => { setLicPageSize(Number(e.target.value)); setLicPage(1); }}
-                              className="pagination-select"
-                            >
-                              <option value={5}>5 / page</option>
-                              <option value={10}>10 / page</option>
-                              <option value={20}>20 / page</option>
-                            </select>
-                          </div>
+                          <select
+                            className="form-select form-select-sm"
+                            style={{ width: 'auto' }}
+                            value={licPageSize}
+                            onChange={(e) => { setLicPageSize(Number(e.target.value)); setLicPage(1); }}
+                          >
+                            <option value={5}>5 / page</option>
+                            <option value={10}>10 / page</option>
+                            <option value={20}>20 / page</option>
+                          </select>
                         </div>
                       </>
                     )}
@@ -293,7 +298,7 @@ export default function Dashboard() {
           onClose={() => setProductModal(null)}
           footer={
             <>
-              <button className="btn btn-default" onClick={() => setProductModal(null)}>Cancel</button>
+              <button className="btn btn-secondary" onClick={() => setProductModal(null)}>Cancel</button>
               <button className="btn btn-primary" type="submit" form="product-form">
                 {productModal.mode === 'create' ? 'Create' : 'Save'}
               </button>
@@ -301,13 +306,13 @@ export default function Dashboard() {
           }
         >
           <form id="product-form" onSubmit={productModal.mode === 'create' ? handleCreateProduct : handleEditProduct}>
-            <div className="form-group">
-              <label>Name</label>
-              <input name="name" defaultValue={productModal.product?.name || ''} required />
+            <div className="mb-3">
+              <label className="form-label">Name</label>
+              <input className="form-control" name="name" defaultValue={productModal.product?.name || ''} required />
             </div>
-            <div className="form-group">
-              <label>Description</label>
-              <textarea name="description" rows={3} defaultValue={productModal.product?.description || ''} />
+            <div className="mb-3">
+              <label className="form-label">Description</label>
+              <textarea className="form-control" name="description" rows={3} defaultValue={productModal.product?.description || ''} />
             </div>
           </form>
         </Modal>
@@ -322,7 +327,7 @@ export default function Dashboard() {
               <button className="btn btn-primary" onClick={() => setLicenseModal(null)}>Done</button>
             ) : (
               <>
-                <button className="btn btn-default" onClick={() => setLicenseModal(null)}>Cancel</button>
+                <button className="btn btn-secondary" onClick={() => setLicenseModal(null)}>Cancel</button>
                 <button className="btn btn-primary" type="submit" form="license-form">
                   {licenseModal.mode === 'create' ? 'Create' : 'Save'}
                 </button>
@@ -332,28 +337,28 @@ export default function Dashboard() {
         >
           {licenseModal.createdKey ? (
             <div>
-              <div className="alert alert-success">License created successfully!</div>
-              <label>License Key</label>
-              <div className="code-box" style={{ display: 'block', marginTop: 4, userSelect: 'all' }}>{licenseModal.createdKey}</div>
+              <div className="alert alert-success py-2">License created successfully!</div>
+              <label className="form-label">License Key</label>
+              <div className="font-mono small bg-body-tertiary border rounded p-2 user-select-all text-break">{licenseModal.createdKey}</div>
             </div>
           ) : (
             <form id="license-form" onSubmit={licenseModal.mode === 'create' ? handleCreateLicense : handleEditLicense}>
-              <div className="form-group">
-                <label>Name</label>
-                <input name="name" defaultValue={licenseModal.license?.name || ''} required />
+              <div className="mb-3">
+                <label className="form-label">Name</label>
+                <input className="form-control" name="name" defaultValue={licenseModal.license?.name || ''} required />
               </div>
-              <div className="form-group">
-                <label>Max Activations</label>
-                <input type="number" name="maxActivations" min={1} defaultValue={licenseModal.license?.maxActivations || 1} required />
+              <div className="mb-3">
+                <label className="form-label">Max Activations</label>
+                <input className="form-control" type="number" name="maxActivations" min={1} defaultValue={licenseModal.license?.maxActivations || 1} required />
               </div>
-              <div className="form-group">
-                <label>Expires At</label>
-                <input type="datetime-local" name="expiresAt" defaultValue={licenseModal.license?.expiresAt ? licenseModal.license.expiresAt.slice(0, 16) : ''} />
+              <div className="mb-3">
+                <label className="form-label">Expires At</label>
+                <input className="form-control" type="datetime-local" name="expiresAt" defaultValue={licenseModal.license?.expiresAt ? licenseModal.license.expiresAt.slice(0, 16) : ''} />
               </div>
               {licenseModal.mode === 'edit' && (
-                <div className="form-group">
-                  <label>Status</label>
-                  <select name="status" defaultValue={licenseModal.license?.status !== undefined ? String(licenseModal.license.status) : ''}>
+                <div className="mb-3">
+                  <label className="form-label">Status</label>
+                  <select className="form-select" name="status" defaultValue={licenseModal.license?.status !== undefined ? String(licenseModal.license.status) : ''}>
                     <option value="true">Active</option>
                     <option value="false">Suspended</option>
                   </select>

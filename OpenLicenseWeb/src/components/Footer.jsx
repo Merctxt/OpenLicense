@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import './Footer.css'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -7,17 +6,17 @@ export default function Footer() {
   const VITE_SOURCE_URL = import.meta.env.VITE_SOURCE_URL
 
   return (
-    <footer className="app-footer-global">
-      <div className="footer-inner">
-        <span className="footer-copy">&copy; {currentYear} OpenLicense. All rights reserved.</span>
-        <nav className="footer-links">
-          <Link to="/docs" className="footer-link">API Docs</Link>
-          <span className="footer-separator">&bull;</span>
-          <a href={VITE_STATUS_URL} className="footer-link" target="_blank" rel="noopener noreferrer">System Status</a>
-          <span className="footer-separator">&bull;</span>
-          <Link to="/terms" className="footer-link">Terms of Use</Link>
-          <span className="footer-separator">&bull;</span>
-          <a href={VITE_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="footer-link">Source Code</a>
+    <footer className="border-top py-3 mt-auto">
+      <div className="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2" style={{ maxWidth: '1100px' }}>
+        <span className="text-body-secondary small">&copy; {currentYear} OpenLicense. All rights reserved.</span>
+        <nav className="d-flex align-items-center gap-2 flex-wrap justify-content-center">
+          <Link to="/docs" className="text-body-secondary small text-decoration-none">API Docs</Link>
+          <span className="text-body-secondary">&bull;</span>
+          <a href={VITE_STATUS_URL} className="text-body-secondary small text-decoration-none" target="_blank" rel="noopener noreferrer">System Status</a>
+          <span className="text-body-secondary">&bull;</span>
+          <Link to="/terms" className="text-body-secondary small text-decoration-none">Terms of Use</Link>
+          <span className="text-body-secondary">&bull;</span>
+          <a href={VITE_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="text-body-secondary small text-decoration-none">Source Code</a>
         </nav>
       </div>
     </footer>

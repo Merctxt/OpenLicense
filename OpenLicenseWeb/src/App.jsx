@@ -14,8 +14,8 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="global-app-container">
-          <div className="global-app-content">
+        <div className="d-flex flex-column min-vh-100">
+          <div className="flex-fill">
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />

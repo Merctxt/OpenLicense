@@ -5,7 +5,13 @@ export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-light)' }}>Loading...</div>
+    return (
+      <div className="d-flex justify-content-center align-items-center py-5">
+        <div className="spinner-border text-secondary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    )
   }
 
   if (!user) {
