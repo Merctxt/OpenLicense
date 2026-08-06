@@ -10,13 +10,12 @@ export default function Footer() {
       <div className="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2" style={{ maxWidth: '1100px' }}>
         <span className="text-body-secondary small">&copy; {currentYear} OpenLicense. All rights reserved.</span>
         <nav className="d-flex align-items-center gap-2 flex-wrap justify-content-center">
-          <Link to="/docs" className="text-body-secondary small text-decoration-none">API Docs</Link>
           <span className="text-body-secondary">&bull;</span>
           <a href={VITE_STATUS_URL} className="text-body-secondary small text-decoration-none" target="_blank" rel="noopener noreferrer">System Status</a>
           <span className="text-body-secondary">&bull;</span>
           <Link to="/terms" className="text-body-secondary small text-decoration-none">Terms of Use</Link>
           <span className="text-body-secondary">&bull;</span>
-          <a href={VITE_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="text-body-secondary small text-decoration-none">Source Code</a>
+          <a href={VITE_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="text-body-secondary small text-decoration-none">Source Code and Docs</a>
         </nav>
       </div>
     </footer>

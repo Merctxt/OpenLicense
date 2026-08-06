@@ -7,7 +7,6 @@ import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
 import Dashboard from './pages/Dashboard/Dashboard'
 import Account from './pages/Account/Account'
-import Docs from './pages/Docs/Docs'
 import Terms from './pages/Terms/Terms'
 
 export default function App() {
@@ -22,7 +21,6 @@ export default function App() {
               <Route element={<Layout />}>
                 <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-                <Route path="/docs" element={<Docs />} />
                 <Route path="/terms" element={<Terms />} />
               </Route>
               <Route path="*" element={<Navigate to="/" replace />} />

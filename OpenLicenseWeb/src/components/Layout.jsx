@@ -38,7 +38,7 @@ export default function Layout() {
                     <Link to="/account" className="nav-link" onClick={closeNav}>Account</Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/docs" className="nav-link" onClick={closeNav}>Docs</Link>
+                    <Link to="/terms" className="nav-link" onClick={closeNav}>Terms</Link>
                   </li>
                   <li className="nav-item ms-sm-2">
                     <button onClick={handleLogout} className="btn btn-outline-secondary btn-sm">Logout</button>
