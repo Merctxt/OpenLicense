@@ -66,7 +66,7 @@ export default function Dashboard() {
                 <div className="d-flex align-items-center gap-3 flex-wrap">
                   <span className="fw-semibold">{product.name}</span>
                   {product.description && <span className="text-body-secondary small d-none d-sm-inline">{product.description}</span>}
-                  <span className="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle">{(product.licenses || []).length} licenses</span>
+                  <span className="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle">{(product.licenses || []).length} {product.licenses && product.licenses.length === 1 ? 'license' : 'licenses'}</span>
                 </div>
                 <div className="d-flex gap-1" onClick={(e) => e.stopPropagation()}>
                   <button className="btn btn-outline-secondary btn-sm" onClick={() => setProductModal({ mode: 'edit', product })}>Edit</button>
