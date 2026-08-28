@@ -50,8 +50,14 @@ namespace OpenLicenseApi.Services
         public async Task<string> LoginAsync(string email, string password)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email.Trim().ToLower());
-            if (user == null)            {
+            if (user == null)
+            {
                 throw new Exception("Invalid email or password.");
+            }
+
+            if (user.IsSuspended)
+            {
+                throw new Exception("Account is suspended.");
             }
 
             var passwordHasher = new PasswordHasher<Users>();

@@ -17,6 +17,7 @@ namespace OpenLicenseApi.Models
         [JsonIgnore]
         public string PasswordHash { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
+        public bool IsSuspended { get; set; } = false;
         public int ProductLimit { get; set; } = 3;
         public int LicenseLimit { get; set; } = 450;
         public ICollection<Product> Products { get; set; } = new List<Product>();
