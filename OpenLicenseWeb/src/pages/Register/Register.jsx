@@ -1,4 +1,5 @@
 import { Link, Navigate } from 'react-router-dom'
+import { LogIn, Layers } from 'lucide-react'
 import useRegister from './useRegister'
 
 export default function Register() {
@@ -29,8 +30,8 @@ export default function Register() {
     <div className="d-flex align-items-center justify-content-center min-vh-100 bg-body-tertiary">
       <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
         <div className="card-body p-4">
-          <div className="text-center mb-4">
-            <h1 className="h4 fw-bold">OpenLicense</h1>
+          <div className="d-flex flex-column justify-content-center align-items-center mb-4">
+            <h1 className="h4 fw-bold d-flex align-items-center gap-2"><Layers />OpenLicense</h1>
             <p className="text-body-secondary mb-0">Create your account</p>
           </div>
           {error && <div className="alert alert-danger py-2">{error}</div>}
@@ -52,7 +53,7 @@ export default function Register() {
             </button>
           </form>
           <div className="text-center mt-3">
-            <span className="text-body-secondary small">Already have an account? <Link to="/login">Sign in</Link></span>
+            <span className="text-body-secondary small">Already have an account? <Link to="/login" className="text-decoration-none"><LogIn className="d-inline me-1" width={14} height={14} />Sign in</Link></span>
           </div>
         </div>
       </div>
