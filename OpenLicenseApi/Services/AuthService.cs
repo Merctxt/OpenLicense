@@ -57,7 +57,7 @@ namespace OpenLicenseApi.Services
 
             if (user.IsSuspended)
             {
-                throw new Exception("Account is suspended.");
+                throw new Exception("Invalid email or password.");
             }
 
             var passwordHasher = new PasswordHasher<Users>();
