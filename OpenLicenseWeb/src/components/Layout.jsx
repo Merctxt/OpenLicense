@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
-import { Layers, Star, User, Scale, LogOut } from 'lucide-react'
+import { Sparkles, Layers, Star, User, Scale, LogOut } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 export default function Layout() {
@@ -39,6 +39,9 @@ export default function Layout() {
                   </li>
                   <li className="nav-item">
                     <Link to="/account" className="nav-link d-flex align-items-center gap-1" onClick={closeNav}><User width={16} height={16} />Account</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/metrics" className="nav-link d-flex align-items-center gap-1" onClick={closeNav}><Sparkles width={16} height={16} />Metrics</Link>
                   </li>
                   <li className="nav-item">
                     <Link to="/terms" className="nav-link d-flex align-items-center gap-1" onClick={closeNav}><Scale width={16} height={16} />Terms</Link>

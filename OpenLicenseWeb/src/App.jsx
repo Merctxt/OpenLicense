@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Layout from './components/Layout'
@@ -8,6 +9,8 @@ import Register from './pages/Register/Register'
 import Dashboard from './pages/Dashboard/Dashboard'
 import Account from './pages/Account/Account'
 import Terms from './pages/Terms/Terms'
+
+const Metrics = lazy(() => import('./pages/Metrics/Metrics'))
 
 export default function App() {
   return (
@@ -21,6 +24,11 @@ export default function App() {
               <Route element={<Layout />}>
                 <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+                <Route path="/metrics" element={
+                  <Suspense fallback={<div className="text-center p-5 text-body-secondary">Loading metrics...</div>}>
+                    <Metrics />
+                  </Suspense>
+                } />
                 <Route path="/terms" element={<Terms />} />
               </Route>
               <Route path="*" element={<Navigate to="/" replace />} />
