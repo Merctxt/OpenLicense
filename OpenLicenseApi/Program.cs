@@ -65,6 +65,7 @@ namespace OpenLicenseApi
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ILicenseService, LicensesService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+            builder.Services.AddSingleton<OpenLicenseApi.Services.IRateLimiterService, OpenLicenseApi.Services.RateLimiterService>();
             
             var app = builder.Build();
 
@@ -92,6 +93,9 @@ namespace OpenLicenseApi
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             });
+
+            // Rate limiting for auth endpoints (before auth check — limits unauthenticated attempts)
+            app.UseMiddleware<OpenLicenseApi.Middleware.RateLimitMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();
