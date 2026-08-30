@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { useCallback, Fragment } from 'react'
 import Modal from '../../components/Modal'
 import useDashboard from './useDashboard'
 
@@ -25,6 +25,9 @@ export default function Dashboard() {
     handleViewActivations,
     handleRemoveActivation,
   } = useDashboard()
+
+  const handleProductModalClose = useCallback(() => setProductModal(null), [setProductModal])
+  const handleLicenseModalClose = useCallback(() => setLicenseModal(null), [setLicenseModal])
 
   if (loading) {
     return (
@@ -295,10 +298,10 @@ export default function Dashboard() {
       {productModal && (
         <Modal
           title={productModal.mode === 'create' ? 'New Product' : 'Edit Product'}
-          onClose={() => setProductModal(null)}
+          onClose={handleProductModalClose}
           footer={
             <>
-              <button className="btn btn-secondary" onClick={() => setProductModal(null)}>Cancel</button>
+              <button className="btn btn-secondary" onClick={handleProductModalClose}>Cancel</button>
               <button className="btn btn-primary" type="submit" form="product-form">
                 {productModal.mode === 'create' ? 'Create' : 'Save'}
               </button>
@@ -321,13 +324,13 @@ export default function Dashboard() {
       {licenseModal && (
         <Modal
           title={licenseModal.mode === 'create' ? 'New License' : 'Edit License'}
-          onClose={() => setLicenseModal(null)}
+          onClose={handleLicenseModalClose}
           footer={
             licenseModal.createdKey ? (
-              <button className="btn btn-primary" onClick={() => setLicenseModal(null)}>Done</button>
+              <button className="btn btn-primary" onClick={handleLicenseModalClose}>Done</button>
             ) : (
               <>
-                <button className="btn btn-secondary" onClick={() => setLicenseModal(null)}>Cancel</button>
+                <button className="btn btn-secondary" onClick={handleLicenseModalClose}>Cancel</button>
                 <button className="btn btn-primary" type="submit" form="license-form">
                   {licenseModal.mode === 'create' ? 'Create' : 'Save'}
                 </button>

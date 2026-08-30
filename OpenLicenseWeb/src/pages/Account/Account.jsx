@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import Modal from '../../components/Modal'
 import { useTheme } from '../../context/ThemeContext'
 import useAccount from './useAccount'
@@ -20,6 +21,8 @@ export default function Account() {
     handleCreateApiKey,
     handleDeleteApiKey,
   } = useAccount()
+
+  const handleModalClose = useCallback(() => setApiKeyModal(false), [setApiKeyModal])
 
   if (!user) return null
 
@@ -125,13 +128,13 @@ export default function Account() {
       {apiKeyModal && (
         <Modal
           title="Create API Key"
-          onClose={() => setApiKeyModal(false)}
+          onClose={handleModalClose}
           footer={
             createdKey ? (
-              <button className="btn btn-primary" onClick={() => setApiKeyModal(false)}>Done</button>
+              <button className="btn btn-primary" onClick={handleModalClose}>Done</button>
             ) : (
               <>
-                <button className="btn btn-secondary" onClick={() => setApiKeyModal(false)}>Cancel</button>
+                <button className="btn btn-secondary" onClick={handleModalClose}>Cancel</button>
                 <button className="btn btn-primary" type="submit" form="apikey-form">Create</button>
               </>
             )
