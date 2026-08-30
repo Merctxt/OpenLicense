@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace OpenLicenseApi.Models
 {
@@ -11,6 +12,7 @@ namespace OpenLicenseApi.Models
 
         [Required]
         public Guid UserId { get; set; }
+        [JsonIgnore]
         public Users User { get; set; } = null!;
 
         [Required]
@@ -18,6 +20,7 @@ namespace OpenLicenseApi.Models
 
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
+        [JsonIgnore]
         public ICollection<License> Licenses { get; set; } = new List<License>();
     }
 }

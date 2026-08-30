@@ -20,7 +20,9 @@ namespace OpenLicenseApi.Models
         public bool IsSuspended { get; set; } = false;
         public int ProductLimit { get; set; } = 3;
         public int LicenseLimit { get; set; } = 450;
+        [JsonIgnore]
         public ICollection<Product> Products { get; set; } = new List<Product>();
+        [JsonIgnore]
         public ICollection<ApiKey> ApiKeys { get; set; } = new List<ApiKey>();
 
     }
