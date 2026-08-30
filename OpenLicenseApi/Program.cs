@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using OpenLicenseApi.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
+using System.Text.Json.Serialization;
 namespace OpenLicenseApi
 {
     public class Program
@@ -27,7 +28,10 @@ namespace OpenLicenseApi
 
             // Add services to the container.   
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             if (string.IsNullOrWhiteSpace(connectionString))
             {

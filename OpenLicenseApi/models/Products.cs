@@ -20,7 +20,6 @@ namespace OpenLicenseApi.Models
 
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
-        [JsonIgnore]
         public ICollection<License> Licenses { get; set; } = new List<License>();
     }
 }
