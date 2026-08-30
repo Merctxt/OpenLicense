@@ -17,6 +17,8 @@ namespace OpenLicenseApi.Services
 
         public async Task<IEnumerable<Product>> GetProductsByUserIdAsync(Guid userId)
         {
+            await EnsureUserActiveAsync(userId);
+
             return await _dbContext.Products
                 .Include(p => p.Licenses)
                 .Where(p => p.UserId == userId)
@@ -25,6 +27,8 @@ namespace OpenLicenseApi.Services
 
         public async Task<Product> CreateProductAsync(Guid userId, CreateProductRequest request)
         {
+            await EnsureUserActiveAsync(userId);
+
             // valida se bateu o limite de produtos por conta
             var Limit = await _dbContext.Users.Where(u => u.Id == userId).Select(u => u.ProductLimit).FirstOrDefaultAsync();
             
@@ -59,6 +63,8 @@ namespace OpenLicenseApi.Services
 
         public async Task<Product> UpdateProductAsync(Guid userId, Guid productId, UpdateProductRequest request)
         {
+            await EnsureUserActiveAsync(userId);
+
             var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId && p.UserId == userId);
             if (product == null)
             {
@@ -92,6 +98,8 @@ namespace OpenLicenseApi.Services
 
         public async Task DeleteProductAsync(Guid userId, Guid productId)
         {
+            await EnsureUserActiveAsync(userId);
+
             var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId && p.UserId == userId);
             if (product == null)
             {
@@ -102,5 +110,17 @@ namespace OpenLicenseApi.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        private async Task EnsureUserActiveAsync(Guid userId)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new Exception("Invalid email or password.");
+            }
+            if (user.IsSuspended)
+            {
+                throw new Exception("Invalid email or password.");
+            }
+        }
     }
 }

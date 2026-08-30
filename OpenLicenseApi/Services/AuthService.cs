@@ -24,6 +24,8 @@ namespace OpenLicenseApi.Services
 
         public async Task DeleteAsync(Guid userId)
         {
+            await EnsureUserActiveAsync(userId);
+
             var user = await _dbContext.Users.FindAsync(userId);
             if (user == null)
             {
@@ -35,6 +37,8 @@ namespace OpenLicenseApi.Services
 
         public async Task<Users> GetMeAsync(Guid userId)
         {
+            await EnsureUserActiveAsync(userId);
+
             var user = await _dbContext.Users
                 .Include(u => u.ApiKeys)
                 .FirstOrDefaultAsync(u => u.Id == userId);
@@ -102,6 +106,8 @@ namespace OpenLicenseApi.Services
 
         public async Task<Users> UpdateAsync(Guid userId, string? name, string? email, string? password)
         {
+            await EnsureUserActiveAsync(userId);
+
             var user = await _dbContext.Users.FindAsync(userId);
             if (user == null)
             {
@@ -141,6 +147,8 @@ namespace OpenLicenseApi.Services
         #region Apikey
         public async Task<CreateApiKeyResponse> CreateApiKeyAsync(Guid userId, CreateApiKeyRequest request)
         {
+            await EnsureUserActiveAsync(userId);
+
             var apiKeyCount = await _dbContext.ApiKeys.CountAsync(k => k.UserId == userId);
             if (apiKeyCount >= 3)
             {
@@ -178,6 +186,8 @@ namespace OpenLicenseApi.Services
 
         public async Task DeleteApiKeyAsync(Guid userId, Guid apiKeyId)
         {
+            await EnsureUserActiveAsync(userId);
+
             var apiKey = await _dbContext.ApiKeys
                 .FirstOrDefaultAsync(k => k.Id == apiKeyId && k.UserId == userId);
             if (apiKey == null)
@@ -208,5 +218,18 @@ namespace OpenLicenseApi.Services
             return Convert.ToHexString(hash);
         }
         #endregion
+
+        private async Task EnsureUserActiveAsync(Guid userId)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new Exception("Invalid email or password.");
+            }
+            if (user.IsSuspended)
+            {
+                throw new Exception("Invalid email or password.");
+            }
+        }
     }
 }

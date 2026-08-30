@@ -18,6 +18,8 @@ namespace OpenLicenseApi.Services
 
         public async Task<IEnumerable<License>> GetLicensesByProductIdAsync(Guid userId, Guid productId)
         {
+            await EnsureUserActiveAsync(userId);
+
             var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId && p.UserId == userId);
             if (product == null)
             {
@@ -29,6 +31,8 @@ namespace OpenLicenseApi.Services
 
         public async Task<License> CreateLicenseAsync(Guid userId, Guid productId, CreateLicenseRequest request)
         {
+            await EnsureUserActiveAsync(userId);
+
             var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId && p.UserId == userId);
             if (product == null)
             {
@@ -65,6 +69,8 @@ namespace OpenLicenseApi.Services
 
         public async Task<License> UpdateLicenseAsync(Guid userId, Guid licenseId, UpdateLicenseRequest request)
         {
+            await EnsureUserActiveAsync(userId);
+
             var license = await _dbContext.Licenses
                 .Include(l => l.Product)
                 .FirstOrDefaultAsync(l => l.Id == licenseId && l.Product.UserId == userId);
@@ -118,6 +124,8 @@ namespace OpenLicenseApi.Services
 
         public async Task DeleteLicenseAsync(Guid userId, Guid licenseId)
         {
+            await EnsureUserActiveAsync(userId);
+
             var license = await _dbContext.Licenses
                 .Include(l => l.Product)
                 .FirstOrDefaultAsync(l => l.Id == licenseId && l.Product.UserId == userId);
@@ -133,6 +141,8 @@ namespace OpenLicenseApi.Services
     
         public async Task<IEnumerable<Activation>> GetLicenseActivationsAsync(Guid userId, Guid licenseId)
         {
+            await EnsureUserActiveAsync(userId);
+
             var license = await _dbContext.Licenses
                 .Include(l => l.Product)
                 .FirstOrDefaultAsync(l => l.Id == licenseId && l.Product.UserId == userId);
@@ -157,6 +167,8 @@ namespace OpenLicenseApi.Services
 
         public async Task<ValidateLicenseResponse> ValidateLicenseAsync(Guid userId, ValidateLicenseRequest request)
         {
+            await EnsureUserActiveAsync(userId);
+
             var normalizedKey = NormalizeLicenseKey(request.LicenseKey);
 
             var license = await _dbContext.Licenses
@@ -235,6 +247,8 @@ namespace OpenLicenseApi.Services
 
         public async Task DeactivateLicenseAsync(Guid userId, Guid? productId, DeactivateLicenseRequest request)
         {
+            await EnsureUserActiveAsync(userId);
+
             var normalizedKey = NormalizeLicenseKey(request.LicenseKey);
 
             var license = await _dbContext.Licenses
@@ -262,6 +276,19 @@ namespace OpenLicenseApi.Services
 
             _dbContext.Activations.Remove(activation);
             await _dbContext.SaveChangesAsync();
+        }
+
+        private async Task EnsureUserActiveAsync(Guid userId)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new Exception("Invalid email or password.");
+            }
+            if (user.IsSuspended)
+            {
+                throw new Exception("Invalid email or password.");
+            }
         }
 
         private static string GenerateLicenseKey()
