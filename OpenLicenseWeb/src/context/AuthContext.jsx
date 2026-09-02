@@ -8,17 +8,10 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   const loadUser = useCallback(async () => {
-    const token = localStorage.getItem('ol_token')
-    if (!token) {
-      setUser(null)
-      setLoading(false)
-      return
-    }
     try {
       const res = await getMe()
       setUser(res.data)
     } catch {
-      localStorage.removeItem('ol_token')
       setUser(null)
     } finally {
       setLoading(false)
@@ -29,17 +22,12 @@ export function AuthProvider({ children }) {
     loadUser()
   }, [loadUser])
 
-  const saveToken = (token) => {
-    localStorage.setItem('ol_token', token)
-  }
-
-  const logout = () => {
-    localStorage.removeItem('ol_token')
+  const logout = useCallback(async () => {
     setUser(null)
-  }
+  }, [])
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, logout, saveToken, loadUser }}>
+    <AuthContext.Provider value={{ user, setUser, loading, logout, loadUser }}>
       {children}
     </AuthContext.Provider>
   )

@@ -9,7 +9,7 @@ export default function useLogin() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const { user, loading, saveToken, loadUser } = useAuth()
+  const { user, loading, loadUser } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -27,7 +27,6 @@ export default function useLogin() {
     setSubmitting(true)
     try {
       const res = await login({ email, password })
-      saveToken(res.data.token)
       await loadUser()
       navigate('/')
     } catch (err) {

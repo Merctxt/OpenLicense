@@ -3,22 +3,20 @@ import axios from 'axios'
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '',
   headers: { 'Content-Type': 'application/json' },
-})
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('ol_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
+  withCredentials: true,
 })
 
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401 && !err.config?.url?.includes('/api/auth/login')) {
-      localStorage.removeItem('ol_token')
-      window.location.href = '/login'
+    if (err.response?.status === 401) {
+      const url = err.config?.url || ''
+      if (!url.includes('/api/auth/login') && !url.includes('/api/auth/me')) {
+        window.location.href = '/login'
+      }
+      if (url.includes('/api/auth/login')) {
+        return Promise.reject(err)
+      }
     }
     return Promise.reject(err)
   }

@@ -91,15 +91,21 @@ namespace OpenLicenseApi
             app.MapOpenApi();
             app.MapScalarApiReference();    
             
+            var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:3000";
+
             app.UseCors(options =>
             {
-                options.AllowAnyOrigin()
+                options.WithOrigins(frontendUrl)
                     .AllowAnyMethod()
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .AllowCredentials();
             });
 
             // Rate limiting for auth endpoints (before auth check — limits unauthenticated attempts)
             app.UseMiddleware<OpenLicenseApi.Middleware.RateLimitMiddleware>();
+
+            // Inject JWT from cookie into Authorization header (before authentication)
+            app.UseMiddleware<OpenLicenseApi.Middleware.CookieToBearerMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -53,12 +53,27 @@ namespace OpenLicenseApi.Controllers
             try
             {
                 var token = await _authService.LoginAsync(request.Email, request.Password);
+                Response.Cookies.Append("auth_token", token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(30)
+                });
                 return Ok(new { token });
             }
             catch (Exception ex)
             {
                 return Unauthorized(new { message = ex.Message });
             }
+        }
+
+        [HttpPost("logout")]
+        [AllowAnonymous]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("auth_token");
+            return Ok(new { ok = true });
         }
         
         [Authorize]

@@ -2,14 +2,18 @@ import { useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { Sparkles, Layers, Star, User, Scale, LogOut } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { logout as apiLogout } from '../api/endpoints'
 
 export default function Layout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [navOpen, setNavOpen] = useState(false)
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setNavOpen(false)
+    try {
+      await apiLogout()
+    } catch { /* ignore — clear local state anyway */ }
     logout()
     navigate('/login')
   }

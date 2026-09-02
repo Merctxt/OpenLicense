@@ -50,8 +50,8 @@ namespace OpenLicenseApi.Extensions
                     ValidIssuer = jwtIssuer,
                     ValidateAudience = !string.IsNullOrWhiteSpace(jwtAudience),
                     ValidAudience = jwtAudience,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.FromSeconds(30)
                 };
             })
             .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(
