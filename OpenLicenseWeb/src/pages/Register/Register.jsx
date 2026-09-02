@@ -9,6 +9,8 @@ export default function Register() {
     password, setPassword,
     error, submitting,
     user, loading,
+    passwordRulesState,
+    allRulesPassed,
     handleSubmit,
   } = useRegister()
 
@@ -47,9 +49,21 @@ export default function Register() {
             <div className="mb-3">
               <label className="form-label">Password</label>
               <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+              {password && (
+                <div className="mt-2">
+                  <p className="small text-body-secondary mb-1">Password must contain:</p>
+                  <ul className="list-unstyled small" style={{ fontSize: '0.8rem' }}>
+                    {passwordRulesState.map(rule => (
+                      <li key={rule.key} className={rule.passed ? 'text-success' : 'text-danger'}>
+                        {rule.passed ? '✓' : '✗'} {rule.label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
-            <button type="submit" className="btn btn-primary w-100" disabled={submitting}>
-              {submitting ? 'Creating account...' : 'Create Account'}
+            <button type="submit" className="btn btn-primary w-100" disabled={submitting || !allRulesPassed}>
+              {submitting ? 'Creating account...' : !allRulesPassed ? 'Complete password requirements' : 'Create Account'}
             </button>
           </form>
           <div className="text-center mt-3">

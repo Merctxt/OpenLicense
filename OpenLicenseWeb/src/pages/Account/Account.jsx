@@ -16,6 +16,8 @@ export default function Account() {
     name, setName,
     email, setEmail,
     password, setPassword,
+    passwordRulesState,
+    pwAllPassed,
     handleUpdateProfile,
     handleDeleteAccount,
     handleCreateApiKey,
@@ -54,9 +56,21 @@ export default function Account() {
               <div className="mb-3">
                 <label className="form-label">New Password <small className="text-body-secondary">(leave blank to keep current)</small></label>
                 <input className="form-control" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} />
+                {password && (
+                  <div className="mt-2">
+                    <p className="small text-body-secondary mb-1">Password must contain:</p>
+                    <ul className="list-unstyled small" style={{ fontSize: '0.8rem' }}>
+                      {passwordRulesState.map(rule => (
+                        <li key={rule.key} className={rule.passed ? 'text-success' : 'text-danger'}>
+                          {rule.passed ? '✓' : '✗'} {rule.label}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
               <div className="d-flex gap-2">
-                <button type="submit" className="btn btn-primary">Save</button>
+                <button type="submit" className="btn btn-primary" disabled={!pwAllPassed}>Save</button>
                 <button type="button" className="btn btn-secondary" onClick={() => { setEditing(false); setName(user.name); setEmail(user.email); setPassword('') }}>Cancel</button>
               </div>
             </form>

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using OpenLicenseApi.Middleware;
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
 
 namespace OpenLicenseApi.Services
 {
@@ -87,6 +88,8 @@ namespace OpenLicenseApi.Services
                 throw new Exception("User has a name too long.");
             }
 
+            ValidatePassword(password);
+
             var newUser = new Users
             {
                 Name = name,
@@ -136,6 +139,7 @@ namespace OpenLicenseApi.Services
 
             if (!string.IsNullOrWhiteSpace(password))
             {
+                ValidatePassword(password);
                 var passwordHasher = new PasswordHasher<Users>();
                 user.PasswordHash = passwordHasher.HashPassword(user, password);
             }
@@ -229,6 +233,40 @@ namespace OpenLicenseApi.Services
             if (user.IsSuspended)
             {
                 throw new Exception("Invalid email or password.");
+            }
+        }
+
+        private static void ValidatePassword(string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new Exception("Password is required.");
+            }
+
+            if (password.Length < 8)
+            {
+                throw new Exception("Password must be at least 8 characters long.");
+            }
+
+            if (password.Length > 128)
+            {
+                throw new Exception("Password must not exceed 128 characters.");
+            }
+
+            bool hasUpper = password.Any(c => char.IsUpper(c));
+            bool hasLower = password.Any(c => char.IsLower(c));
+            bool hasDigit = password.Any(c => char.IsDigit(c));
+            bool hasSpecial = password.Any(c => !char.IsLetterOrDigit(c));
+
+            var missing = new List<string>();
+            if (!hasUpper) missing.Add("uppercase letter");
+            if (!hasLower) missing.Add("lowercase letter");
+            if (!hasDigit) missing.Add("digit");
+            if (!hasSpecial) missing.Add("special character");
+
+            if (missing.Count > 0)
+            {
+                throw new Exception($"Password must contain at least one {string.Join(", ", missing)}.");
             }
         }
     }
