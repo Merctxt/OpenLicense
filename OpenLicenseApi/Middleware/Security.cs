@@ -4,7 +4,7 @@ using OpenLicenseApi.Models;
 using System.Security.Claims;
 using System.Text;
 
-namespace OpenLicenseApi.Security
+namespace OpenLicenseApi.Middleware
 {
     public interface IJwtTokenService
     {

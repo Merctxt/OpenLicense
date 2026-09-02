@@ -33,7 +33,7 @@ using OpenLicenseApi.Services;
 using OpenLicenseApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using OpenLicenseApi.Security;
+using OpenLicenseApi.Middleware;
 
 namespace OpenLicenseApi.Controllers
 {

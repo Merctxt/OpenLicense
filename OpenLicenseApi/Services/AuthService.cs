@@ -2,7 +2,7 @@ using OpenLicenseApi.Models;
 using Microsoft.EntityFrameworkCore;
 using OpenLicenseApi.Data;
 using Microsoft.AspNetCore.Identity;
-using OpenLicenseApi.Security;
+using OpenLicenseApi.Middleware;
 using System.Security.Cryptography;
 using System.Text;
 

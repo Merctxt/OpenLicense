@@ -2,116 +2,84 @@ using Scalar.AspNetCore;
 using OpenLicenseApi.Data;
 using Microsoft.EntityFrameworkCore;
 using OpenLicenseApi.Services;
+using OpenLicenseApi.Middleware;
 using DotNetEnv;
-using OpenLicenseApi.Security;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.OpenApi.Models;
-using System.Text;
-using OpenLicenseApi.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Text.Json.Serialization;
+
 namespace OpenLicenseApi
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            #region DB Setup
-                
-            // Ensure .env values are available for local CLI/runtime scenarios.
             Env.TraversePath().Load();
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.   
-
+            // ── Controllers ──────────────────────────────────────────────
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                connectionString = builder.Configuration["database_connection"]
-                    ?? Environment.GetEnvironmentVariable("database_connection");
-            }
+
+            // ── Database ─────────────────────────────────────────────────
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? builder.Configuration["database_connection"]
+                ?? Environment.GetEnvironmentVariable("database_connection")
+                ?? throw new InvalidOperationException("Database connection string was not found.");
 
             builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(connectionString
-                ?? throw new InvalidOperationException("Database connection string was not found. Set ConnectionStrings:DefaultConnection or database_connection (including .env)."),
-                npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
-                    maxRetryCount: 5,
-                    maxRetryDelay: TimeSpan.FromSeconds(10),
-                    errorCodesToAdd: null)
-                ));
-       
-            #endregion
+                options.UseNpgsql(connectionString, npgsqlOptions =>
+                    npgsqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null))
+            );
 
-            #region OpenAPI Setup
-
+            // ── OpenAPI / Scalar ─────────────────────────────────────────
             builder.Services.AddOpenApiConfiguration();
 
-            var jwtSecret = builder.Configuration["Jwt:SecretKey"]
-                ?? throw new InvalidOperationException("Jwt:SecretKey was not found.");
-            var jwtIssuer = builder.Configuration["Jwt:Issuer"];
-            var jwtAudience = builder.Configuration["Jwt:Audience"];
-
+            // ── Authentication (JWT + API Key) ───────────────────────────
             builder.Services.AddAuthenticationServices(builder.Configuration);
-
             builder.Services.AddAuthorization();
 
-            #endregion
-            
+            // ── Business Services ────────────────────────────────────────
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ILicenseService, LicensesService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-            builder.Services.AddSingleton<OpenLicenseApi.Services.IRateLimiterService, OpenLicenseApi.Services.RateLimiterService>();
-            
+            builder.Services.AddSingleton<IRateLimiterService, RateLimiterService>();
+
             var app = builder.Build();
 
-            #region Middleware Setup
-
+            // ── Forwarded Headers (for reverse proxy / Docker) ───────────
             var forwardedHeadersOptions = new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             };
             forwardedHeadersOptions.KnownNetworks.Clear();
             forwardedHeadersOptions.KnownProxies.Clear();
-
             app.UseForwardedHeaders(forwardedHeadersOptions);
 
-            // Simple health check endpoint for Docker/Coolify — always returns 200 if the process is alive
-            app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
-                .ExcludeFromDescription();
-
+            // ── Health & Docs ────────────────────────────────────────────
+            app.MapGet("/health", () => Results.Ok(new { status = "healthy" })).ExcludeFromDescription();
             app.MapOpenApi();
-            app.MapScalarApiReference();    
-            
-            var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:3000";
+            app.MapScalarApiReference();
 
+            // ── CORS ─────────────────────────────────────────────────────
+            var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:3000";
             app.UseCors(options =>
-            {
                 options.WithOrigins(frontendUrl)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    .AllowCredentials();
-            });
+                    .AllowCredentials()
+            );
 
-            // Rate limiting for auth endpoints (before auth check — limits unauthenticated attempts)
-            app.UseMiddleware<OpenLicenseApi.Middleware.RateLimitMiddleware>();
-
-            // Inject JWT from cookie into Authorization header (before authentication)
-            app.UseMiddleware<OpenLicenseApi.Middleware.CookieToBearerMiddleware>();
-
+            // ── Middleware Pipeline ──────────────────────────────────────
+            app.UseMiddleware<RateLimitMiddleware>();
+            app.UseMiddleware<CookieToBearerMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
-            #endregion
 
             app.Run();
         }

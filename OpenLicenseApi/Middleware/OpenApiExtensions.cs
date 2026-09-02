@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using OpenLicenseApi.Security;
+using OpenLicenseApi.Middleware;
 
 
-namespace OpenLicenseApi.Extensions
+namespace OpenLicenseApi.Middleware
 {
     public static class OpenApiExtensions
     {
