@@ -15,8 +15,11 @@ namespace OpenLicenseApi.Middleware
         // Rate limits: per endpoint path prefix -> (maxRequests, window)
         private static readonly Dictionary<string, (int Max, TimeSpan Window)> _limits = new()
         {
-            { "/api/auth/login", (10, TimeSpan.FromMinutes(1)) },     // 10 attempts/min
-            { "/api/auth/register", (5, TimeSpan.FromMinutes(5)) }    // 5 requests/5min
+            { "/api/auth/login", (10, TimeSpan.FromMinutes(1)) },          // 10 attempts/min
+            { "/api/auth/register", (5, TimeSpan.FromMinutes(5)) },       // 5 requests/5min
+            { "/api/auth/forgot-password", (3, TimeSpan.FromMinutes(5)) }, // 3 requests/5min
+            { "/api/auth/reset-password/verify", (6, TimeSpan.FromMinutes(5)) }, // 6 requests/5min
+            { "/api/auth/reset-password", (3, TimeSpan.FromMinutes(5)) }   // 3 requests/5min
         };
 
         public RateLimitMiddleware(RequestDelegate next, IRateLimiterService rateLimiter)
