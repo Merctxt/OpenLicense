@@ -1,4 +1,5 @@
 using OpenLicenseApi.Models;
+using OpenLicenseApi.DTOs;
 
 namespace OpenLicenseApi.Services
 {

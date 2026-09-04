@@ -1,4 +1,5 @@
 using OpenLicenseApi.Models;
+using OpenLicenseApi.DTOs;
 using Microsoft.EntityFrameworkCore;
 using OpenLicenseApi.Data;
 using Microsoft.AspNetCore.Identity;
@@ -34,7 +35,7 @@ namespace OpenLicenseApi.Services
             var user = await _dbContext.Users.FindAsync(userId);
             if (user == null)
             {
-                throw new Exception("User not found.");
+                throw new KeyNotFoundException("User not found.");
             }
             _dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync();
@@ -50,7 +51,7 @@ namespace OpenLicenseApi.Services
 
             if (user == null)
             {
-                throw new Exception("User not found.");
+                throw new KeyNotFoundException("User not found.");
             }
 
             return user;
@@ -61,19 +62,19 @@ namespace OpenLicenseApi.Services
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email.Trim().ToLower());
             if (user == null)
             {
-                throw new Exception("Invalid email or password.");
+                throw new UnauthorizedAccessException("Invalid credentials.");
             }
 
             if (user.IsSuspended)
             {
-                throw new Exception("Invalid email or password.");
+                throw new UnauthorizedAccessException("Account is suspended.");
             }
 
             var passwordHasher = new PasswordHasher<Users>();
             var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
             if (result == PasswordVerificationResult.Failed)
             {
-                throw new Exception("Invalid email or password.");
+                throw new UnauthorizedAccessException("Invalid credentials.");
             }
 
             return _jwtTokenService.GenerateToken(user);
@@ -84,12 +85,12 @@ namespace OpenLicenseApi.Services
             var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email.Trim().ToLower());
             if (existingUser != null)
             {
-                throw new Exception("User with the same email already exists.");
+                throw new InvalidOperationException("User with the same email already exists.");
             }
 
             if (name.Length > 40)
             {
-                throw new Exception("User has a name too long.");
+                throw new ArgumentException("User name is too long.");
             }
 
             ValidatePassword(password);
@@ -118,12 +119,12 @@ namespace OpenLicenseApi.Services
             var user = await _dbContext.Users.FindAsync(userId);
             if (user == null)
             {
-                throw new Exception("User not found.");
+                throw new KeyNotFoundException("User not found.");
             }
 
             if (!string.IsNullOrWhiteSpace(name) && name.Length > 40)
             {
-                throw new Exception("User has a name too long.");
+                throw new ArgumentException("User name is too long.");
             }
 
             if (!string.IsNullOrWhiteSpace(name))
@@ -136,7 +137,7 @@ namespace OpenLicenseApi.Services
                 var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email.Trim().ToLower() && u.Id != userId);
                 if (existingUser != null)
                 {
-                    throw new Exception("Another user with the same email already exists.");
+                    throw new InvalidOperationException("Another user with the same email already exists.");
                 }
                 user.Email = email.Trim().ToLower();
             }
@@ -160,12 +161,12 @@ namespace OpenLicenseApi.Services
             var apiKeyCount = await _dbContext.ApiKeys.CountAsync(k => k.UserId == userId);
             if (apiKeyCount >= 3)
             {
-                throw new Exception("API key limit reached for this account.");
+                throw new InvalidOperationException("API key limit reached for this account.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Name) && request.Name.Length > 40)
             {
-                throw new Exception("API key name is too long.");
+                throw new ArgumentException("API key name is too long.");
             }
 
             var plainApiKey = GenerateApiKey();
@@ -232,11 +233,11 @@ namespace OpenLicenseApi.Services
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
             {
-                throw new Exception("Invalid email or password.");
+                throw new UnauthorizedAccessException("Invalid credentials.");
             }
             if (user.IsSuspended)
             {
-                throw new Exception("Invalid email or password.");
+                throw new UnauthorizedAccessException("Account is suspended.");
             }
         }
 
@@ -244,17 +245,17 @@ namespace OpenLicenseApi.Services
         {
             if (string.IsNullOrEmpty(password))
             {
-                throw new Exception("Password is required.");
+                throw new ArgumentException("Password is required.");
             }
 
             if (password.Length < 8)
             {
-                throw new Exception("Password must be at least 8 characters long.");
+                throw new ArgumentException("Password must be at least 8 characters long.");
             }
 
             if (password.Length > 128)
             {
-                throw new Exception("Password must not exceed 128 characters.");
+                throw new ArgumentException("Password must not exceed 128 characters.");
             }
 
             bool hasUpper = password.Any(c => char.IsUpper(c));
@@ -270,7 +271,7 @@ namespace OpenLicenseApi.Services
 
             if (missing.Count > 0)
             {
-                throw new Exception($"Password must contain at least one {string.Join(", ", missing)}.");
+                throw new ArgumentException($"Password must contain at least one {string.Join(", ", missing)}.");
             }
         }
 
@@ -322,12 +323,12 @@ namespace OpenLicenseApi.Services
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email.Trim().ToLower());
             if (user == null)
             {
-                throw new Exception("Invalid email or token.");
+                throw new UnauthorizedAccessException("Invalid credentials.");
             }
 
             if (string.IsNullOrEmpty(user.PasswordResetToken) || user.PasswordResetTokenExpiry == null)
             {
-                throw new Exception("Invalid or expired token.");
+                throw new UnauthorizedAccessException("Invalid or expired token.");
             }
 
             if (DateTime.UtcNow > user.PasswordResetTokenExpiry)
@@ -335,12 +336,12 @@ namespace OpenLicenseApi.Services
                 user.PasswordResetToken = null;
                 user.PasswordResetTokenExpiry = null;
                 await _dbContext.SaveChangesAsync();
-                throw new Exception("Invalid or expired token.");
+                throw new UnauthorizedAccessException("Invalid or expired token.");
             }
 
             if (user.PasswordResetToken != ComputeSha256Hex(token))
             {
-                throw new Exception("Invalid token.");
+                throw new UnauthorizedAccessException("Invalid token.");
             }
 
             ValidatePassword(newPassword);

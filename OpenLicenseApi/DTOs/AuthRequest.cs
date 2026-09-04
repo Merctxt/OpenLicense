@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
-  namespace OpenLicenseApi.Models
-  {
+namespace OpenLicenseApi.DTOs
+{
       public class RegisterRequest
       {
           [Required]
@@ -9,14 +9,14 @@ using System.ComponentModel.DataAnnotations;
 
           [Required]
           [EmailAddress] // Valida formato de e-mail automaticamente
-          public string Email { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
-          [Required]
-          [MinLength(8, ErrorMessage = "A senha deve conter pelo menos 8 caracteres.")]
-          public string Password { get; set; } = string.Empty;
-      }
+        [Required]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters.")]
+        public string Password { get; set; } = string.Empty;
+    }
 
-      public class LoginRequest
+    public class LoginRequest
       {
           [Required]
           [EmailAddress] // Valida formato de e-mail automaticamente
@@ -36,11 +36,11 @@ using System.ComponentModel.DataAnnotations;
       {
           public string? Name { get; set; }
 
-          [EmailAddress] // Valida formato de e-mail automaticamente
-          public string? Email { get; set; }
+        [EmailAddress] // Valida formato de e-mail automaticamente
+        public string? Email { get; set; }
 
-          [MinLength(8, ErrorMessage = "A senha deve conter pelo menos 8 caracteres.")]
-          public string? Password { get; set; }
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters.")]
+        public string? Password { get; set; }
       }
 
     public class CreateApiKeyRequest
@@ -63,4 +63,4 @@ using System.ComponentModel.DataAnnotations;
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
     }
-  }
+}

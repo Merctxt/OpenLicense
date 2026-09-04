@@ -1,17 +1,18 @@
 using OpenLicenseApi.Models;
+using OpenLicenseApi.DTOs;
 using Microsoft.EntityFrameworkCore;
 using OpenLicenseApi.Data;
 using System.Security.Cryptography;
 
 namespace OpenLicenseApi.Services
 {
-    public class LicensesService : ILicenseService
+    public class LicenseService : ILicenseService
     {
         private readonly AppDbContext _dbContext;
         private const string LicenseKeyChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         private const int LicenseKeyBlockLength = 4;
         private const int LicenseKeyLength = 16;
-        public LicensesService(AppDbContext dbContext)
+        public LicenseService(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -41,12 +42,12 @@ namespace OpenLicenseApi.Services
 
             if (!string.IsNullOrWhiteSpace(request.Name) && request.Name.Length > 40)
             {
-                throw new Exception("License name is too long.");
+                throw new ArgumentException("License name is too long.");
             }
 
             if (request.MaxActivations <= 0)
             {
-                throw new Exception("MaxActivations must be greater than zero.");
+                throw new ArgumentException("MaxActivations must be greater than zero.");
             }
 
             var license = new License
@@ -82,7 +83,7 @@ namespace OpenLicenseApi.Services
 
             if (!string.IsNullOrWhiteSpace(request.Name) && request.Name.Length > 40)
             {
-                throw new Exception("License name is too long.");
+                throw new ArgumentException("License name is too long.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Name))
@@ -99,7 +100,7 @@ namespace OpenLicenseApi.Services
             {
                 if (request.MaxActivations.Value <= 0)
                 {
-                    throw new Exception("MaxActivations must be greater than zero.");
+                    throw new ArgumentException("MaxActivations must be greater than zero.");
                 }
 
                 license.MaxActivations = request.MaxActivations.Value;
@@ -109,10 +110,10 @@ namespace OpenLicenseApi.Services
             {
                 var newStatus = request.Status.Value;
 
-                if (license.Status == newStatus)
-                {
-                    throw new Exception($"License is already in status {(newStatus ? "active" : "suspended")}.");
-                }
+            if (license.Status == newStatus)
+            {
+                throw new InvalidOperationException($"License is already in status {(newStatus ? "active" : "suspended")}.");
+            }
 
                 license.Status = newStatus;
             }
@@ -183,12 +184,12 @@ namespace OpenLicenseApi.Services
 
             if (!license.Status)
             {
-                throw new Exception("Inactive license.");
+                throw new InvalidOperationException("Inactive license.");
             }
 
             if (license.ExpiresAt.HasValue && license.ExpiresAt.Value < DateTime.UtcNow)
             {
-                throw new Exception("Inactive license.");
+                throw new InvalidOperationException("Inactive license.");
             }
 
             var existingActivation = await _dbContext.Activations
@@ -218,7 +219,7 @@ namespace OpenLicenseApi.Services
 
             if (activationCount >= license.MaxActivations)
             {
-                throw new Exception("Activation limit reached.");
+                throw new InvalidOperationException("Activation limit reached.");
             }
 
             var activation = new Activation
@@ -283,17 +284,16 @@ namespace OpenLicenseApi.Services
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
             {
-                throw new Exception("Invalid email or password.");
+                throw new UnauthorizedAccessException("Invalid credentials.");
             }
             if (user.IsSuspended)
             {
-                throw new Exception("Invalid email or password.");
+                throw new UnauthorizedAccessException("Account is suspended.");
             }
         }
 
         private static string GenerateLicenseKey()
         {
-            // Padrão da licença: 45AH-4HJY-97MR-2O80
             var keyChars = new char[LicenseKeyLength];
             using (var rng = RandomNumberGenerator.Create())
             {

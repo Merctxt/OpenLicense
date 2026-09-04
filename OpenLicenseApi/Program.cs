@@ -44,7 +44,7 @@ namespace OpenLicenseApi
             // ── Business Services ────────────────────────────────────────
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IProductService, ProductService>();
-            builder.Services.AddScoped<ILicenseService, LicensesService>();
+            builder.Services.AddScoped<ILicenseService, LicenseService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
             builder.Services.AddSingleton<IRateLimiterService, RateLimiterService>();
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
@@ -76,6 +76,7 @@ namespace OpenLicenseApi
             );
 
             // ── Middleware Pipeline ──────────────────────────────────────
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseMiddleware<RateLimitMiddleware>();
             app.UseMiddleware<CookieToBearerMiddleware>();
             app.UseAuthentication();

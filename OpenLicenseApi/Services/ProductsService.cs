@@ -1,4 +1,5 @@
 using OpenLicenseApi.Models;
+using OpenLicenseApi.DTOs;
 using Microsoft.EntityFrameworkCore;
 using OpenLicenseApi.Data;
 using System.Security.Cryptography;
@@ -29,22 +30,21 @@ namespace OpenLicenseApi.Services
         {
             await EnsureUserActiveAsync(userId);
 
-            // valida se bateu o limite de produtos por conta
-            var Limit = await _dbContext.Users.Where(u => u.Id == userId).Select(u => u.ProductLimit).FirstOrDefaultAsync();
-            
-            if (await _dbContext.Products.CountAsync(p => p.UserId == userId) >= Limit)
+            var limit = await _dbContext.Users.Where(u => u.Id == userId).Select(u => u.ProductLimit).FirstOrDefaultAsync();
+
+            if (await _dbContext.Products.CountAsync(p => p.UserId == userId) >= limit)
             {
-                throw new Exception(string.Format("Product limit reached. You can only create up to {0} products.", Limit));
+                throw new InvalidOperationException($"Product limit reached. You can only create up to {limit} products.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Name) && request.Name.Length > 40)
             {
-                throw new Exception("Product name is too long.");
+                throw new ArgumentException("Product name is too long.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Description) && request.Description.Length > 200)
             {
-                throw new Exception("Product description is too long.");
+                throw new ArgumentException("Product description is too long.");
             }
             var product = new Product
             {
@@ -73,12 +73,12 @@ namespace OpenLicenseApi.Services
 
             if (!string.IsNullOrWhiteSpace(request.Name) && request.Name.Length > 40)
             {
-                throw new Exception("Product name is too long.");
+                throw new ArgumentException("Product name is too long.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Description) && request.Description.Length > 200)
             {
-                throw new Exception("Product description is too long.");
+                throw new ArgumentException("Product description is too long.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Name))
@@ -115,11 +115,11 @@ namespace OpenLicenseApi.Services
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
             {
-                throw new Exception("Invalid email or password.");
+                throw new UnauthorizedAccessException("Invalid credentials.");
             }
             if (user.IsSuspended)
             {
-                throw new Exception("Invalid email or password.");
+                throw new UnauthorizedAccessException("Account is suspended.");
             }
         }
     }
