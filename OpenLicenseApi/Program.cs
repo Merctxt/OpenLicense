@@ -47,6 +47,8 @@ namespace OpenLicenseApi
             builder.Services.AddScoped<ILicenseService, LicensesService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
             builder.Services.AddSingleton<IRateLimiterService, RateLimiterService>();
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             var app = builder.Build();
 

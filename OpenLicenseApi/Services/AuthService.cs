@@ -13,14 +13,18 @@ namespace OpenLicenseApi.Services
     {
         private readonly AppDbContext _dbContext;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly IEmailService _emailService;
         private const string ApiKeyPrefix = "api_";
         private const string ApiKeyChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         private const int ApiKeyBodyLength = 64;
+        private const int TokenLength = 32;
+        private const int TokenExpiryMinutes = 15;
 
-        public AuthService(AppDbContext dbContext, IJwtTokenService jwtTokenService)
+        public AuthService(AppDbContext dbContext, IJwtTokenService jwtTokenService, IEmailService emailService)
         {
             _dbContext = dbContext;
             _jwtTokenService = jwtTokenService;
+            _emailService = emailService;
         }
 
         public async Task DeleteAsync(Guid userId)
@@ -269,5 +273,93 @@ namespace OpenLicenseApi.Services
                 throw new Exception($"Password must contain at least one {string.Join(", ", missing)}.");
             }
         }
+
+        #region Password Recovery
+        public async Task ForgotPasswordAsync(string email)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email.Trim().ToLower());
+            if (user == null)
+            {
+                return;
+            }
+
+            var token = GenerateResetToken();
+
+            await _emailService.SendPasswordResetEmailAsync(user.Email, token);
+
+            user.PasswordResetToken = ComputeSha256Hex(token);
+            user.PasswordResetTokenExpiry = DateTime.UtcNow.AddMinutes(TokenExpiryMinutes);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> VerifyResetTokenAsync(string email, string token)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email.Trim().ToLower());
+            if (user == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(user.PasswordResetToken) || user.PasswordResetTokenExpiry == null)
+            {
+                return false;
+            }
+
+            if (DateTime.UtcNow > user.PasswordResetTokenExpiry)
+            {
+                user.PasswordResetToken = null;
+                user.PasswordResetTokenExpiry = null;
+                await _dbContext.SaveChangesAsync();
+                return false;
+            }
+
+            return user.PasswordResetToken == ComputeSha256Hex(token);
+        }
+
+        public async Task ResetPasswordAsync(string email, string token, string newPassword)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email.Trim().ToLower());
+            if (user == null)
+            {
+                throw new Exception("Invalid email or token.");
+            }
+
+            if (string.IsNullOrEmpty(user.PasswordResetToken) || user.PasswordResetTokenExpiry == null)
+            {
+                throw new Exception("Invalid or expired token.");
+            }
+
+            if (DateTime.UtcNow > user.PasswordResetTokenExpiry)
+            {
+                user.PasswordResetToken = null;
+                user.PasswordResetTokenExpiry = null;
+                await _dbContext.SaveChangesAsync();
+                throw new Exception("Invalid or expired token.");
+            }
+
+            if (user.PasswordResetToken != ComputeSha256Hex(token))
+            {
+                throw new Exception("Invalid token.");
+            }
+
+            ValidatePassword(newPassword);
+
+            var passwordHasher = new PasswordHasher<Users>();
+            user.PasswordHash = passwordHasher.HashPassword(user, newPassword);
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiry = null;
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private static string GenerateResetToken()
+        {
+            var bytes = new byte[TokenLength];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(bytes);
+            return Convert.ToHexString(bytes).ToLower().Replace("0O", "aB");
+        }
+        #endregion
     }
 }

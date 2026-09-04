@@ -6,6 +6,9 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Footer from './components/Footer'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
+import ForgotPassword from './pages/ForgotPassword/ForgotPassword'
+import VerifyToken from './pages/VerifyToken/VerifyToken'
+import ResetPassword from './pages/ResetPassword/ResetPassword'
 import Dashboard from './pages/Dashboard/Dashboard'
 import Account from './pages/Account/Account'
 import Terms from './pages/Terms/Terms'
@@ -21,12 +24,17 @@ export default function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/verify-token" element={<VerifyToken />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route element={<Layout />}>
                 <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
                 <Route path="/metrics" element={
                   <Suspense fallback={<div className="text-center p-5 text-body-secondary">Loading metrics...</div>}>
-                    <Metrics />
+                    <ProtectedRoute>
+                      <Metrics />
+                    </ProtectedRoute>
                   </Suspense>
                 } />
                 <Route path="/terms" element={<Terms />} />

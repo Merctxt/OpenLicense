@@ -1,14 +1,14 @@
 /* 
 POST   /api/auth/register <- registrar um novo usuário, deve receber nome, email e senha. Retorna os dados do usuário criado ou um erro se o email já estiver em uso.
 POST   /api/auth/login <- autenticar um usuário, deve receber email e senha. Retorna um JWT se as credenciais forem válidas ou um erro se forem inválidas.
-
 GET    /api/auth/me <- retorna os dados do usuário autenticado.
-
 PUT    /api/auth <- atualizar os dados do usuário autenticado, deve receber nome, email e/ou senha. Retorna os dados atualizados do usuário ou um erro se o email já estiver em uso por outro usuário.
 DELETE /api/auth <- deletar o usuário autenticado.
-
 POST   /api/auth/apikey <- criar uma nova chave de API para o usuário autenticado.
 DELETE /api/auth/apikey <- deletar uma chave de API do usuário autenticado.
+POST   /api/auth/forgot-password <- solicitar envio de token de recuperação por email.
+POST   /api/auth/reset-password/verify <- verificar se o token de recuperação é válido.
+POST   /api/auth/reset-password <- redefinir a senha usando o token verificado.
 
 JWT do usuário do dashboard.
 */
@@ -174,6 +174,55 @@ namespace OpenLicenseApi.Controllers
 
                 await _authService.DeleteApiKeyAsync(userId, request.ApiKeyId);
                 return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            try
+            {
+                await _authService.ForgotPasswordAsync(request.Email);
+                return Ok(new { message = "If the email exists, a recovery token has been sent." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("reset-password/verify")]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyResetToken([FromBody] VerifyTokenRequest request)
+        {
+            try
+            {
+                var isValid = await _authService.VerifyResetTokenAsync(request.Email, request.Token);
+                if (!isValid)
+                {
+                    return BadRequest(new { message = "Invalid or expired token." });
+                }
+                return Ok(new { valid = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            try
+            {
+                await _authService.ResetPasswordAsync(request.Email, request.Token, request.Password);
+                return Ok(new { message = "Password reset successfully." });
             }
             catch (Exception ex)
             {

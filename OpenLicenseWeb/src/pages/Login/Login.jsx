@@ -48,6 +48,9 @@ export default function Login() {
             <button type="submit" className="btn btn-primary w-100" disabled={submitting}>
               {submitting ? 'Signing in...' : 'Sign In'}
             </button>
+            <div className="text-center mt-3">
+              <a href="/forgot-password" className="text-decoration-none small text-body-secondary">Forgot your password?</a>
+            </div>
           </form>
           <div className="text-center mt-3">
             <span className="text-body-secondary small">Don't have an account? <Link to="/register" className="text-decoration-none"><UserPlus className="d-inline me-1" width={14} height={14} />Create one</Link></span>

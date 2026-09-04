@@ -24,6 +24,18 @@ export function deleteAccount() {
   return api.delete('/api/auth')
 }
 
+export function forgotPassword(data) {
+  return api.post('/api/auth/forgot-password', data)
+}
+
+export function verifyToken(data) {
+  return api.post('/api/auth/reset-password/verify', data)
+}
+
+export function resetPassword(data) {
+  return api.post('/api/auth/reset-password', data)
+}
+
 export function createApiKey(data) {
   return api.post('/api/auth/apikey', data)
 }

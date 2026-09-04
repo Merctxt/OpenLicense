@@ -24,5 +24,9 @@ namespace OpenLicenseApi.Models
         public ICollection<Product> Products { get; set; } = new List<Product>();
         public ICollection<ApiKey> ApiKeys { get; set; } = new List<ApiKey>();
 
+        [JsonIgnore]
+        public string? PasswordResetToken { get; set; }
+
+        public DateTime? PasswordResetTokenExpiry { get; set; }
     }
 }
