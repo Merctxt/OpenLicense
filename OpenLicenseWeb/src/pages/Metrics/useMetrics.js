@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getProducts, getLicenseActivations } from '../../api/endpoints'
 import { useAuth } from '../../context/AuthContext'
 
@@ -25,6 +25,7 @@ export default function useMetrics() {
   const [products, setProducts] = useState([])
   const [activationsLoading, setActivationsLoading] = useState(false)
   const [productActivationData, setProductActivationData] = useState([])
+  const [hasLoaded, setHasLoaded] = useState(false)
 
   // Load products and licenses
   useEffect(() => {
@@ -34,6 +35,8 @@ export default function useMetrics() {
         setProducts(res.data || [])
       } catch {
         setProducts([])
+      } finally {
+        setHasLoaded(true)
       }
     }
     load()
@@ -148,6 +151,6 @@ export default function useMetrics() {
     usage,
     productActivationData,
     activationsLoading,
-    loading: products.length === 0 && !activationsLoading,
+    loading: !hasLoaded,
   }
 }
