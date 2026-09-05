@@ -32,41 +32,6 @@ docker compose up -d
 
 See [docs/01-architecture.md](docs/01-architecture.md) for the full architecture overview.
 
-## Project Structure
-
-```
-OpenLicense/
-├── Backend/                  # .NET 9 Web API
-│   ├── Controllers/          # API endpoints
-│   ├── Services/             # Business logic
-│   ├── Models/               # Entity models
-│   ├── DTOs/                 # Request/response types
-│   ├── Middleware/           # Auth, rate limiting, error handling
-│   ├── Data/                 # EF Core DbContext
-│   └── Migrations/           # Database migrations
-├── Frontend/                 # React 19 dashboard
-│   ├── src/
-│   │   ├── pages/            # Page components
-│   │   ├── components/       # Shared UI components
-│   │   ├── context/          # Auth & theme providers
-│   │   └── api/              # Axios client + endpoints
-├── Tests/                    # xUnit integration tests (74 tests)
-├── docs/                     # Full documentation
-│   ├── 01-architecture.md
-│   ├── 02-backend.md
-│   ├── 03-frontend.md
-│   ├── 04-api-reference.md
-│   ├── 05-database.md
-│   ├── 06-authentication.md
-│   ├── 07-configuration.md
-│   ├── 08-docker.md
-│   ├── 09-testing.md
-│   ├── 10-development.md
-│   └── 11-migration-roadmap.md
-├── docker-compose.yml        # API + frontend services
-└── .env.example              # Environment template
-```
-
 ## Key Features
 
 - **User management** — registration, login, profile, account deletion
