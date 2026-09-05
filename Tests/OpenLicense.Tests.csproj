@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenLicenseApi\OpenLicenseApi.csproj" />
+    <ProjectReference Include="..\Backend\OpenLicenseApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

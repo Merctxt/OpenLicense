@@ -5,7 +5,7 @@ services:
   # .NET API
   api:
     build:
-      context: ./OpenLicenseApi
+      context: ./Backend
       dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
@@ -27,7 +27,7 @@ services:
   # React Frontend
   frontend:
     build:
-      context: ./OpenLicenseWeb
+      context: ./Frontend
       dockerfile: Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL}
