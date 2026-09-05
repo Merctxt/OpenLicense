@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { Lock } from 'lucide-react'
 import useResetPassword from './useResetPassword'
+import PasswordValidation from '../../components/PasswordValidation'
 
 export default function ResetPassword() {
   const {
@@ -9,7 +10,6 @@ export default function ResetPassword() {
     confirmPassword, setConfirmPassword,
     error,
     submitting,
-    passwordRulesState,
     allRulesPassed,
     passwordsMatch,
     user, loading,
@@ -47,18 +47,7 @@ export default function ResetPassword() {
             <div className="mb-3">
               <label className="form-label">New Password</label>
               <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
-              {password && (
-                <div className="mt-2">
-                  <p className="small text-body-secondary mb-1">Password must contain:</p>
-                  <ul className="list-unstyled small" style={{ fontSize: '0.8rem' }}>
-                    {passwordRulesState.map(rule => (
-                      <li key={rule.key} className={rule.passed ? 'text-success' : 'text-danger'}>
-                        {rule.passed ? '✓' : '✗'} {rule.label}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <PasswordValidation password={password} />
             </div>
             <div className="mb-3">
               <label className="form-label">Confirm Password</label>

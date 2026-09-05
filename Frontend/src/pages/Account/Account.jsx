@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import Modal from '../../components/Modal'
 import { useTheme } from '../../context/ThemeContext'
 import useAccount from './useAccount'
+import PasswordValidation from '../../components/PasswordValidation'
 
 export default function Account() {
   const { theme, setTheme } = useTheme()
@@ -16,7 +17,6 @@ export default function Account() {
     name, setName,
     email, setEmail,
     password, setPassword,
-    passwordRulesState,
     pwAllPassed,
     handleUpdateProfile,
     handleDeleteAccount,
@@ -56,18 +56,7 @@ export default function Account() {
               <div className="mb-3">
                 <label className="form-label">New Password <small className="text-body-secondary">(leave blank to keep current)</small></label>
                 <input className="form-control" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} />
-                {password && (
-                  <div className="mt-2">
-                    <p className="small text-body-secondary mb-1">Password must contain:</p>
-                    <ul className="list-unstyled small" style={{ fontSize: '0.8rem' }}>
-                      {passwordRulesState.map(rule => (
-                        <li key={rule.key} className={rule.passed ? 'text-success' : 'text-danger'}>
-                          {rule.passed ? '✓' : '✗'} {rule.label}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                <PasswordValidation password={password} showLabel={false} />
               </div>
               <div className="d-flex gap-2">
                 <button type="submit" className="btn btn-primary" disabled={!pwAllPassed}>Save</button>
