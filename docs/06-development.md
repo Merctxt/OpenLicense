@@ -32,7 +32,35 @@ git clone <repository-url>
 cd OpenLicense
 ```
 
-### 2. Database
+### 2. Environment Configuration
+
+> **Important:** For local development to work correctly, environment variables must be configured separately for each project.
+
+- **Backend:** Edit `Backend/appsettings.json` with the database connection string and JWT secret (or use system environment variables)
+- **Frontend:** Copy `.env` to `.env.local` in the `Frontend/` directory and configure the variables (e.g. `VITE_API_URL`)
+- **Root (`.env`):** The `.env` file in the project root is used exclusively by Docker Compose and **does not** affect local backend or frontend execution
+
+```bash
+# Copy frontend template
+cp Frontend/.env.example Frontend/.env.local  # if it exists
+# OR create manually with the required variables
+```
+
+### 3. Run Both (PowerShell)
+
+> Requires Windows/PowerShell. Starts backend and frontend simultaneously, terminates both on Ctrl+C.
+
+```powershell
+.\start.ps1
+```
+
+The script:
+- Runs `dotnet run` in `Backend/`
+- Runs `npm run dev` in `Frontend/`
+- Tracks PIDs and terminates both processes when stopped
+- Shows which process was terminated in the console
+
+### 4. Database
 
 Start a PostgreSQL instance. The simplest option:
 
@@ -47,7 +75,7 @@ docker run -d --name openlicense-db \
 
 Or use any external PostgreSQL instance (Azure Database for PostgreSQL, etc.).
 
-### 3. Backend
+### 5. Backend
 
 ```bash
 cd Backend
@@ -67,7 +95,7 @@ The backend loads configuration from:
 - `appsettings.Development.json` (dev overrides)
 - Environment variables (override JSON config)
 
-### 4. Frontend
+### 5. Frontend
 
 ```bash
 cd Frontend
@@ -79,22 +107,6 @@ npm install
 npm run dev
 ```
 
-The dev server proxies `/api/*` requests to `http://localhost:7224` (or wherever the backend is running).
-
-### 5. Open in Browser
-
-Visit `http://localhost:3000` to access the application.
-
-## VS Code Setup
-
-### Recommended Extensions
-
-- **C# Dev Kit** — IntelliSense, debugging, project management
-- **C# Extensions** — NuGet support, formatting
-- **ESLint** — JavaScript/TypeScript linting
-- **Prettier** — Code formatting
-- **Error Lens** — Inline error highlighting
-- **REST Client** — HTTP request testing
 
 ### Debugging
 
@@ -127,24 +139,6 @@ Or in Visual Studio:
 
 ## Development Workflow
 
-### Local Development (All Services)
-
-```bash
-# Terminal 1: Database (if not using external)
-docker run -d --name openlicense-db \
-  -e POSTGRES_DB=openlicense \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=secret \
-  -p 5432:5432 postgres:17-alpine
-
-# Terminal 2: Backend
-cd Backend
-dotnet run
-
-# Terminal 3: Frontend
-cd Frontend
-npm run dev
-```
 
 ### Port Configuration
 
