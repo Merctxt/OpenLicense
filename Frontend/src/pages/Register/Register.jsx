@@ -2,6 +2,7 @@ import { Link, Navigate } from 'react-router-dom'
 import { LogIn, Layers } from 'lucide-react'
 import useRegister from './useRegister'
 import PasswordValidation from '../../components/PasswordValidation'
+import AuthBackground from '../../components/AuthBackground/AuthBackground'
 
 export default function Register() {
   const {
@@ -29,8 +30,8 @@ export default function Register() {
   }
 
   return (
-    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-body-tertiary">
-      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
+    <AuthBackground>
+      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%', zIndex: 1, position: 'relative' }}>
         <div className="card-body p-4">
           <div className="d-flex flex-column justify-content-center align-items-center mb-4">
             <h1 className="h4 fw-bold d-flex align-items-center gap-2"><Layers />OpenLicense</h1>
@@ -60,6 +61,6 @@ export default function Register() {
           </div>
         </div>
       </div>
-    </div>
+    </AuthBackground>
   )
 }

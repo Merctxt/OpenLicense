@@ -1,6 +1,7 @@
 import { Link, Navigate } from 'react-router-dom'
 import { UserPlus, Layers } from 'lucide-react'
 import useLogin from './useLogin'
+import AuthBackground from '../../components/AuthBackground/AuthBackground'
 
 export default function Login() {
   const {
@@ -27,8 +28,8 @@ export default function Login() {
   }
 
   return (
-    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-body-tertiary">
-      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
+    <AuthBackground>
+      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%', zIndex: 1, position: 'relative' }}>
         <div className="card-body p-4">
           <div className="d-flex flex-column justify-content-center align-items-center mb-4">
             <h1 className="h4 fw-bold d-flex align-items-center gap-2"><Layers />OpenLicense</h1>
@@ -57,6 +58,6 @@ export default function Login() {
           </div>
         </div>
       </div>
-    </div>
+    </AuthBackground>
   )
 }

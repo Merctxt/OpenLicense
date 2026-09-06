@@ -2,6 +2,7 @@ import { Navigate } from 'react-router-dom'
 import { Lock } from 'lucide-react'
 import useResetPassword from './useResetPassword'
 import PasswordValidation from '../../components/PasswordValidation'
+import AuthBackground from '../../components/AuthBackground/AuthBackground'
 
 export default function ResetPassword() {
   const {
@@ -31,8 +32,8 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-body-tertiary">
-      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
+    <AuthBackground>
+      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%', zIndex: 1, position: 'relative' }}>
         <div className="card-body p-4">
           <div className="d-flex flex-column justify-content-center align-items-center mb-4">
             <h1 className="h4 fw-bold d-flex align-items-center gap-2"><Lock />Reset Password</h1>
@@ -69,6 +70,6 @@ export default function ResetPassword() {
           </div>
         </div>
       </div>
-    </div>
+    </AuthBackground>
   )
 }
