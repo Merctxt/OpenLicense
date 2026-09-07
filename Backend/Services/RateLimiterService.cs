@@ -2,11 +2,6 @@ using System.Collections.Concurrent;
 
 namespace OpenLicenseApi.Services
 {
-    public interface IRateLimiterService
-    {
-        bool IsAllowed(string key, int maxRequests, TimeSpan window);
-    }
-
     /// <summary>
     /// In-memory sliding-window rate limiter. Thread-safe. No external dependencies.
     /// </summary>

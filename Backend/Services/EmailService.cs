@@ -6,11 +6,6 @@ using Microsoft.Extensions.Options;
 
 namespace OpenLicenseApi.Services
 {
-    public interface IEmailService
-    {
-        Task SendPasswordResetEmailAsync(string toEmail, string token);
-    }
-
     public class EmailService : IEmailService
     {
         private readonly EmailSettings _settings;
