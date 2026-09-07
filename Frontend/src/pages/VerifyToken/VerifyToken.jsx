@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CheckCircle, AlertTriangle } from 'lucide-react'
 import useVerifyToken from './useVerifyToken'
-import AuthBackground from '../../components/AuthBackground/AuthBackground'
+import Background from '../../components/Background/Background'
 
 export default function VerifyToken() {
   const {
@@ -22,7 +22,7 @@ export default function VerifyToken() {
   }, [location.state?.email, navigate])
 
   return (
-    <AuthBackground>
+    <Background variant="auth">
       <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
         <div className="card-body p-4">
           <div className="d-flex flex-column justify-content-center align-items-center mb-4">
@@ -51,6 +51,6 @@ export default function VerifyToken() {
           </div>
         </div>
       </div>
-    </AuthBackground>
+    </Background>
   )
 }

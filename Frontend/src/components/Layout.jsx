@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { Sparkles, Layers, Star, User, Scale, LogOut, Activity, Code2, Zap } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { logout as apiLogout } from '../api/endpoints'
-import AppBackground from './AppBackground/AppBackground'
+import Background from './Background/Background'
 
 export default function Layout() {
   const { user, logout } = useAuth()
@@ -22,7 +22,7 @@ export default function Layout() {
   const closeNav = () => setNavOpen(false)
 
   return (
-    <AppBackground>
+    <Background>
       <div className="d-flex flex-column min-vh-100">
         <nav className="navbar navbar-expand-sm sticky-top" style={{ backgroundColor: 'var(--bs-body-bg)' }}>
           <div className="container" style={{ maxWidth: '1100px' }}>
@@ -74,6 +74,6 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
-    </AppBackground>
+    </Background>
   )
 }

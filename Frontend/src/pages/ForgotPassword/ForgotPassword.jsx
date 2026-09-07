@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { KeyRound } from 'lucide-react'
 import useForgotPassword from './useForgotPassword'
-import AuthBackground from '../../components/AuthBackground/AuthBackground'
+import Background from '../../components/Background/Background'
 
 export default function ForgotPassword() {
   const {
@@ -12,7 +12,7 @@ export default function ForgotPassword() {
   } = useForgotPassword()
 
   return (
-    <AuthBackground>
+    <Background variant="auth">
       <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
         <div className="card-body p-4">
           <div className="d-flex flex-column justify-content-center align-items-center mb-4">
@@ -37,6 +37,6 @@ export default function ForgotPassword() {
           </div>
         </div>
       </div>
-    </AuthBackground>
+    </Background>
   )
 }
