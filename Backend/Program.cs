@@ -64,7 +64,11 @@ namespace OpenLicenseApi
             // ── Health & Docs ────────────────────────────────────────────
             app.MapGet("/health", () => Results.Ok(new { status = "healthy" })).ExcludeFromDescription();
             app.MapOpenApi();
-            app.MapScalarApiReference();
+            app.MapScalarApiReference(options =>
+            {
+                options.Title = "OpenLicense API";
+                options.Theme = ScalarTheme.Alternate;
+            });
 
             // ── CORS ─────────────────────────────────────────────────────
             var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:3000";
