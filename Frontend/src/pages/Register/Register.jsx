@@ -31,7 +31,7 @@ export default function Register() {
 
   return (
     <AuthBackground>
-      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%', zIndex: 1, position: 'relative' }}>
+      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
         <div className="card-body p-4">
           <div className="d-flex flex-column justify-content-center align-items-center mb-4">
             <h1 className="h4 fw-bold d-flex align-items-center gap-2"><Layers />OpenLicense</h1>
@@ -58,6 +58,9 @@ export default function Register() {
           </form>
           <div className="text-center mt-3">
             <span className="text-body-secondary small">Already have an account? <Link to="/login" className="text-decoration-none"><LogIn className="d-inline me-1" width={14} height={14} />Sign in</Link></span>
+          </div>
+          <div className="text-center mt-2">
+            <span className="text-body-secondary small">By creating an account, you agree to our <Link to="/terms" className="text-decoration-none">Terms of Use</Link>.</span>
           </div>
         </div>
       </div>

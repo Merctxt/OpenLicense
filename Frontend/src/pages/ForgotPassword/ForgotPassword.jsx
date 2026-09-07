@@ -13,7 +13,7 @@ export default function ForgotPassword() {
 
   return (
     <AuthBackground>
-      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%', zIndex: 1, position: 'relative' }}>
+      <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
         <div className="card-body p-4">
           <div className="d-flex flex-column justify-content-center align-items-center mb-4">
             <h1 className="h4 fw-bold d-flex align-items-center gap-2"><KeyRound />Recover Password</h1>
