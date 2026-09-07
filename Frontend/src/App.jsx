@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
-import Footer from './components/Footer'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword'
@@ -19,31 +18,24 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="d-flex flex-column min-vh-100">
-          <div className="flex-fill">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/verify-token" element={<VerifyToken />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route element={<Layout />}>
-                <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-                <Route path="/metrics" element={
-                  <Suspense fallback={<div className="text-center p-5 text-body-secondary">Loading metrics...</div>}>
-                    <ProtectedRoute>
-                      <Metrics />
-                    </ProtectedRoute>
-                  </Suspense>
-                } />
-                <Route path="/terms" element={<Terms />} />
-              </Route>
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-          <Footer />
-        </div>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-token" element={<VerifyToken />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route element={<Layout />}>
+            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+            <Route path="/metrics" element={
+              <Suspense fallback={<div className="text-center p-5 text-body-secondary">Loading metrics...</div>}>
+                <ProtectedRoute><Metrics /></ProtectedRoute>
+              </Suspense>
+            } />
+            <Route path="/terms" element={<Terms />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </BrowserRouter>
     </AuthProvider>
   )
