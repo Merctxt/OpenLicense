@@ -70,4 +70,23 @@ public class RegisterTests : TestBase
         var response = await Client.PostAsJsonAsync("/api/auth/register", payload);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
+
+    [Fact]
+    public async Task ShouldReturn403WhenRegistrationDisabled()
+    {
+        var factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
+        {
+            builder.UseSetting("RegistrationEnabled", "false");
+        });
+
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+
+        var payload = new { Name = "User", Email = $"closed-{Guid.NewGuid():N}@test.com", Password = "ValidPass1!" };
+        var response = await client.PostAsJsonAsync("/api/auth/register", payload);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
 }

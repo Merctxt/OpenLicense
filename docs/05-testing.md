@@ -2,7 +2,7 @@
 
 ## Overview
 
-OpenLicense uses xUnit for integration testing with FluentAssertions for expressive assertions. The test suite contains **78 tests** that validate all API endpoints against a real PostgreSQL database.
+OpenLicense uses xUnit for integration testing with FluentAssertions for expressive assertions. The test suite contains **79 tests** that validate all API endpoints against a real PostgreSQL database.
 
 
 ## Architecture
@@ -106,6 +106,7 @@ Requirements:
 | Register returns 400 with invalid passwords (short, numeric, no uppercase, no lowercase, no special) | Covered |
 | Register normalizes email to lowercase | Covered |
 | Register returns 400 when name exceeds 40 characters | Covered |
+| Register returns 403 when registration is disabled | Covered |
 | Login with valid credentials | Covered |
 | Login returns 401 with non-existent email | Covered |
 | Login returns 401 with incorrect password | Covered |
