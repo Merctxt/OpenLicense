@@ -14,13 +14,17 @@ namespace OpenLicenseApi.Middleware
             string serviceName = "OpenLicenseApi")
         {
             var endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
-            var headers  = builder.Configuration["OTEL_EXPORTER_OTLP_HEADERS"];
+            var rawHeaders = builder.Configuration["OTEL_EXPORTER_OTLP_HEADERS"];
 
             if (string.IsNullOrWhiteSpace(endpoint))
                 return builder;
 
+            var headers = rawHeaders?.Replace("Authorization:", "Authorization=");
+
             var resource = ResourceBuilder.CreateDefault()
                 .AddService(serviceName, serviceVersion: "1.0.0");
+
+            var baseUri = new Uri(endpoint);
 
             // ── Traces ──────────────────────────────────────────────────
             builder.Services.AddOpenTelemetry()
@@ -28,15 +32,13 @@ namespace OpenLicenseApi.Middleware
                     .SetResourceBuilder(resource)
                     .AddAspNetCoreInstrumentation(o =>
                     {
-                        // Ignora health check para não poluir os traces
-                        o.Filter = ctx =>
-                            !ctx.Request.Path.StartsWithSegments("/health");
+                        o.Filter = ctx => !ctx.Request.Path.StartsWithSegments("/health");
                     })
                     .AddHttpClientInstrumentation()
                     .AddOtlpExporter(o =>
                     {
-                        o.Endpoint = new Uri($"{endpoint.TrimEnd('/')}/v1/traces");
-                        o.Protocol  = OtlpExportProtocol.HttpProtobuf;
+                        o.Endpoint = baseUri;
+                        o.Protocol = OtlpExportProtocol.HttpProtobuf;
                         if (!string.IsNullOrWhiteSpace(headers))
                             o.Headers = headers;
                     })
@@ -50,8 +52,8 @@ namespace OpenLicenseApi.Middleware
                     .AddRuntimeInstrumentation()
                     .AddOtlpExporter(o =>
                     {
-                        o.Endpoint = new Uri($"{endpoint.TrimEnd('/')}/v1/metrics");
-                        o.Protocol  = OtlpExportProtocol.HttpProtobuf;
+                        o.Endpoint = baseUri;
+                        o.Protocol = OtlpExportProtocol.HttpProtobuf;
                         if (!string.IsNullOrWhiteSpace(headers))
                             o.Headers = headers;
                     })
@@ -62,11 +64,11 @@ namespace OpenLicenseApi.Middleware
             {
                 logging.SetResourceBuilder(resource);
                 logging.IncludeFormattedMessage = true;
-                logging.IncludeScopes           = true;
+                logging.IncludeScopes = true;
                 logging.AddOtlpExporter(o =>
                 {
-                    o.Endpoint = new Uri($"{endpoint.TrimEnd('/')}/v1/logs");
-                    o.Protocol  = OtlpExportProtocol.HttpProtobuf;
+                    o.Endpoint = baseUri;
+                    o.Protocol = OtlpExportProtocol.HttpProtobuf;
                     if (!string.IsNullOrWhiteSpace(headers))
                         o.Headers = headers;
                 });
@@ -76,4 +78,3 @@ namespace OpenLicenseApi.Middleware
         }
     }
 }
-
