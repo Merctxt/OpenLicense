@@ -1,290 +1,177 @@
-# Backend Architecture
+# Backend
 
 ## Overview
 
-The Backend is a .NET 9 Web API built with ASP.NET Core. It provides a RESTful API for managing software licensing, products, users, and activations.
+The OpenLicense backend is a REST API built with .NET 9 and ASP.NET Core. It handles authentication, products, licenses, activations, and e-mail flows.
 
+The application is organized in clear layers:
 
-## Architecture Layers
+- Controllers: expose HTTP endpoints
+- Services: implement business logic
+- Data: database access through EF Core
+- Models: domain entities
+- Middleware: authentication, rate limiting, error handling, and proxy compatibility
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                    HTTP Request/Response                     │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-┌──────────────────────────────▼───────────────────────────────┐
-│                    Middleware Pipeline                        │
-│  ExceptionHandling → RateLimit → CookieBridge → Auth →       │
-│                    Authorization → Controllers                │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-┌──────────────────────────────▼───────────────────────────────┐
-│                       Controllers                             │
-│  AuthController │ ProductsController │ LicensesController     │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-┌──────────────────────────────▼───────────────────────────────┐
-│                      Services                                 │
-│  AuthService │ ProductService │ LicenseService │ EmailService │
-│              RateLimiterService                              │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-┌──────────────────────────────▼───────────────────────────────┐
-│                      Database                                 │
-│              PostgreSQL (via EF Core)                         │
-└──────────────────────────────────────────────────────────────┘
+## Main structure
+
+```text
+Backend/
+├── Controllers/
+├── Services/
+├── Models/
+├── Data/
+├── DTOs/
+├── Middleware/
+├── Program.cs
+├── appsettings.json
+├── appsettings.Development.json
+└── OpenLicenseApi.csproj
 ```
 
-## Controllers
+## Request flow
+
+```text
+HTTP request
+  ↓
+Middleware pipeline
+  ↓
+Authentication / Authorization
+  ↓
+Controller
+  ↓
+Service
+  ↓
+Database / Email / JWT / API Key flow
+```
+
+## Middleware
+
+Execution order matters:
+
+1. `ExceptionHandlingMiddleware` — catches exceptions and converts them into HTTP responses
+2. `RateLimitMiddleware` — limits requests per IP and route
+3. `CookieToBearerMiddleware` — reads the session cookie and forwards it as a Bearer token
+4. `Authentication` — validates JWT or API key
+5. `Authorization` — checks permission rules
+6. `Controllers` — executes the final business logic
+
+## Authentication
+
+The API supports two auth flows:
+
+- JWT Bearer for authenticated users
+- X-Api-Key for external license validation clients
+
+## Controllers and endpoints
 
 ### AuthController
 
-Routes under `/api/auth` — User authentication and management.
+Base path: `/api/auth`
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/auth/register` | None | Register new user |
-| POST | `/api/auth/login` | None | Login, returns JWT + sets `auth_token` cookie |
-| POST | `/api/auth/logout` | None | Clears auth cookie |
-| GET | `/api/auth/me` | JWT | Get current user profile + API keys |
-| PUT | `/api/auth` | JWT | Update profile (name, email, password) |
+| Method | Endpoint | Authentication | Description |
+|---|---|---|---|
+| POST | `/api/auth/register` | None | User registration |
+| POST | `/api/auth/login` | None | Login and token response |
+| POST | `/api/auth/logout` | None | Clear auth cookie |
+| GET | `/api/auth/me` | JWT | Current user profile |
+| PUT | `/api/auth` | JWT | Update profile |
 | DELETE | `/api/auth` | JWT | Delete account |
-| POST | `/api/auth/apikey` | JWT | Create API key (max 3 per user) |
-| DELETE | `/api/auth/apikey` | JWT | Delete API key |
-| POST | `/api/auth/forgot-password` | None | Send password reset email |
-| POST | `/api/auth/reset-password/verify` | None | Verify reset token |
-| POST | `/api/auth/reset-password` | None | Reset password with token |
+| POST | `/api/auth/apikey` | JWT | Create API key |
+| DELETE | `/api/auth/apikey` | JWT | Remove API key |
+| POST | `/api/auth/forgot-password` | None | Request password recovery |
+| POST | `/api/auth/reset-password/verify` | None | Validate reset token |
+| POST | `/api/auth/reset-password` | None | Reset password |
 
 ### ProductsController
 
-Routes under `/api/products` — Product CRUD.
+Base path: `/api/products`
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/api/products/all` | JWT | List all products (includes licenses) |
-| POST | `/api/products/create` | JWT | Create product (limit: 3 per user) |
+| Method | Endpoint | Authentication | Description |
+|---|---|---|---|
+| GET | `/api/products/all` | JWT | List user products |
+| POST | `/api/products/create` | JWT | Create product |
 | PUT | `/api/products/update` | JWT | Update product |
 | DELETE | `/api/products` | JWT | Delete product |
 
 ### LicensesController
 
-Routes under `/api/licenses` — License management and validation.
+Base path: `/api/licenses`
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/api/licenses` | JWT | List licenses by productId |
+| Method | Endpoint | Authentication | Description |
+|---|---|---|---|
+| GET | `/api/licenses` | JWT | List licenses |
 | POST | `/api/licenses` | JWT | Create license |
-| PUT | `/api/licenses` | JWT | Update license (name, status, limits) |
+| PUT | `/api/licenses` | JWT | Update license |
 | DELETE | `/api/licenses` | JWT | Delete license |
-| GET | `/api/licenses/activations` | JWT | List activations for a license |
-| POST | `/api/licenses/validate` | API Key | Validate license key + activate hardware |
+| GET | `/api/licenses/activations` | JWT | List activations |
+| POST | `/api/licenses/validate` | API Key | Validate license and activate hardware |
 | POST | `/api/licenses/deactivate` | API Key | Deactivate hardware |
-| POST | `/api/licenses/deactivate-by-jwt` | JWT | Deactivate hardware (JWT auth) |
+| POST | `/api/licenses/deactivate-by-jwt` | JWT | Deactivate by user |
 
-## Services
+## Main services
 
 ### AuthService
 
-Handles user authentication, registration, and API key management.
+Responsible for:
 
-**Key methods:**
-- `RegisterAsync(name, email, password)` — Creates user, hashes password, validates rules
-- `LoginAsync(email, password)` — Verifies credentials, generates JWT, sets cookie
-- `GetMeAsync(userId)` — Returns user profile with related API keys
-- `UpdateAsync(userId, name, email, password)` — Updates profile, enforces uniqueness
-- `DeleteAsync(userId)` — Soft delete (cascades via FK)
-- `CreateApiKeyAsync(userId, request)` — Generates secure API key (64-char random), stores SHA-256 hash
-- `DeleteApiKeyAsync(userId, apiKeyId)` — Deletes API key if owned by user
-- `ForgotPasswordAsync(email)` — Generates reset token, sends email, stores hashed token
-- `VerifyResetTokenAsync(email, token)` — Validates token (15-min expiry)
-- `ResetPasswordAsync(email, token, newPassword)` — Resets password, clears token
-
-**Validation rules:**
-- Password: 8-128 chars, must contain uppercase, lowercase, digit, special character
-- Name/Email: Max 40 chars, email normalized to lowercase
-- API keys: Max 3 per user, name max 40 chars
+- user registration
+- login with password validation
+- JWT generation and validation
+- API key creation
+- password reset
+- e-mail-based recovery
 
 ### ProductService
 
-Manages product CRUD with ownership enforcement.
+Responsible for:
 
-**Key methods:**
-- `GetProductsByUserIdAsync(userId)` — Returns all user's products with licenses
-- `CreateProductAsync(userId, request)` — Enforces product limit (3 per user)
-- `UpdateProductAsync(userId, productId, request)` — Ensures ownership
-- `DeleteProductAsync(userId, productId)` — Ensures ownership
+- product creation and editing
+- quantity limits per user
+- ownership enforcement
 
 ### LicenseService
 
-Manages licenses, activations, and hardware validation.
+Responsible for:
 
-**Key methods:**
-- `GetLicensesByProductIdAsync(userId, productId)` — List licenses (ownership check)
-- `CreateLicenseAsync(userId, productId, request)` — Generates license key (4x4 alphanumeric format)
-- `UpdateLicenseAsync(userId, licenseId, request)` — Updates name, status, max activations, expiration
-- `DeleteLicenseAsync(userId, licenseId)` — Ownership check via product relationship
-- `GetLicenseActivationsAsync(userId, licenseId)` — List hardware activations
-- `ValidateLicenseAsync(userId, request)` — Validates license key, checks activation limit, creates activation
-- `DeactivateLicenseAsync(userId, productId, request)` — Deactivates hardware
-- `GenerateLicenseKey()` — Creates keys in `XXXX-XXXX-XXXX-XXXX` format (A-Z, 0-9)
+- license creation
+- key validation
+- hardware activation tracking
+- activation limits and expiration handling
 
 ### EmailService
 
-Sends password recovery emails via SMTP (MailKit/MimeKit).
-
-**Method:**
-- `SendPasswordResetEmailAsync(toEmail, token)` — Sends HTML + plain text email with recovery token
+Sends password recovery e-mails through SMTP.
 
 ### RateLimiterService
 
-In-memory sliding-window rate limiter. Thread-safe, no external dependencies.
+Implements in-memory rate limiting to avoid abuse of authentication and password reset endpoints.
 
-**Method:**
-- `IsAllowed(key, maxRequests, window)` — Returns true if request is within limits
 
-**Cleanup:** Runs every 5 minutes to remove expired entries from memory.
+## Database
 
-## DTOs
+The backend uses PostgreSQL through EF Core and `Npgsql`.
 
-### Authentication
-- `RegisterRequest` — name, email, password
-- `LoginRequest` — email, password
-- `UpdateRequest` — name?, email?, password?
-- `CreateApiKeyRequest` — name
-- `DeleteApiKeyRequest` — apiKeyId (Guid)
-- `CreateApiKeyResponse` — id, name, apiKey, createdAt, isActive
-- `ForgotPasswordRequest` — email
-- `VerifyTokenRequest` — email, token
-- `ResetPasswordRequest` — email, token, password
+In local development, the database is usually run in a container or in an external managed instance.
 
-### Products
-- `CreateProductRequest` — name, description?
-- `UpdateProductRequest` — productId, name?, description?
-- `DeleteProductRequest` — productId
+## Observability
 
-### Licenses
-- `CreateLicenseRequest` — productId, name?, expiresAt?, maxActivations
-- `UpdateLicenseRequest` — licenseId, name?, expiresAt?, maxActivations?, status?
-- `DeleteLicenseRequest` — licenseId
-- `ValidateLicenseRequest` — licenseKey, hardwareId
-- `DeactivateLicenseRequest` — licenseKey, hardwareId
-- `ValidateLicenseResponse` — isValid, message, reusedActivation, currentActivations, maxActivations, expiresAt
+The API also supports OTLP export to OpenObserve/OpenTelemetry.
 
-## Middleware Pipeline
+Relevant variables:
 
-Order is critical — middleware executes in registration order:
+- `OTEL_EXPORTER_OTLP_ENDPOINT`
+- `OTEL_EXPORTER_OTLP_HEADERS`
 
-1. **ExceptionHandlingMiddleware** — Catches all exceptions, maps to HTTP status codes (404, 401, 400)
-2. **RateLimitMiddleware** — Applies IP-based rate limiting to `/api/auth` POST endpoints
-3. **CookieToBearerMiddleware** — Reads `auth_token` cookie, injects as `Authorization: Bearer` header
-4. **Authentication** — JWT Bearer or API Key via `SmartAuth` policy scheme
-5. **Authorization** — Checks `[Authorize]` policies
-6. **Controllers** — Request handling
+These variables are read directly by ASP.NET Core and used by the OpenTelemetry exporters.
 
-### SmartAuth Hybrid Scheme
+## Important business rules
 
-```
-Request arrives
-    │
-    ├── Has "Authorization: Bearer ..." header?
-    │   └── Yes → JWT Bearer authentication
-    │
-    └── Has "X-Api-Key" header?
-        └── Yes → API Key authentication
-```
+- minimum password length: 8 characters, including uppercase, lowercase, number, and special character
+- e-mail normalized to lowercase
+- maximum number of products and licenses per user
+- API keys stored with secure hashing
+- password reset through a temporary token
 
-The policy scheme auto-selects the correct authentication handler based on request headers.
-
-### Rate Limits
-
-| Endpoint | Limit | Window |
-|----------|-------|--------|
-| `/api/auth/login` | 10 | 1 minute |
-| `/api/auth/register` | 5 | 5 minutes |
-| `/api/auth/forgot-password` | 3 | 5 minutes |
-| `/api/auth/reset-password/verify` | 6 | 5 minutes |
-| `/api/auth/reset-password` | 3 | 5 minutes |
-
-### Exception Mapping
-
-| Exception | HTTP Status |
-|-----------|-------------|
-| `KeyNotFoundException` | 404 Not Found |
-| `UnauthorizedAccessException` | 401 Unauthorized |
-| Other exceptions | 400 Bad Request |
-
-## Models
-
-### Users
-
-| Column | Type | Constraints |
-|--------|------|-------------|
-| Id | Guid | PK |
-| Name | string | Required, max 40 |
-| Email | string | Required, unique, normalized lowercase |
-| PasswordHash | string | Required, bcrypt hash |
-| CreatedAt | DateTime | UTC |
-| IsSuspended | bool | Default false |
-| ProductLimit | int | Default 3 |
-| LicenseLimit | int | Default 450 |
-| PasswordResetToken | string? | SHA-256 hash, null by default |
-| PasswordResetTokenExpiry | DateTime? | 15-minute expiry |
-
-**Relationships:** HasMany Products, HasMany ApiKeys
-
-### Products
-
-| Column | Type | Constraints |
-|--------|------|-------------|
-| Id | Guid | PK |
-| UserId | Guid | FK → Users, required |
-| Name | string | Required, max 40 |
-| Description | string? | Optional, max 200 |
-| CreatedAt | DateTime | UTC |
-
-**Relationships:** BelongsTo User, HasMany Licenses
-
-### Licenses
-
-| Column | Type | Constraints |
-|--------|------|-------------|
-| Id | Guid | PK |
-| ProductId | Guid | FK → Products, required |
-| Name | string | Required, max 40 |
-| LicenseKey | string | Required, unique, 4x4 format |
-| Status | bool | Default true (active) |
-| CreatedAt | DateTime | UTC |
-| ExpiresAt | DateTime? | Nullable expiration |
-| MaxActivations | int | Required, ≥ 1 |
-
-**Relationships:** BelongsTo Product, HasMany Activations
-
-### ApiKeys
-
-| Column | Type | Constraints |
-|--------|------|-------------|
-| Id | Guid | PK |
-| UserId | Guid | FK → Users, required |
-| Name | string | Required, max 40 |
-| KeyHash | string | Required, unique, SHA-256 hash |
-| CreatedAt | DateTime | UTC |
-| LastUsedAt | DateTime? | Updated on each authentication |
-| IsActive | bool | Default true |
-
-**Relationships:** BelongsTo User
-
-### Activations
-
-| Column | Type | Constraints |
-|--------|------|-------------|
-| Id | Guid | PK |
-| LicenseId | Guid | FK → Licenses, required |
-| HardwareId | string | Required, machine identifier |
-| ActivatedAt | DateTime | UTC |
-| LastSeenAt | DateTime? | Updated on validation |
-| IsActive | bool | Default true |
-
-**Relationships:** BelongsTo License
 
 ## Configuration
 
@@ -309,25 +196,12 @@ The policy scheme auto-selects the correct authentication handler based on reque
     "Username": "...",
     "Password": "...",
     "From": "noreply@example.com"
-  }
+  },
+  "OTEL_EXPORTER_OTLP_ENDPOINT": "https://.../api/default",
+  "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Basic ..."
 }
 ```
 
-### Environment Variables (DotNetEnv)
-
-Loaded from `.env` file:
-- `database_connection` — PostgreSQL connection string
-- `Jwt__SecretKey`, `Jwt__Issuer`, `Jwt__Audience`
-- `ASPNETCORE_ENVIRONMENT`, `ASPNETCORE_URLS`
-- `RegistrationEnabled` — Allow new user registrations (`true`/`false`)
-
-## Entity Relationships
-
-```
-Users (1) ────< (N) Products (1) ────< (N) Licenses (1) ────< (N) Activations
-    │
-    └───< (N) ApiKeys
-```
 
 ## Account Suspension
 
@@ -347,3 +221,6 @@ Suspended users cannot log in or make authenticated requests:
 8. **Email Normalization**: Lowercase email addresses prevent case-based duplication
 9. **UTC Timestamps**: All timestamps are stored in UTC
 10. **JWT Expiration**: Tokens expire in 30 minutes with 30s clock skew
+11. **Password Complexity**: Minimum 8 characters, including uppercase, lowercase, number, and special character
+12. **Account Suspension**: Suspended users cannot log in or make authenticated requests
+13. **Max email changes**: Users can only change their email a limited number of times per month

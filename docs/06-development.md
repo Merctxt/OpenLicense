@@ -1,303 +1,203 @@
 # Development Guide
 
-## Prerequisites
+## Requirements
 
-- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
 - [Node.js 20+](https://nodejs.org/)
-- [PostgreSQL 17+](https://www.postgresql.org/)
-- [Docker](https://www.docker.com/) (optional, for containerized development)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Docker](https://www.docker.com/) (optional, but useful)
 - [VS Code](https://code.visualstudio.com/) or Visual Studio 2022
 
-## Project Structure
+## Project structure
 
-```
+```text
 OpenLicense/
-├── Backend/              # .NET 9.0 API
-├── Frontend/             # React/Vite SPA
-├── Tests/                # Integration tests
-├── docs/                 # Documentation
-├── .vscode/              # VS Code settings
-├── docker-compose.yml    # Docker orchestration
-├── .env.example          # Environment variables template
+├── Backend/               # .NET API
+├── Frontend/              # React/Vite app
+├── Tests/                 # integration tests
+├── docs/                  # documentation
+├── docker-compose.yml     # Docker environment
+├── .env.example           # root environment template
 ├── .gitignore
-└── README.md
+├── README.md
+├── start.ps1              # starts backend + frontend locally
+└── LICENSE.md
 ```
 
-## Quick Start
+## Getting started
 
-### 1. Clone and Setup
+### 1. Clone the project
 
 ```bash
-git clone <repository-url>
+git clone <repo-url>
 cd OpenLicense
 ```
 
-### 2. Environment Configuration
+### 2. Create the environment file
 
-> **Important:** For local development to work correctly, environment variables must be configured separately for each project.
-
-- **Backend:** Copy `.env.example` to `.env` in the `Backend/` directory, or use `appsettings.json` (or system environment variables)
-- **Frontend:** Copy `Frontend/.env.example` to `Frontend/.env` and configure the variables (e.g. `VITE_API_URL`)
-- **Root (`.env`):** The `.env` file in the project root is used exclusively by Docker Compose and **does not** affect local backend or frontend execution
+At the project root, copy the template:
 
 ```bash
-# Copy frontend template
-cp Frontend/.env.example Frontend/.env
-# OR create manually with the required variables
+cp .env.example .env
 ```
 
-### 3. Run Both (PowerShell)
+This `.env` file is used by Docker Compose. It does not replace the local backend/frontend environment variables during direct local development.
 
-> Requires Windows/PowerShell. Starts backend and frontend simultaneously, terminates both on Ctrl+C.
+### 3. Configure the database and e-mail settings
+
+Edit the `.env` file with:
+
+- PostgreSQL connection string
+- JWT secret
+- SMTP host and credentials
+- OpenObserve/OTLP endpoint if enabled
+
+## Running locally
+
+### Option A: use the project script
+
+In PowerShell:
 
 ```powershell
 .\start.ps1
 ```
 
-The script:
-- Runs `dotnet run` in `Backend/`
-- Runs `npm run dev` in `Frontend/`
-- Tracks PIDs and terminates both processes when stopped
-- Shows which process was terminated in the console
+This script starts:
 
-### 4. Database
+- `dotnet run` in the backend
+- `npm run dev` in the frontend
+- stops both when the session ends
 
-Start a PostgreSQL instance. The simplest option:
+### Option B: run manually
 
-```bash
-docker run -d --name openlicense-db \
-  -e POSTGRES_DB=openlicense \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=secret \
-  -p 5432:5432 \
-  postgres:17-alpine
-```
-
-Or use any external PostgreSQL instance (Azure Database for PostgreSQL, etc.).
-
-### 5. Backend
+#### Backend
 
 ```bash
 cd Backend
-
-# Restore packages
 dotnet restore
-
-# Apply database migrations
 dotnet ef database update
-
-# Run the API (default: http://localhost:5000)
 dotnet run
 ```
 
-The backend loads configuration from:
-- `appsettings.json` (base config)
-- `appsettings.Development.json` (dev overrides)
-- Environment variables (override JSON config)
-
-### 5. Frontend
+#### Frontend
 
 ```bash
 cd Frontend
-
-# Install dependencies
 npm install
-
-# Start dev server (default: http://localhost:3000)
 npm run dev
 ```
 
+## Backend configuration
 
-### Debugging
+The backend reads configuration in this priority order:
 
-The `.vscode/launch.json` includes a configuration to launch Edge with source maps:
+1. environment variables
+2. `appsettings.Development.json`
+3. `appsettings.json`
 
-```json
-{
-  "type": "msedge",
-  "request": "launch",
-  "name": "Launch Edge against localhost",
-  "url": "http://localhost:3000",
-  "webRoot": "${workspaceFolder}/Frontend",
-  "sourceMaps": true
-}
+Relevant configuration examples:
+
+```text
+database_connection=Host=...;Database=...;
+Jwt__SecretKey=...
+Jwt__Issuer=OpenLicenseApi
+Jwt__Audience=OpenLicenseApiUsers
+REGISTRATION_ENABLED=true
 ```
 
-Press `F5` to start debugging the frontend in Edge.
+## Local frontend
 
-### Backend Debugging
+The client runs at:
 
-In VS Code:
-1. Open `Backend/` folder (or the workspace root)
-2. Set breakpoints in C# files
-3. Press `F5` (choose ".NET Core Launch (web)")
+```text
+http://localhost:3000
+```
 
-Or in Visual Studio:
-1. Open the solution file
-2. Set to start `Backend` project
-3. Press `F5`
+The API runs at:
 
-## Development Workflow
+```text
+http://localhost:5000
+```
 
+## Debugging
 
-### Port Configuration
+### Backend
 
-| Service | Default Port |
-|---------|-------------|
-| Backend API | 5000 |
-| Frontend Dev Server | 3000 |
-| PostgreSQL | 5432 |
-| Scalar API Docs | 5000/scalar/v1 |
+In VS Code or Visual Studio, open the project and run the API in debug mode.
 
-### Creating a New Entity
+### Frontend
 
-1. Create the model class in `Backend/Models/`
-2. Add `DbSet<T>` to `AppDbContext`
-3. Create migration: `dotnet ef migrations add <Name>`
-4. Apply migration: `dotnet ef database update`
-5. Add controller in `Backend/Controllers/`
-6. Add service in `Backend/Services/`
-7. Write integration tests in `Tests/Features/`
+Use the VS Code launch configuration to open the app in Edge with source maps enabled.
 
-### Adding a New Controller
-
-1. Create `Backend/Controllers/<Name>Controller.cs`
-2. Inherit from `ApiController` or use minimal API patterns
-3. Add endpoint routes with `[HttpGet]`, `[HttpPost]`, etc.
-4. Add SmartAuth policy attributes where needed
-5. Register in `Program.cs` if using route groups
-6. Add corresponding frontend API functions in `Frontend/src/api/endpoints.js`
-
-### Database Migrations
+## Migrations
 
 ```bash
-# Create a new migration
-dotnet ef migrations add <MigrationName>
-
-# Apply pending migrations
+cd Backend
+dotnet ef migrations add MigrationName
 dotnet ef database update
-
-# Remove last migration (only if not applied)
-dotnet ef migrations remove
-
-# List all migrations
-dotnet ef migrations list
 ```
 
-## API Development
-
-### Adding a New Endpoint
-
-1. **Backend Controller:**
-   ```csharp
-   [ApiController]
-   [Route("api/[controller]")]
-   public class MyController : ControllerBase
-   {
-       [HttpGet]
-       public IActionResult Get() { ... }
-   }
-   ```
-
-2. **Route Auth Registration:**
-   Update `Backend/Models/RouteAuth.cs` if the endpoint needs specific auth.
-
-3. **Frontend API Function:**
-   Add to `Frontend/src/api/endpoints.js`:
-   ```javascript
-   export async function getMyResource() {
-     return client.get('/api/my');
-   }
-   ```
-
-4. **Integration Test:**
-   Add to `Tests/Features/` with appropriate test class.
-
-### API Key Auth Endpoints
-
-For client-side validation endpoints:
-
-```csharp
-[ApiController]
-[Route("api/[controller]")]
-public class ValidateController : ControllerBase
-{
-    [HttpPost("validate")]
-    [ServiceFilter(typeof(ApiKeyAuthMiddleware))]
-    public IActionResult Validate([FromBody] ValidateRequest request) { ... }
-}
-```
-
-## Frontend Development
-
-### Adding a New Page
-
-1. Create `Frontend/src/pages/MyPage/MyPage.jsx`
-2. Create `Frontend/src/pages/MyPage/useMyPage.js` (hook)
-3. Add route in `Frontend/src/App.jsx`
-4. Add navigation link in `Frontend/src/components/Layout.jsx`
-5. Add API functions in `Frontend/src/api/endpoints.js`
-
-### Adding a New Component
-
-1. Create `Frontend/src/components/MyComponent.jsx`
-2. Export as default
-3. Import and use in pages
-
-### State Management
-
-The app uses React Context for global state:
-- `AuthContext` — Authentication state
-- `ThemeContext` — Theme preferences
-
-Page-specific state is managed via custom hooks (`use*.js`).
-
-## Testing
-
-### Run All Tests
+If you need to remove the most recent local migration:
 
 ```bash
+dotnet ef migrations remove
+```
+
+## Tests
+
+```bash
+cd OpenLicense
 dotnet test
 ```
 
-### Run Tests with Coverage
+## Project conventions
+
+- keep services small and focused
+- use DTOs for request and response payloads
+- validate business rules in the backend
+- prefer integration tests for API flows
+- document environment variables and deployment changes
+
+
+### Run tests with coverage
 
 ```bash
 dotnet test /p:CollectCoverage=true
 ```
 
-### Filter Tests
+### Filter tests
 
 ```bash
 dotnet test --filter "Category=Integration"
 dotnet test --filter "FullyQualifiedName~RegisterTests"
 ```
 
-## Debugging Tips
+## Debugging tips
 
 ### Backend
 
-- Check logs: `dotnet run` outputs to console
+- Check logs: `dotnet run` writes to the console
 - Use `ILogger<T>` for structured logging
 - Enable detailed errors in development: `appsettings.Development.json`
 
 ### Frontend
 
 - React DevTools browser extension
-- Network tab in browser DevTools to inspect API calls
+- Browser Network tab to inspect API calls
 - Check Axios interceptors in `Frontend/src/api/client.js`
 
 ### Database
 
 - Connect with any PostgreSQL client (DBeaver, pgAdmin, VS Code pg extension)
-- Use `dotnet ef dbcontextinfo` to visualize schema
-- Check EF Core logging: set `logging:LogLevel:Microsoft.EntityFrameworkCore` to `Debug`
+- Use `dotnet ef dbcontextinfo` to inspect the schema
+- Enable EF Core logging by setting `logging:LogLevel:Microsoft.EntityFrameworkCore` to `Debug`
 
-## Common Issues
+## Common issues
 
-### CORS Errors
+### CORS errors
 
-Ensure the frontend origin is in `Cors:AllowedOrigins` in `appsettings.json`:
+Ensure the frontend origin is included in `Cors:AllowedOrigins` in `appsettings.json`:
+
 ```json
 {
   "Cors": {
@@ -306,19 +206,19 @@ Ensure the frontend origin is in `Cors:AllowedOrigins` in `appsettings.json`:
 }
 ```
 
-### JWT Authentication Failures
+### JWT authentication failures
 
-- Check that `Jwt:SecretKey` matches in both backend and test config
-- Verify token is not expired (30-minute default)
+- Check that `Jwt:SecretKey` matches in both backend and test configuration
+- Verify the token has not expired (default: 30 minutes)
 - Check cookie settings for browser-based auth
 
-### Database Connection Issues
+### Database connection issues
 
-- Verify connection string format: `Host=...;Port=5432;Database=...;Username=...;Password=...`
-- Ensure PostgreSQL is accessible from the host
+- Verify the connection string format: `Host=...;Port=5432;Database=...;Username=...;Password=...`
+- Ensure PostgreSQL is reachable from the host
 - Check firewall rules for external databases
 
-### Port Conflicts
+### Port conflicts
 
 - Backend default: 5000 (configure via `Properties/launchSettings.json`)
 - Frontend default: 3000 (configure in `Frontend/vite.config.js`)
