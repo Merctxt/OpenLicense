@@ -2,7 +2,7 @@
 
 ## Overview
 
-OpenLicense uses xUnit for integration testing with FluentAssertions for expressive assertions. The test suite contains **74 tests** that validate all API endpoints against a real PostgreSQL database.
+OpenLicense uses xUnit for integration testing with FluentAssertions for expressive assertions. The test suite contains **78 tests** that validate all API endpoints against a real PostgreSQL database.
 
 
 ## Architecture
@@ -58,6 +58,7 @@ dotnet test --filter "FullyQualifiedName~RegisterTests"
 dotnet test --filter "FullyQualifiedName~LoginTests"
 dotnet test --filter "FullyQualifiedName~ProductsTests"
 dotnet test --filter "FullyQualifiedName~LicensesTests"
+dotnet test --filter "FullyQualifiedName~EmailChangeRateLimitTests"
 ```
 
 ### Specific Test Method
@@ -115,6 +116,10 @@ Requirements:
 | Update user email | Covered |
 | Update user password | Covered |
 | Update email returns 400 when email belongs to another user | Covered |
+| Update rate limits email changes to 1 per 3 months | Covered |
+| Update allows email change when last change is older than 3 months | Covered |
+| Update does not count when email value is unchanged | Covered |
+| Update name alone does not consume email change limit | Covered |
 | Update without authentication returns 401 | Covered |
 | Delete account | Covered |
 | Delete without authentication returns 401 | Covered |

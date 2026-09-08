@@ -16,3 +16,5 @@ global using System.Text;
 global using OpenLicenseApi;
 global using OpenLicenseApi.Data;
 global using OpenLicenseApi.Models;
+global using System.Linq;
+global using Microsoft.AspNetCore.Mvc;
