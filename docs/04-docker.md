@@ -1,10 +1,9 @@
 # Docker
 
-## Overview
 
 Docker Compose orchestrates the application stack with two services:
-- **API** (.NET 9.0 API)
-- **Frontend** (React/Vite static files served by Nginx)
+- **API** 
+- **Frontend**
 
 **Note:** PostgreSQL is NOT managed by this docker-compose. The database must be available externally (e.g., Azure Database for PostgreSQL, self-hosted).
 
@@ -63,7 +62,6 @@ All variables are defined in `.env.example` — copy it to `.env` and fill in th
 | `VITE_REGISTRATION_ENABLED` | `true` | Frontend registration toggle (`true`/`false`) |
 
 
-
 ## Usage
 
 ### Build and Start
@@ -84,29 +82,6 @@ docker compose down
 docker compose logs -f
 ```
 
-### API Logs
-
-```bash
-docker compose logs -f api
-```
-
-### Frontend Logs
-
-```bash
-docker compose logs -f frontend
-```
-
-### Restart a Service
-
-```bash
-docker compose restart api
-```
-
-### Run Commands Inside Container
-
-```bash
-docker compose exec api dotnet --info
-```
 
 ## Network
 
