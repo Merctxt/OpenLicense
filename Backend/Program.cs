@@ -17,6 +17,9 @@ namespace OpenLicenseApi
 
             var builder = WebApplication.CreateBuilder(args);
 
+            // ── Telemetry (Traces + Metrics + Logs → OpenObserve) ────────
+            builder.AddOpenTelemetry("OpenLicenseApi");
+
             // ── Controllers ──────────────────────────────────────────────
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
