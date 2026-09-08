@@ -134,19 +134,23 @@ namespace OpenLicenseApi.Services
 
             if (!string.IsNullOrWhiteSpace(email))
             {
-                var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email.Trim().ToLower() && u.Id != userId);
+                var newEmail = email.Trim().ToLower();
+                var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == newEmail && u.Id != userId);
                 if (existingUser != null)
                 {
                     throw new InvalidOperationException("Another user with the same email already exists.");
                 }
 
-                if (user.LastEmailChangeAt != null && DateTime.UtcNow - user.LastEmailChangeAt < TimeSpan.FromDays(91))
+                if (newEmail != user.Email)
                 {
-                    throw new InvalidOperationException("Maximum number of email changes reached in the period.");
-                }
+                    if (user.LastEmailChangeAt != null && DateTime.UtcNow - user.LastEmailChangeAt < TimeSpan.FromDays(91))
+                    {
+                        throw new InvalidOperationException("Maximum number of email changes reached in the period.");
+                    }
 
-                user.Email = email.Trim().ToLower();
-                user.LastEmailChangeAt = DateTime.UtcNow;
+                    user.Email = newEmail;
+                    user.LastEmailChangeAt = DateTime.UtcNow;
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(password))
