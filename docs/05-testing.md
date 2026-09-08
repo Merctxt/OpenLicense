@@ -86,7 +86,8 @@ Tests read from `Tests/appsettings.json`:
     "SecretKey": "<jwt-secret>",
     "Issuer": "OpenLicenseApi",
     "Audience": "OpenLicenseApiUsers"
-  }
+  },
+  "RegistrationEnabled": true
 }
 ```
 
