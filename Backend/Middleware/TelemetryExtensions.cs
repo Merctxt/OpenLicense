@@ -1,9 +1,9 @@
 using OpenTelemetry;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using OpenTelemetry.Exporter;
 
 namespace OpenLicenseApi.Middleware
 {
@@ -14,27 +14,13 @@ namespace OpenLicenseApi.Middleware
             string serviceName = "OpenLicenseApi")
         {
             var endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
-            var rawHeaders = builder.Configuration["OTEL_EXPORTER_OTLP_HEADERS"];
-
             if (string.IsNullOrWhiteSpace(endpoint))
             {
                 Console.WriteLine("[OTEL] Disabled - OTEL_EXPORTER_OTLP_ENDPOINT is not set");
                 return builder;
             }
 
-            var headerDictionary = ParseHeaders(rawHeaders);
-
-            Console.WriteLine($"[OTEL] Initialized:");
-            Console.WriteLine($"  Endpoint: {endpoint}");
-            Console.WriteLine($"  Headers: {headerDictionary?.Count ?? 0} header(s)");
-            if (headerDictionary != null)
-            {
-                foreach (var h in headerDictionary)
-                {
-                    var masked = h.Value.Length > 10 ? h.Value[..7] + "..." : h.Value;
-                    Console.WriteLine($"    {h.Key} = {masked}");
-                }
-            }
+            var headers = ParseHeaders(builder.Configuration["OTEL_EXPORTER_OTLP_HEADERS"]);
 
             var resource = ResourceBuilder.CreateDefault()
                 .AddService(serviceName, serviceVersion: "1.0.0");
@@ -43,27 +29,6 @@ namespace OpenLicenseApi.Middleware
             var metricsEndpoint = NormalizeSignalEndpoint(endpoint, "v1/metrics");
             var logsEndpoint = NormalizeSignalEndpoint(endpoint, "v1/logs");
 
-            Action<OtlpExporterOptions> configureTraceExporter = o =>
-            {
-                o.Endpoint = traceEndpoint;
-                o.Protocol = OtlpExportProtocol.HttpProtobuf;
-                if (headerDictionary != null)
-                {
-                    o.Headers = string.Join(";", headerDictionary.Select(h => $"{h.Key}={h.Value}"));
-                }
-            };
-
-            Action<OtlpExporterOptions> configureMetricsExporter = o =>
-            {
-                o.Endpoint = metricsEndpoint;
-                o.Protocol = OtlpExportProtocol.HttpProtobuf;
-                if (headerDictionary != null)
-                {
-                    o.Headers = string.Join(";", headerDictionary.Select(h => $"{h.Key}={h.Value}"));
-                }
-            };
-
-            // ── Traces ──────────────────────────────────────────────────
             builder.Services.AddOpenTelemetry()
                 .WithTracing(tracing => tracing
                     .SetResourceBuilder(resource)
@@ -72,36 +37,36 @@ namespace OpenLicenseApi.Middleware
                         o.Filter = ctx => !ctx.Request.Path.StartsWithSegments("/health");
                     })
                     .AddHttpClientInstrumentation()
-                    .AddOtlpExporter(configureTraceExporter)
+                    .AddOtlpExporter(options => ConfigureOtlpOptions(options, traceEndpoint, headers))
                 )
-
-            // ── Metrics ─────────────────────────────────────────────────
                 .WithMetrics(metrics => metrics
                     .SetResourceBuilder(resource)
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
-                    .AddOtlpExporter(configureMetricsExporter)
+                    .AddOtlpExporter(options => ConfigureOtlpOptions(options, metricsEndpoint, headers))
                 );
 
-            // ── Logs ────────────────────────────────────────────────────
             builder.Logging.AddOpenTelemetry(logging =>
             {
                 logging.SetResourceBuilder(resource);
                 logging.IncludeFormattedMessage = true;
                 logging.IncludeScopes = true;
-                logging.AddOtlpExporter(o =>
-                {
-                    o.Endpoint = logsEndpoint;
-                    o.Protocol = OtlpExportProtocol.HttpProtobuf;
-                    if (headerDictionary != null)
-                    {
-                        o.Headers = string.Join(";", headerDictionary.Select(h => $"{h.Key}={h.Value}"));
-                    }
-                });
+                logging.AddOtlpExporter(options => ConfigureOtlpOptions(options, logsEndpoint, headers));
             });
 
             return builder;
+        }
+
+        private static void ConfigureOtlpOptions(OtlpExporterOptions options, Uri endpoint, Dictionary<string, string>? headers)
+        {
+            options.Endpoint = endpoint;
+            options.Protocol = OtlpExportProtocol.HttpProtobuf;
+
+            if (headers is not null && headers.Count > 0)
+            {
+                options.Headers = string.Join(";", headers.Select(h => $"{h.Key}={h.Value}"));
+            }
         }
 
         private static Uri NormalizeSignalEndpoint(string endpoint, string signalPath)
@@ -125,9 +90,8 @@ namespace OpenLicenseApi.Middleware
                 return null;
 
             var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
             var parts = rawHeaders.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            
+
             foreach (var part in parts)
             {
                 var trimmed = part.Trim();
