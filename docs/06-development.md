@@ -36,13 +36,13 @@ cd OpenLicense
 
 > **Important:** For local development to work correctly, environment variables must be configured separately for each project.
 
-- **Backend:** Edit `Backend/appsettings.json` with the database connection string and JWT secret (or use system environment variables)
-- **Frontend:** Copy `.env` to `.env.local` in the `Frontend/` directory and configure the variables (e.g. `VITE_API_URL`)
+- **Backend:** Copy `.env.example` to `.env` in the `Backend/` directory, or use `appsettings.json` (or system environment variables)
+- **Frontend:** Copy `Frontend/.env.example` to `Frontend/.env` and configure the variables (e.g. `VITE_API_URL`)
 - **Root (`.env`):** The `.env` file in the project root is used exclusively by Docker Compose and **does not** affect local backend or frontend execution
 
 ```bash
 # Copy frontend template
-cp Frontend/.env.example Frontend/.env.local  # if it exists
+cp Frontend/.env.example Frontend/.env
 # OR create manually with the required variables
 ```
 

@@ -39,18 +39,28 @@ Docker Compose orchestrates the application stack with two services:
 
 ### Environment Variables
 
-Set in `.env` file (copied from `.env.example`):
+All variables are defined in `.env.example` — copy it to `.env` and fill in the values you need.
 
 | Variable | Default | Description |
-|----------|---------|-------------|
-| `ASPNETCORE_ENVIRONMENT` | `Development` | App environment |
+|-----------|---------|-------------|
+| `ASPNETCORE_ENVIRONMENT` | `Production` | App environment (`Development`, `Production`) |
 | `API_PORT` | `5000` | Host port for API |
 | `DATABASE_CONNECTION` | (required) | PostgreSQL connection string |
 | `JWT_SECRET_KEY` | (required) | JWT signing secret |
 | `JWT_ISSUER` | `OpenLicenseApi` | JWT issuer |
 | `JWT_AUDIENCE` | `OpenLicenseApiUsers` | JWT audience |
+| `REGISTRATION_ENABLED` | `true` | Allow new user registrations (`true`/`false`) |
+| `EMAIL_HOST` | (empty) | SMTP host |
+| `EMAIL_PORT` | `587` | SMTP port |
+| `EMAIL_SECURE` | `false` | SMTP SSL/TLS |
+| `EMAIL_USERNAME` | (empty) | SMTP username |
+| `EMAIL_PASSWORD` | (empty) | SMTP password |
+| `EMAIL_FROM` | (empty) | Sender email |
 | `FRONTEND_PORT` | `3000` | Host port for frontend |
 | `VITE_API_URL` | (empty) | API base URL for frontend build |
+| `VITE_STATUS_URL` | (empty) | Status page URL |
+| `VITE_SOURCE_URL` | (empty) | Source repository URL |
+| `VITE_REGISTRATION_ENABLED` | `true` | Frontend registration toggle (`true`/`false`) |
 
 
 
