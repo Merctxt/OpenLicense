@@ -39,11 +39,23 @@ namespace OpenLicenseApi.Middleware
             var resource = ResourceBuilder.CreateDefault()
                 .AddService(serviceName, serviceVersion: "1.0.0");
 
-            var baseUri = new Uri(endpoint);
+            var traceEndpoint = NormalizeSignalEndpoint(endpoint, "v1/traces");
+            var metricsEndpoint = NormalizeSignalEndpoint(endpoint, "v1/metrics");
+            var logsEndpoint = NormalizeSignalEndpoint(endpoint, "v1/logs");
 
             Action<OtlpExporterOptions> configureTraceExporter = o =>
             {
-                o.Endpoint = baseUri;
+                o.Endpoint = traceEndpoint;
+                o.Protocol = OtlpExportProtocol.HttpProtobuf;
+                if (headerDictionary != null)
+                {
+                    o.Headers = string.Join(";", headerDictionary.Select(h => $"{h.Key}={h.Value}"));
+                }
+            };
+
+            Action<OtlpExporterOptions> configureMetricsExporter = o =>
+            {
+                o.Endpoint = metricsEndpoint;
                 o.Protocol = OtlpExportProtocol.HttpProtobuf;
                 if (headerDictionary != null)
                 {
@@ -69,7 +81,7 @@ namespace OpenLicenseApi.Middleware
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
-                    .AddOtlpExporter(configureTraceExporter)
+                    .AddOtlpExporter(configureMetricsExporter)
                 );
 
             // ── Logs ────────────────────────────────────────────────────
@@ -80,7 +92,7 @@ namespace OpenLicenseApi.Middleware
                 logging.IncludeScopes = true;
                 logging.AddOtlpExporter(o =>
                 {
-                    o.Endpoint = baseUri;
+                    o.Endpoint = logsEndpoint;
                     o.Protocol = OtlpExportProtocol.HttpProtobuf;
                     if (headerDictionary != null)
                     {
@@ -90,6 +102,21 @@ namespace OpenLicenseApi.Middleware
             });
 
             return builder;
+        }
+
+        private static Uri NormalizeSignalEndpoint(string endpoint, string signalPath)
+        {
+            var normalizedEndpoint = endpoint.Trim();
+            if (string.IsNullOrWhiteSpace(normalizedEndpoint))
+                throw new InvalidOperationException("OTEL_EXPORTER_OTLP_ENDPOINT cannot be empty.");
+
+            var trimmedBase = normalizedEndpoint.TrimEnd('/');
+            var normalizedSignal = signalPath.Trim('/');
+
+            if (trimmedBase.EndsWith($"/{normalizedSignal}", StringComparison.OrdinalIgnoreCase))
+                return new Uri(trimmedBase, UriKind.Absolute);
+
+            return new Uri($"{trimmedBase}/{normalizedSignal}", UriKind.Absolute);
         }
 
         private static Dictionary<string, string>? ParseHeaders(string? rawHeaders)
