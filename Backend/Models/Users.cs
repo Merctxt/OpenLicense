@@ -28,5 +28,7 @@ namespace OpenLicenseApi.Models
         public string? PasswordResetToken { get; set; }
 
         public DateTime? PasswordResetTokenExpiry { get; set; }
+
+        public DateTime? LastEmailChangeAt { get; set; }
     }
 }
