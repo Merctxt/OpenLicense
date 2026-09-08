@@ -78,6 +78,11 @@ Register a new user account.
 }
 ```
 
+**Error Response (403) — Registration Disabled:**
+```json
+{}
+```
+
 ---
 
 ### POST `/api/auth/login`

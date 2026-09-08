@@ -13,15 +13,22 @@ namespace OpenLicenseApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, IConfiguration configuration)
         {
             _authService = authService;
+            _configuration = configuration;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
+            bool registrationEnabled = _configuration.GetValue<bool>("RegistrationEnabled", true);
+            if (!registrationEnabled)
+            {
+                return Forbid();
+            }
             var user = await _authService.RegisterAsync(request.Name, request.Email, request.Password);
             return Ok(user);
         }

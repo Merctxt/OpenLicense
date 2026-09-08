@@ -301,6 +301,7 @@ The policy scheme auto-selects the correct authentication handler based on reque
     "Audience": "OpenLicenseApiUsers"
   },
   "FrontendUrl": "http://localhost:3000",
+  "RegistrationEnabled": true,
   "Email": {
     "Host": "smtp.example.com",
     "Port": 587,
@@ -318,6 +319,7 @@ Loaded from `.env` file:
 - `database_connection` — PostgreSQL connection string
 - `Jwt__SecretKey`, `Jwt__Issuer`, `Jwt__Audience`
 - `ASPNETCORE_ENVIRONMENT`, `ASPNETCORE_URLS`
+- `RegistrationEnabled` — Allow new user registrations (`true`/`false`)
 
 ## Entity Relationships
 

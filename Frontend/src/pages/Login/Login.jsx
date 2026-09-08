@@ -3,6 +3,8 @@ import { UserPlus, Layers } from 'lucide-react'
 import useLogin from './useLogin'
 import Background from '../../components/Background/Background'
 
+const registrationEnabled = import.meta.env.VITE_REGISTRATION_ENABLED !== 'false'
+
 export default function Login() {
   const {
     email, setEmail,
@@ -53,9 +55,9 @@ export default function Login() {
               <a href="/forgot-password" className="text-decoration-none small text-body-secondary">Forgot your password?</a>
             </div>
           </form>
-          <div className="text-center mt-3">
+          {registrationEnabled && <div className="text-center mt-3">
             <span className="text-body-secondary small">Don't have an account? <Link to="/register" className="text-decoration-none"><UserPlus className="d-inline me-1" width={14} height={14} />Create one</Link></span>
-          </div>
+          </div>}
         </div>
       </div>
     </Background>

@@ -12,6 +12,8 @@ import Dashboard from './pages/Dashboard/Dashboard'
 import Account from './pages/Account/Account'
 import Terms from './pages/Terms/Terms'
 
+const registrationEnabled = import.meta.env.VITE_REGISTRATION_ENABLED !== 'false'
+
 const Metrics = lazy(() => import('./pages/Metrics/Metrics'))
 
 export default function App() {
@@ -20,7 +22,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          {registrationEnabled && <Route path="/register" element={<Register />} />}
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-token" element={<VerifyToken />} />
           <Route path="/reset-password" element={<ResetPassword />} />
