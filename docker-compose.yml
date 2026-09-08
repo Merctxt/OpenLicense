@@ -15,13 +15,13 @@ services:
       - Jwt__Issuer=${JWT_ISSUER:-OpenLicenseApi}
       - Jwt__Audience=${JWT_AUDIENCE:-OpenLicenseApiUsers}
       - REGISTRATION_ENABLED=${REGISTRATION_ENABLED:-true}
-      
-      - Email__Host=${EMAIL_HOST}
-      - Email__Port=${EMAIL_PORT:-587}
-      - Email__Secure=${EMAIL_SECURE:-false}
-      - Email__Username=${EMAIL_USERNAME}
-      - Email__Password=${EMAIL_PASSWORD}
-      - Email__From=${EMAIL_FROM}
+
+      - Email__Host=${Email__Host}
+      - Email__Port=${Email__Port:-587}
+      - Email__Secure=${Email__Secure:-false}
+      - Email__Username=${Email__Username}
+      - Email__Password=${Email__Password}
+      - Email__From=${Email__From}
 
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-}
       - OTEL_EXPORTER_OTLP_HEADERS=${OTEL_EXPORTER_OTLP_HEADERS:-}
