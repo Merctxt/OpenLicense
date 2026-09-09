@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import UseTitle from './hooks/UseTitle'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login/Login'
@@ -20,6 +21,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <UseTitle />
         <Routes>
           <Route path="/login" element={<Login />} />
           {registrationEnabled && <Route path="/register" element={<Register />} />}
