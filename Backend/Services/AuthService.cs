@@ -3,7 +3,7 @@ using OpenLicenseApi.DTOs;
 using Microsoft.EntityFrameworkCore;
 using OpenLicenseApi.Data;
 using Microsoft.AspNetCore.Identity;
-using OpenLicenseApi.Middleware;
+using OpenLicenseApi.Middleware.Auth;
 using System.Security.Cryptography;
 using System.Text;
 using System.Linq;

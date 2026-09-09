@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
-namespace OpenLicenseApi.Middleware
+namespace OpenLicenseApi.Middleware.ErrorHandling
 {
     public class ExceptionHandlingMiddleware
     {

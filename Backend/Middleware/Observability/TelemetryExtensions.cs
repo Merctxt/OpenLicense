@@ -5,7 +5,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-namespace OpenLicenseApi.Middleware
+namespace OpenLicenseApi.Middleware.Observability
 {
     public static class TelemetryExtensions
     {

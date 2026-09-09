@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using OpenLicenseApi.Middleware;
+using OpenLicenseApi.Middleware.Auth;
 
 
-namespace OpenLicenseApi.Middleware
+namespace OpenLicenseApi.Middleware.Documentation
 {
     public static class OpenApiExtensions
     {
@@ -21,7 +21,7 @@ namespace OpenLicenseApi.Middleware
                         Type = SecuritySchemeType.Http,
                         Scheme = "bearer",
                         BearerFormat = "JWT",
-                        In = ParameterLocation.Header, // Wait, I need to check the correct constant
+                        In = ParameterLocation.Header,
                         Name = "Authorization",
                         Description = "Use: Bearer {seu_token_jwt}"
                     };

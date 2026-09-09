@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using OpenLicenseApi.Middleware;
+using OpenLicenseApi.Middleware.Auth;
 
-namespace OpenLicenseApi.Middleware
+namespace OpenLicenseApi.Middleware.Auth
 {
     public static class AuthExtensions
     {

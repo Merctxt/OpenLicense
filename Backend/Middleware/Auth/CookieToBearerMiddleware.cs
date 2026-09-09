@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace OpenLicenseApi.Middleware
+namespace OpenLicenseApi.Middleware.Auth
 {
     /// <summary>
     /// Reads the JWT from an HttpOnly cookie and injects it into the Authorization header.

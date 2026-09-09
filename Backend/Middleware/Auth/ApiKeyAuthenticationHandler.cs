@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using OpenLicenseApi.Data;
 
-namespace OpenLicenseApi.Middleware
+namespace OpenLicenseApi.Middleware.Auth
 {
     public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {

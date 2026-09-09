@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using OpenLicenseApi.Services;
 
-namespace OpenLicenseApi.Middleware
+namespace OpenLicenseApi.Middleware.Security
 {
     /// <summary>
     /// Middleware that applies rate limiting to /api/auth/login and /api/auth/register.

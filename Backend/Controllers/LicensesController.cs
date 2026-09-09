@@ -4,7 +4,7 @@ using OpenLicenseApi.DTOs;
 using OpenLicenseApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using OpenLicenseApi.Middleware;
+using OpenLicenseApi.Middleware.Auth;
 
 namespace OpenLicenseApi.Controllers
 {
