@@ -3,6 +3,7 @@ import { LogIn, Layers } from 'lucide-react'
 import useRegister from './useRegister'
 import PasswordValidation from '../../components/PasswordValidation'
 import Background from '../../components/Background/Background'
+import { Alert } from '../../components/Alert'
 
 export default function Register() {
   const {
@@ -12,6 +13,7 @@ export default function Register() {
     error, submitting,
     user, loading,
     allRulesPassed,
+    clearAlert,
     handleSubmit,
   } = useRegister()
 
@@ -37,7 +39,7 @@ export default function Register() {
             <h1 className="h4 fw-bold d-flex align-items-center gap-2"><Layers />OpenLicense</h1>
             <p className="text-body-secondary mb-0">Create your account</p>
           </div>
-          {error && <div className="alert alert-danger py-2">{error}</div>}
+          {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label">Name</label>

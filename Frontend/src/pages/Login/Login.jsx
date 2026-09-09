@@ -2,6 +2,7 @@ import { Link, Navigate } from 'react-router-dom'
 import { UserPlus, Layers } from 'lucide-react'
 import useLogin from './useLogin'
 import Background from '../../components/Background/Background'
+import { Alert } from '../../components/Alert'
 
 const registrationEnabled = import.meta.env.VITE_REGISTRATION_ENABLED !== 'false'
 
@@ -12,6 +13,7 @@ export default function Login() {
     error, success,
     submitting,
     user, loading,
+    clearAlert,
     handleSubmit,
   } = useLogin()
 
@@ -37,8 +39,8 @@ export default function Login() {
             <h1 className="h4 fw-bold d-flex align-items-center gap-2"><Layers />OpenLicense</h1>
             <p className="text-body-secondary mb-0">Sign in to your account</p>
           </div>
-          {success && <div className="alert alert-success py-2">{success}</div>}
-          {error && <div className="alert alert-danger py-2">{error}</div>}
+          {success && <Alert type="success" message={success} onDismiss={clearAlert} />}
+          {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label">Email</label>

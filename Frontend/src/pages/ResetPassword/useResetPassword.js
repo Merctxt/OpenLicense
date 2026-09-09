@@ -34,9 +34,11 @@ export default function useResetPassword() {
   const { allPassed: allRulesPassed } = validatePassword(password)
   const passwordsMatch = confirmPassword && password === confirmPassword
 
+  const clearAlert = () => setError('')
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
+    clearAlert()
     setSubmitting(true)
     try {
       await resetPassword({ email, token, password })
@@ -57,6 +59,7 @@ export default function useResetPassword() {
     allRulesPassed,
     passwordsMatch,
     user, loading,
+    clearAlert,
     handleSubmit,
   }
 }

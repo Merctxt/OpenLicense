@@ -20,10 +20,14 @@ export default function useLogin() {
     }
   }, [location, navigate])
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const clearAlert = () => {
     setError('')
     setSuccess('')
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    clearAlert()
     setSubmitting(true)
     try {
       const res = await login({ email, password })
@@ -42,6 +46,7 @@ export default function useLogin() {
     error, success,
     submitting,
     user, loading,
+    clearAlert,
     handleSubmit,
   }
 }

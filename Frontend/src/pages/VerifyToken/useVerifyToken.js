@@ -12,10 +12,14 @@ export default function useVerifyToken() {
 
   const email = location.state?.email || ''
 
-  const handleVerify = async (e) => {
-    e.preventDefault()
+  const clearAlert = () => {
     setError('')
     setSuccess('')
+  }
+
+  const handleVerify = async (e) => {
+    e.preventDefault()
+    clearAlert()
     setSubmitting(true)
     try {
       await verifyToken({ email, token })
@@ -35,6 +39,7 @@ export default function useVerifyToken() {
     token, setToken,
     error, success,
     submitting,
+    clearAlert,
     handleVerify,
   }
 }

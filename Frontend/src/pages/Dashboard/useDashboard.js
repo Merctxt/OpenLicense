@@ -9,6 +9,7 @@ export default function useDashboard() {
   const [licenseModal, setLicenseModal] = useState(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [info, setInfo] = useState('')
 
   // Activation panel state
   const [activeActivationLicense, setActiveActivationLicense] = useState(null)
@@ -22,7 +23,11 @@ export default function useDashboard() {
   const [licPage, setLicPage] = useState(1)
   const [licPageSize, setLicPageSize] = useState(5)
 
-  const clearMsg = () => { setError(''); setSuccess('') }
+  const clearAlert = () => {
+    setError('')
+    setSuccess('')
+    setInfo('')
+  }
 
   const load = useCallback(async () => {
     try {
@@ -39,7 +44,7 @@ export default function useDashboard() {
 
   const handleCreateProduct = async (e) => {
     e.preventDefault()
-    clearMsg()
+    clearAlert()
     const fd = new FormData(e.target)
     try {
       await createProduct({ name: fd.get('name'), description: fd.get('description') || undefined })
@@ -47,13 +52,18 @@ export default function useDashboard() {
       await load()
       setSuccess('Product created')
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create product')
+      const msg = err.response?.data?.message || 'Failed to create product'
+      if (msg.toLowerCase().includes('limit reached')) {
+        setInfo(msg)
+      } else {
+        setError(msg)
+      }
     }
   }
 
   const handleEditProduct = async (e) => {
     e.preventDefault()
-    clearMsg()
+    clearAlert()
     const fd = new FormData(e.target)
     try {
       await updateProduct({ productId: productModal.product.id, name: fd.get('name'), description: fd.get('description') || undefined })
@@ -67,7 +77,7 @@ export default function useDashboard() {
 
   const handleDeleteProduct = async (id) => {
     if (!confirm('Delete this product and all its licenses?')) return
-    clearMsg()
+    clearAlert()
     try {
       await deleteProduct({ productId: id })
       setExpandedId(null)
@@ -80,7 +90,7 @@ export default function useDashboard() {
 
   const handleCreateLicense = async (e) => {
     e.preventDefault()
-    clearMsg()
+    clearAlert()
     const fd = new FormData(e.target)
     try {
       const payload = {
@@ -100,7 +110,7 @@ export default function useDashboard() {
 
   const handleEditLicense = async (e) => {
     e.preventDefault()
-    clearMsg()
+    clearAlert()
     const fd = new FormData(e.target)
     try {
       const payload = { licenseId: licenseModal.license.id }
@@ -131,7 +141,7 @@ export default function useDashboard() {
 
   const handleDeleteLicense = async (id) => {
     if (!confirm('Delete this license?')) return
-    clearMsg()
+    clearAlert()
     try {
       await deleteLicense({ licenseId: id })
       setLicenseModal(null)
@@ -155,7 +165,7 @@ export default function useDashboard() {
       setActiveActivationLicense(null)
       return
     }
-    clearMsg()
+    clearAlert()
     setActiveActivationLicense(licenseId)
     setActivationsLoading(prev => ({ ...prev, [licenseId]: true }))
     setActivationsError(prev => ({ ...prev, [licenseId]: '' }))
@@ -171,7 +181,7 @@ export default function useDashboard() {
 
   const handleRemoveActivation = async (licenseKey, hardwareId, licenseId) => {
     if (!confirm(`Remove activation for hardware "${hardwareId}"?`)) return
-    clearMsg()
+    clearAlert()
     try {
       await deactivateLicense({ licenseKey, hardwareId })
       const res = await getLicenseActivations(licenseId)
@@ -187,13 +197,14 @@ export default function useDashboard() {
     expandedId,
     productModal, setProductModal,
     licenseModal, setLicenseModal,
-    error, success,
+    error, success, info,
     activeActivationLicense,
     activationsData, activationsLoading, activationsError,
     licSearch, setLicSearch,
     licStatusFilter, setLicStatusFilter,
     licPage, setLicPage,
     licPageSize, setLicPageSize,
+    clearAlert,
     handleCreateProduct,
     handleEditProduct,
     handleDeleteProduct,

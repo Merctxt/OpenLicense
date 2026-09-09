@@ -3,6 +3,7 @@ import { Lock } from 'lucide-react'
 import useResetPassword from './useResetPassword'
 import PasswordValidation from '../../components/PasswordValidation'
 import Background from '../../components/Background/Background'
+import { Alert } from '../../components/Alert'
 
 export default function ResetPassword() {
   const {
@@ -14,6 +15,7 @@ export default function ResetPassword() {
     allRulesPassed,
     passwordsMatch,
     user, loading,
+    clearAlert,
     handleSubmit,
   } = useResetPassword()
 
@@ -39,7 +41,7 @@ export default function ResetPassword() {
             <h1 className="h4 fw-bold d-flex align-items-center gap-2"><Lock />Reset Password</h1>
             <p className="text-body-secondary mb-0">Enter your new password</p>
           </div>
-          {error && <div className="alert alert-danger py-2">{error}</div>}
+          {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label">Email</label>

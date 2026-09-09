@@ -3,13 +3,14 @@ import Modal from '../../components/Modal'
 import { useTheme } from '../../context/ThemeContext'
 import useAccount from './useAccount'
 import PasswordValidation from '../../components/PasswordValidation'
+import { Alert } from '../../components/Alert'
 
 export default function Account() {
   const { theme, setTheme } = useTheme()
 
   const {
     user,
-    error, success,
+    error, success, info,
     apiKeyModal, setApiKeyModal,
     newKeyName, setNewKeyName,
     createdKey, setCreatedKey,
@@ -18,6 +19,7 @@ export default function Account() {
     email, setEmail,
     password, setPassword,
     pwAllPassed,
+    clearAlert,
     handleUpdateProfile,
     handleDeleteAccount,
     handleCreateApiKey,
@@ -32,8 +34,9 @@ export default function Account() {
     <div>
       <h1 className="h4 mb-3">Account</h1>
 
-      {error && <div className="alert alert-danger py-2">{error}</div>}
-      {success && <div className="alert alert-success py-2">{success}</div>}
+      {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
+      {info && <Alert type="info" message={info} onDismiss={clearAlert} />}
+      {success && <Alert type="success" message={success} onDismiss={clearAlert} />}
 
       <div className="card mb-3">
         <div className="card-header d-flex justify-content-between align-items-center">

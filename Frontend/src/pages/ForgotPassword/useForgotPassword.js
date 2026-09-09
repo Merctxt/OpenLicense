@@ -9,10 +9,14 @@ export default function useForgotPassword() {
   const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const clearAlert = () => {
     setError('')
     setSuccess('')
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    clearAlert()
     setSubmitting(true)
     try {
       await forgotPassword({ email })
@@ -28,6 +32,7 @@ export default function useForgotPassword() {
     email, setEmail,
     error, success,
     submitting,
+    clearAlert,
     handleSubmit,
   }
 }

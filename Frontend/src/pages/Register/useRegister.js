@@ -15,9 +15,11 @@ export default function useRegister() {
 
   const { allPassed: allRulesPassed } = validatePassword(password)
 
+  const clearAlert = () => setError('')
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
+    clearAlert()
     setSubmitting(true)
     try {
       await register({ name, email, password })
@@ -36,6 +38,7 @@ export default function useRegister() {
     error, submitting,
     user, loading,
     allRulesPassed,
+    clearAlert,
     handleSubmit,
   }
 }

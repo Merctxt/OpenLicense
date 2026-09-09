@@ -1,6 +1,7 @@
 import { useCallback, Fragment } from 'react'
 import Modal from '../../components/Modal'
 import useDashboard from './useDashboard'
+import { Alert } from '../../components/Alert'
 
 export default function Dashboard() {
   const {
@@ -8,13 +9,14 @@ export default function Dashboard() {
     expandedId,
     productModal, setProductModal,
     licenseModal, setLicenseModal,
-    error, success,
+    error, success, info,
     activeActivationLicense,
     activationsData, activationsLoading, activationsError,
     licSearch, setLicSearch,
     licStatusFilter, setLicStatusFilter,
     licPage, setLicPage,
     licPageSize, setLicPageSize,
+    clearAlert,
     handleCreateProduct,
     handleEditProduct,
     handleDeleteProduct,
@@ -46,8 +48,9 @@ export default function Dashboard() {
         <button className="btn btn-primary btn-sm" onClick={() => setProductModal({ mode: 'create' })}>+ New Product</button>
       </div>
 
-      {error && <div className="alert alert-danger py-2">{error}</div>}
-      {success && <div className="alert alert-success py-2">{success}</div>}
+      {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
+      {info && <Alert type="info" message={info} onDismiss={clearAlert} />}
+      {success && <Alert type="success" message={success} onDismiss={clearAlert} />}
 
       {products.length === 0 ? (
         <div className="card text-center">

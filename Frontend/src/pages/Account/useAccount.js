@@ -9,6 +9,7 @@ export default function useAccount() {
   const navigate = useNavigate()
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [info, setInfo] = useState('')
   const [apiKeyModal, setApiKeyModal] = useState(false)
   const [newKeyName, setNewKeyName] = useState('')
   const [createdKey, setCreatedKey] = useState('')
@@ -19,24 +20,33 @@ export default function useAccount() {
 
   const { allPassed: pwAllPassed } = validatePassword(password)
 
-  const clearMsg = () => { setError(''); setSuccess('') }
+  const clearAlert = () => {
+    setError('')
+    setSuccess('')
+    setInfo('')
+  }
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault()
-    clearMsg()
+    clearAlert()
     try {
       await updateAccount({ name, email, password: password || undefined })
       await loadUser()
       setEditing(false)
       setSuccess('Profile updated')
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update profile')
+      const msg = err.response?.data?.message || 'Failed to update profile'
+      if (msg.toLowerCase().includes('email change') || msg.toLowerCase().includes('maximum')) {
+        setInfo(msg)
+      } else {
+        setError(msg)
+      }
     }
   }
 
   const handleDeleteAccount = async () => {
     if (!confirm('Are you sure? This will permanently delete your account, all products, and licenses.')) return
-    clearMsg()
+    clearAlert()
     try {
       await deleteAccount()
       logout()
@@ -48,19 +58,24 @@ export default function useAccount() {
 
   const handleCreateApiKey = async (e) => {
     e.preventDefault()
-    clearMsg()
+    clearAlert()
     try {
       const res = await createApiKey({ name: newKeyName })
       setCreatedKey(res.data.apiKey)
       await loadUser()
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create API key')
+      const msg = err.response?.data?.message || 'Failed to create API key'
+      if (msg.toLowerCase().includes('limit reached')) {
+        setInfo(msg)
+      } else {
+        setError(msg)
+      }
     }
   }
 
   const handleDeleteApiKey = async (id) => {
     if (!confirm('Delete this API key?')) return
-    clearMsg()
+    clearAlert()
     try {
       await deleteApiKey({ apiKeyId: id })
       await loadUser()
@@ -72,7 +87,7 @@ export default function useAccount() {
 
   return {
     user,
-    error, success,
+    error, success, info,
     apiKeyModal, setApiKeyModal,
     newKeyName, setNewKeyName,
     createdKey, setCreatedKey,
@@ -81,6 +96,7 @@ export default function useAccount() {
     email, setEmail,
     password, setPassword,
     pwAllPassed,
+    clearAlert,
     handleUpdateProfile,
     handleDeleteAccount,
     handleCreateApiKey,
