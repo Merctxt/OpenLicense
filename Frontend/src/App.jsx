@@ -1,50 +1,14 @@
-import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
-import UseTitle from './hooks/UseTitle'
-import Layout from './components/Layout'
-import ProtectedRoute from './components/ProtectedRoute'
-import Login from './pages/Login/Login'
-import Register from './pages/Register/Register'
-import ForgotPassword from './pages/ForgotPassword/ForgotPassword'
-import VerifyToken from './pages/VerifyToken/VerifyToken'
-import ResetPassword from './pages/ResetPassword/ResetPassword'
-import Products from './pages/Products/Products'
-import Licenses from './pages/Licenses/Licenses'
-import Activations from './pages/Activations/Activations'
-import Account from './pages/Account/Account'
-import Terms from './pages/Terms/Terms'
-
-const registrationEnabled = import.meta.env.VITE_REGISTRATION_ENABLED !== 'false'
-
-const Metrics = lazy(() => import('./pages/Metrics/Metrics'))
+import { BrowserRouter } from 'react-router-dom'
+import { AuthProvider } from './shared/context/AuthContext'
+import UseTitle from './shared/hooks/UseTitle'
+import Router from './router'
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <UseTitle />
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          {registrationEnabled && <Route path="/register" element={<Register />} />}
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/verify-token" element={<VerifyToken />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route element={<Layout />}>
-            <Route path="/" element={<Navigate to="/products" replace />} />
-            <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
-            <Route path="/licenses" element={<ProtectedRoute><Licenses /></ProtectedRoute>} />
-            <Route path="/activations" element={<ProtectedRoute><Activations /></ProtectedRoute>} />
-            <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-            <Route path="/metrics" element={
-              <Suspense fallback={<div className="text-center p-5 text-body-secondary">Loading metrics...</div>}>
-                <ProtectedRoute><Metrics /></ProtectedRoute>
-              </Suspense>
-            } />
-            <Route path="/terms" element={<Terms />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/products" replace />} />
-        </Routes>
+        <Router />
       </BrowserRouter>
     </AuthProvider>
   )
