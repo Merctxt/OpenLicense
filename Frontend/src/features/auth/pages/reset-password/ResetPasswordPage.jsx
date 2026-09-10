@@ -1,9 +1,9 @@
 import { Navigate } from 'react-router-dom'
 import { Lock } from 'lucide-react'
 import useResetPassword from './useResetPassword'
-import PasswordValidation from '../../../shared/components/PasswordValidation/PasswordValidation'
-import Background from '../../../shared/components/Background/Background'
-import { Alert } from '../../../shared/components/Alert'
+import PasswordValidation from '../../../../shared/components/PasswordValidation/PasswordValidation'
+import Background from '../../../../shared/components/Background/Background'
+import { Alert } from '../../../../shared/components/Alert'
 
 export default function ResetPassword() {
   const {

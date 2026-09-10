@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { KeyRound } from 'lucide-react'
 import useForgotPassword from './useForgotPassword'
-import Background from '../../../shared/components/Background/Background'
-import { Alert } from '../../../shared/components/Alert'
+import Background from '../../../../shared/components/Background/Background'
+import { Alert } from '../../../../shared/components/Alert'
 
 export default function ForgotPassword() {
   const {

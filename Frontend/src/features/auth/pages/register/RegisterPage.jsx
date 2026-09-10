@@ -1,9 +1,9 @@
 import { Link, Navigate } from 'react-router-dom'
 import { LogIn, Layers } from 'lucide-react'
 import useRegister from './useRegister'
-import PasswordValidation from '../../../shared/components/PasswordValidation/PasswordValidation'
-import Background from '../../../shared/components/Background/Background'
-import { Alert } from '../../../shared/components/Alert'
+import PasswordValidation from '../../../../shared/components/PasswordValidation/PasswordValidation'
+import Background from '../../../../shared/components/Background/Background'
+import { Alert } from '../../../../shared/components/Alert'
 
 export default function Register() {
   const {

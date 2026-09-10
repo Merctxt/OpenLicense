@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { forgotPassword } from '../../../shared/api/endpoints'
+import { forgotPassword } from '../../../../shared/api/endpoints'
 
 export default function useForgotPassword() {
   const [email, setEmail] = useState('')

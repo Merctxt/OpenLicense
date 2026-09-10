@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { login, getMe } from '../../../shared/api/endpoints'
-import { useAuth } from '../../../shared/context/AuthContext'
+import { login, getMe } from '../../../../shared/api/endpoints'
+import { useAuth } from '../../../../shared/context/AuthContext'
 
 export default function useLogin() {
   const [email, setEmail] = useState('')

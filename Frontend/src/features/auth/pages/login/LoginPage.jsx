@@ -1,8 +1,8 @@
 import { Link, Navigate } from 'react-router-dom'
 import { UserPlus, Layers } from 'lucide-react'
 import useLogin from './useLogin'
-import Background from '../../../shared/components/Background/Background'
-import { Alert } from '../../../shared/components/Alert'
+import Background from '../../../../shared/components/Background/Background'
+import { Alert } from '../../../../shared/components/Alert'
 
 const registrationEnabled = import.meta.env.VITE_REGISTRATION_ENABLED !== 'false'
 

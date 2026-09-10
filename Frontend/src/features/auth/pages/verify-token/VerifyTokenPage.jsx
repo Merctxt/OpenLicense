@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CheckCircle, AlertTriangle } from 'lucide-react'
 import useVerifyToken from './useVerifyToken'
-import Background from '../../../shared/components/Background/Background'
-import { Alert } from '../../../shared/components/Alert'
+import Background from '../../../../shared/components/Background/Background'
+import { Alert } from '../../../../shared/components/Alert'
 
 export default function VerifyToken() {
   const {

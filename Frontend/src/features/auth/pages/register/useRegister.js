@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { register } from '../../../shared/api/endpoints'
-import { useAuth } from '../../../shared/context/AuthContext'
-import { validatePassword } from '../../../shared/components/PasswordValidation/PasswordValidation'
+import { register } from '../../../../shared/api/endpoints'
+import { useAuth } from '../../../../shared/context/AuthContext'
+import { validatePassword } from '../../../../shared/components/PasswordValidation/PasswordValidation'
 
 export default function useRegister() {
   const [name, setName] = useState('')

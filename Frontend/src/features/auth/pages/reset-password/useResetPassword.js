@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { resetPassword } from '../../../shared/api/endpoints'
-import { useAuth } from '../../../shared/context/AuthContext'
-import { validatePassword } from '../../../shared/components/PasswordValidation/PasswordValidation'
+import { resetPassword } from '../../../../shared/api/endpoints'
+import { useAuth } from '../../../../shared/context/AuthContext'
+import { validatePassword } from '../../../../shared/components/PasswordValidation/PasswordValidation'
 
 export default function useResetPassword() {
   const [password, setPassword] = useState('')
