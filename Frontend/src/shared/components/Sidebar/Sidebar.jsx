@@ -5,6 +5,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Code2,
+  HardDrive,
   Layers,
   LogOut,
   Menu,
@@ -23,7 +24,7 @@ const sourceUrl = import.meta.env.VITE_SOURCE_URL
 const sidebarLinks = [
   { to: '/products', label: 'Products', icon: Package },
   { to: '/licenses', label: 'Licenses', icon: Star },
-  { to: '/activations', label: 'Activations', icon: Activity },
+  { to: '/activations', label: 'Activations', icon: HardDrive },
   { to: '/account', label: 'Account', icon: User },
   { href: import.meta.env.VITE_STATUS_URL, label: 'Status', icon: Activity, external: true },
   { href: sourceUrl, label: 'Docs', icon: Code2, external: true },
