@@ -9,7 +9,9 @@ import Register from './pages/Register/Register'
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword'
 import VerifyToken from './pages/VerifyToken/VerifyToken'
 import ResetPassword from './pages/ResetPassword/ResetPassword'
-import Dashboard from './pages/Dashboard/Dashboard'
+import Products from './pages/Products/Products'
+import Licenses from './pages/Licenses/Licenses'
+import Activations from './pages/Activations/Activations'
 import Account from './pages/Account/Account'
 import Terms from './pages/Terms/Terms'
 
@@ -29,7 +31,10 @@ export default function App() {
           <Route path="/verify-token" element={<VerifyToken />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route element={<Layout />}>
-            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/" element={<Navigate to="/products" replace />} />
+            <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
+            <Route path="/licenses" element={<ProtectedRoute><Licenses /></ProtectedRoute>} />
+            <Route path="/activations" element={<ProtectedRoute><Activations /></ProtectedRoute>} />
             <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
             <Route path="/metrics" element={
               <Suspense fallback={<div className="text-center p-5 text-body-secondary">Loading metrics...</div>}>
@@ -38,7 +43,7 @@ export default function App() {
             } />
             <Route path="/terms" element={<Terms />} />
           </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/products" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

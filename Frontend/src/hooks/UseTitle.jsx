@@ -2,7 +2,9 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
 const titleMap = {
-  '/': 'OpenLicense - Dashboard',
+  '/products': 'OpenLicense - Products',
+  '/licenses': 'OpenLicense - Licenses',
+  '/activations': 'OpenLicense - Activations',
   '/login': 'OpenLicense - Login',
   '/register': 'OpenLicense - Register',
   '/forgot-password': 'OpenLicense - Forgot Password',
