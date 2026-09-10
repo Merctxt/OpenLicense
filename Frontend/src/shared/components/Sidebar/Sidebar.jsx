@@ -6,7 +6,6 @@ import {
   ChevronRight,
   Code2,
   HardDrive,
-  Layers,
   LogOut,
   Menu,
   Package,
@@ -217,7 +216,7 @@ export default function Sidebar({ children }) {
         >
           <div className="d-flex align-items-center justify-content-between p-3 border-bottom" style={{ height: '56px', minHeight: '56px' }}>
             <Link to="/" className="text-decoration-none text-body fw-bold d-flex align-items-center gap-2" style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
-              <Layers size={20} />
+              <img src="/favicon.svg" alt="" style={{ height: '20px' }} />
               {!collapsed && <span>OpenLicense</span>}
             </Link>
 
@@ -254,7 +253,7 @@ export default function Sidebar({ children }) {
           {isMobile && (
             <div className="d-flex align-items-center justify-content-between p-3 border-bottom" style={{ height: '56px', minHeight: '56px', backgroundColor: 'var(--bs-body-bg)' }}>
               <Link to="/" className="text-decoration-none text-body fw-bold d-flex align-items-center gap-2">
-                <Layers size={18} /> OpenLicense
+                <img src="/favicon.svg" alt="" style={{ height: '18px' }} /> OpenLicense
               </Link>
               <button type="button" className="btn btn-link text-body p-0 border-0" onClick={() => setMobileOpen((previous) => !previous)} aria-label={mobileOpen ? 'Close menu' : 'Open menu'}>
                 {mobileOpen ? <X size={22} /> : <Menu size={22} />}

@@ -1,5 +1,5 @@
 import { Link, Navigate } from 'react-router-dom'
-import { UserPlus, Layers } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import useLogin from './useLogin'
 import Background from '../../../../shared/components/Background/Background'
 import { Alert } from '../../../../shared/components/Alert'
@@ -36,7 +36,7 @@ export default function Login() {
       <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
         <div className="card-body p-4">
           <div className="d-flex flex-column justify-content-center align-items-center mb-4">
-            <h1 className="h4 fw-bold d-flex align-items-center gap-2"><Layers />OpenLicense</h1>
+            <h1 className="h4 fw-bold d-flex align-items-center gap-2"><img src="/favicon.svg" alt="" style={{ height: '24px' }} />OpenLicense</h1>
             <p className="text-body-secondary mb-0">Sign in to your account</p>
           </div>
           {success && <Alert type="success" message={success} onDismiss={clearAlert} />}
