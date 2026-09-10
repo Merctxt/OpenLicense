@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   Activity,
-  ChevronLeft,
-  ChevronRight,
   Code2,
   HardDrive,
   LogOut,
@@ -24,20 +22,22 @@ const sidebarLinks = [
   { to: '/products', label: 'Products', icon: Package },
   { to: '/licenses', label: 'Licenses', icon: Star },
   { to: '/activations', label: 'Activations', icon: HardDrive },
-  { to: '/account', label: 'Account', icon: User },
   { href: import.meta.env.VITE_STATUS_URL, label: 'Status', icon: Activity, external: true },
   { href: sourceUrl, label: 'Docs', icon: Code2, external: true },
   { href: `${import.meta.env.VITE_API_URL}/scalar/v1`, label: 'API', icon: Zap, external: true },
 ]
 
-function SidebarItem({ link, collapsed, active, onNavigate }) {
+function MenuItem({ link, isActive, onNavigate }) {
   const Icon = link.icon
+
   const content = (
     <>
-      <Icon size={18} className="flex-shrink-0" />
-      {!collapsed && <span className="text-truncate">{link.label}</span>}
+      <Icon className="me-2" size={16} />
+      <span>{link.label}</span>
     </>
   )
+
+  const className = `nav-link ${isActive ? 'active link-light' : 'link-body-emphasis'}`
 
   if (link.external) {
     return (
@@ -46,11 +46,8 @@ function SidebarItem({ link, collapsed, active, onNavigate }) {
         href={link.href}
         target="_blank"
         rel="noopener noreferrer"
-        className={`d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none mb-1 ${
-          active ? 'text-bg-primary' : 'text-body-secondary'
-        }`}
-        style={{ fontSize: '0.875rem' }}
-        title={collapsed ? link.label : undefined}
+        className={className}
+        aria-current={isActive ? 'page' : undefined}
       >
         {content}
       </a>
@@ -62,18 +59,15 @@ function SidebarItem({ link, collapsed, active, onNavigate }) {
       key={link.to}
       to={link.to}
       onClick={onNavigate}
-      className={`d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none mb-1 ${
-        active ? 'text-bg-primary' : 'text-body-secondary'
-      }`}
-      style={{ fontSize: '0.875rem' }}
-      title={collapsed ? link.label : undefined}
+      className={className}
+      aria-current={isActive ? 'page' : undefined}
     >
       {content}
     </Link>
   )
 }
 
-function UserMenu({ user, collapsed, onLogout }) {
+function UserMenu({ user, onLogout }) {
   const [open, setOpen] = useState(false)
   const buttonRef = useRef(null)
   const menuRef = useRef(null)
@@ -95,67 +89,51 @@ function UserMenu({ user, collapsed, onLogout }) {
   }, [open])
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div className="dropdown" style={{ position: 'relative' }}>
       <button
         ref={buttonRef}
         type="button"
-        onClick={() => setOpen((previous) => !previous)}
+        className="dropdown-toggle link-body-emphasis d-flex align-items-center text-decoration-none w-100 border-0 bg-transparent px-0 text-start"
+        data-bs-toggle="dropdown"
         aria-expanded={open}
-        className="d-flex align-items-center gap-2 w-100 text-decoration-none text-body p-3 border-top"
+        onClick={() => setOpen((previous) => !previous)}
         style={{
-          fontSize: '0.875rem',
-          textAlign: 'left',
-          backgroundColor: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
+          fontWeight: 600,
+          padding: '0.5rem 0',
+          outline: 'none',
         }}
       >
-        <User size={18} className="flex-shrink-0" />
-        {!collapsed && (
-          <span className="text-truncate d-inline-block" style={{ maxWidth: '140px' }}>
-            {user.name || user.email || 'Account'}
-          </span>
-        )}
-        {!collapsed && (
-          <ChevronRight
-            size={14}
-            style={{
-              transition: 'transform 0.2s ease',
-              transform: open ? 'rotate(90deg)' : 'none',
-              marginLeft: 'auto',
-            }}
-          />
-        )}
+        <div className="d-flex align-items-center justify-content-center rounded-circle bg-body-tertiary me-2" style={{ width: '32px', height: '32px' }}>
+          <User size={18} />
+        </div>
+        <strong>{user.name || user.email || 'User'}</strong>
       </button>
 
       {open && (
         <div
           ref={menuRef}
-          className="position-absolute shadow-sm"
+          className="dropdown-menu show shadow"
           style={{
-            left: 'calc(100% + 10px)',
-            bottom: '8px',
-            zIndex: 1050,
+            left: '0',
+            bottom: '100%',
+            marginBottom: '0.5rem',
             minWidth: '220px',
-            backgroundColor: 'var(--bs-body-bg)',
-            border: '1px solid var(--bs-border-color)',
-            borderRadius: '0.75rem',
-            overflow: 'hidden',
+            zIndex: 1050,
           }}
         >
-          <div className="px-3 py-2 text-body-secondary small" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div className="dropdown-item-text text-body-secondary small" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {user.email}
           </div>
-
-          <Link to="/account" className="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-body" onClick={() => setOpen(false)}>
-            <User size={16} /> Account
+          <Link className="dropdown-item" to="/account" onClick={() => setOpen(false)}>
+            Profile
           </Link>
-
-          <hr className="dropdown-divider my-1" />
-
+          <Link className="dropdown-item" to="/account" onClick={() => setOpen(false)}>
+            Settings
+          </Link>
+          <div className="dropdown-divider" />
           <button
             type="button"
-            className="d-flex align-items-center gap-2 px-3 py-2 text-danger border-0 bg-transparent w-100 text-start"
+            className="dropdown-item text-danger"
             onClick={async () => {
               setOpen(false)
               try {
@@ -166,7 +144,7 @@ function UserMenu({ user, collapsed, onLogout }) {
               onLogout()
             }}
           >
-            <LogOut size={16} /> Logout
+            Sign out
           </button>
         </div>
       )}
@@ -177,7 +155,6 @@ function UserMenu({ user, collapsed, onLogout }) {
 export default function Sidebar({ children }) {
   const { user, logout: authLogout } = useAuth()
   const location = useLocation()
-  const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
 
@@ -189,71 +166,73 @@ export default function Sidebar({ children }) {
 
   useEffect(() => {
     setMobileOpen(false)
-    setCollapsed(false)
   }, [location.pathname])
 
-  const sidebarWidth = collapsed ? 64 : 240
+  const asideStyle = {
+    position: isMobile ? 'fixed' : 'sticky',
+    top: 0,
+    left: 0,
+    height: '100vh',
+    width: isMobile ? '85%' : '20%',
+    maxWidth: isMobile ? '300px' : '260px',
+    minWidth: isMobile ? '220px' : '220px',
+    zIndex: 1040,
+    transform: isMobile && !mobileOpen ? 'translateX(-100%)' : 'none',
+    transition: 'transform 0.2s ease',
+    borderRight: '1px solid var(--bs-border-color)',
+    backgroundColor: 'var(--bs-body-bg)',
+    flexShrink: 0,
+  }
 
   return (
     <Background>
       <div className="d-flex" style={{ minHeight: '100vh' }}>
-        <aside
-          className="d-flex flex-column"
-          style={{
-            position: isMobile ? 'fixed' : 'sticky',
-            top: 0,
-            left: 0,
-            height: '100vh',
-            zIndex: 1040,
-            transition: 'transform 0.2s ease, width 0.2s ease',
-            width: sidebarWidth,
-            transform: isMobile && !mobileOpen ? `translateX(-${sidebarWidth}px)` : 'none',
-            overflow: 'visible',
-            backgroundColor: 'var(--bs-body-bg)',
-            borderRight: isMobile ? '1px solid var(--bs-border-color)' : 'none',
-            flexShrink: 0,
-          }}
-        >
-          <div className="d-flex align-items-center justify-content-between p-3 border-bottom" style={{ height: '56px', minHeight: '56px' }}>
-            <Link to="/" className="text-decoration-none text-body fw-bold d-flex align-items-center gap-2" style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
-              <img src="/favicon.svg" alt="" style={{ height: '20px' }} />
-              {!collapsed && <span>OpenLicense</span>}
+        <aside className="d-flex flex-column" style={asideStyle}>
+          <div className="d-flex align-items-center justify-content-between px-3 pt-3 pb-2">
+            <Link to="/" className="link-body-emphasis d-flex align-items-center me-md-auto text-decoration-none">
+              <img src="/favicon.svg" alt="OpenLicense logo" style={{ width: '24px', height: '24px', marginRight: '0.75rem' }} />
+              <span className="fs-4">OpenLicense</span>
             </Link>
 
-            {isMobile ? (
-              <button type="button" className="btn btn-link text-body p-0 border-0" onClick={() => setMobileOpen(false)} aria-label="Close menu">
-                <X size={20} />
-              </button>
-            ) : (
-              <button type="button" className="btn btn-link text-body p-0 border-0" onClick={() => setCollapsed((previous) => !previous)} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
-                {collapsed ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-              </button>
+            {isMobile && (
+              <button type="button" className="btn-close" aria-label="Close" onClick={() => setMobileOpen(false)} />
             )}
           </div>
 
-          <nav className="flex-grow-1 p-2 overflow-auto">
-            {user &&
-              sidebarLinks.map((link) => (
-                <SidebarItem
-                  key={link.label || link.to}
-                  link={link}
-                  collapsed={collapsed}
-                  active={link.external ? false : location.pathname === link.to}
-                  onNavigate={() => setMobileOpen(false)}
-                />
-              ))}
-          </nav>
+          <div className="d-flex flex-column justify-content-between pt-0 px-3 flex-grow-1">
+            <div>
+              <hr className="mt-0" />
+              <ul className="nav nav-pills flex-column mb-auto">
+                {user &&
+                  sidebarLinks.map((link) => (
+                    <li key={link.label || link.to} className="nav-item">
+                      <MenuItem
+                        link={link}
+                        isActive={link.external ? false : location.pathname === link.to}
+                        onNavigate={() => setMobileOpen(false)}
+                      />
+                    </li>
+                  ))}
+              </ul>
+            </div>
 
-          {user && <UserMenu user={user} collapsed={collapsed} onLogout={() => { authLogout(); window.location.href = '/login' }} />}
+            <div className="pb-3">
+              <hr />
+              {user && <UserMenu user={user} onLogout={() => { authLogout(); window.location.href = '/login' }} />}
+            </div>
+          </div>
         </aside>
 
-        {isMobile && mobileOpen && <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50" style={{ zIndex: 1035 }} onClick={() => setMobileOpen(false)} />}
+        {isMobile && mobileOpen && (
+          <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50" style={{ zIndex: 1035 }} onClick={() => setMobileOpen(false)} />
+        )}
 
         <div className="flex-grow-1 d-flex flex-column" style={{ minWidth: 0 }}>
           {isMobile && (
-            <div className="d-flex align-items-center justify-content-between p-3 border-bottom" style={{ height: '56px', minHeight: '56px', backgroundColor: 'var(--bs-body-bg)' }}>
+            <div className="d-flex align-items-center justify-content-between p-3 border-bottom bg-body" style={{ height: '56px', minHeight: '56px' }}>
               <Link to="/" className="text-decoration-none text-body fw-bold d-flex align-items-center gap-2">
-                <img src="/favicon.svg" alt="" style={{ height: '18px' }} /> OpenLicense
+                <img src="/favicon.svg" alt="OpenLicense" style={{ height: '18px' }} />
+                OpenLicense
               </Link>
               <button type="button" className="btn btn-link text-body p-0 border-0" onClick={() => setMobileOpen((previous) => !previous)} aria-label={mobileOpen ? 'Close menu' : 'Open menu'}>
                 {mobileOpen ? <X size={22} /> : <Menu size={22} />}
@@ -261,23 +240,7 @@ export default function Sidebar({ children }) {
             </div>
           )}
 
-          {!isMobile && (
-            <>
-              {!collapsed && (
-                <button type="button" className="btn btn-link text-body d-none d-md-block position-fixed" style={{ left: `${sidebarWidth}px`, top: '64px', zIndex: 1030, transform: 'translateX(-100%)', padding: '0.25rem' }} onClick={() => setCollapsed(true)} title="Collapse sidebar" aria-label="Collapse sidebar">
-                  <ChevronRight size={20} />
-                </button>
-              )}
-
-              {collapsed && (
-                <button type="button" className="btn btn-link text-body d-none d-md-block position-fixed" style={{ left: `${sidebarWidth}px`, top: '64px', zIndex: 1030, transform: 'translateX(-100%)', padding: '0.25rem' }} onClick={() => setCollapsed(false)} title="Expand sidebar" aria-label="Expand sidebar">
-                  <ChevronLeft size={20} />
-                </button>
-              )}
-            </>
-          )}
-
-          <main className="flex-grow-1 py-4" style={{ maxWidth: '1100px', width: '100%', margin: '0 auto', padding: '1rem' }}>
+          <main className="flex-grow-1 px-3 px-md-4 py-4" style={{ width: '100%', margin: '0 auto', maxWidth: '1100px' }}>
             {children}
           </main>
         </div>
