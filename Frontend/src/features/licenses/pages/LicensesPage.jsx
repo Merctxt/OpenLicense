@@ -113,7 +113,7 @@ export default function Licenses() {
                     <tr>
                       <td>{lic.productName}</td>
                       <td>{lic.name}</td>
-                      <td><code className="font-mono small bg-body-tertiary px-2 py-1 rounded border text-break">{lic.licenseKey}</code></td>
+                      <td><code className="font-mono small bg-body-tertiary px-2 py-1 rounded border text-nowrap" style={{ whiteSpace: 'nowrap' }}>{lic.licenseKey}</code></td>
                       <td>
                         {lic.status ? (
                           <span className="badge bg-success-subtle text-success-emphasis border border-success-subtle">Active</span>
