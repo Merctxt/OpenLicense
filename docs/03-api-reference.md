@@ -371,6 +371,38 @@ Reset password with verified token.
 }
 ```
 
+---
+
+### PUT `/api/auth/report-preferences`
+
+Update email report opt-in preference. User will receive periodic license status reports if opted in.
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Body:**
+```json
+{
+  "reportsOptIn": true
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "reportsOptIn": true
+}
+```
+
+**Error Response (401):**
+```json
+{
+  "message": "Invalid credentials."
+}
+```
+
 ## Products Endpoints
 
 ### GET `/api/products/all`
@@ -904,6 +936,7 @@ Characters: A-Z, 0-9 only (uppercase).
   "isSuspended": false,
   "productLimit": 3,
   "licenseLimit": 450,
+  "reportsOptIn": true,
   "apiKeys": []
 }
 ```

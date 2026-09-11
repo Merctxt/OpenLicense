@@ -38,6 +38,7 @@ The API includes native OpenTelemetry support for exporting traces, metrics, and
 - API key issuance and control
 - Customer activation flows
 - Email-based recovery and account protections
+- Scheduled license status reports (opt-in, background service)
 - Observability via OpenTelemetry / OTLP
 - Containerized deployment with Docker Compose
 

@@ -81,6 +81,7 @@ Base path: `/api/auth`
 | POST | `/api/auth/forgot-password` | None | Request password recovery |
 | POST | `/api/auth/reset-password/verify` | None | Validate reset token |
 | POST | `/api/auth/reset-password` | None | Reset password |
+| PUT | `/api/auth/report-preferences` | JWT | Update email report opt-in preference |
 
 ### ProductsController
 
@@ -142,6 +143,22 @@ Responsible for:
 
 Sends password recovery e-mails through SMTP.
 
+### ReportService
+
+Generates license status reports for opted-in users. Called by the background service.
+
+- Eagerly loads `User -> Products -> Licenses -> Activations`
+- Computes per-product summaries and counts
+- Collects expiring and expired licenses
+- Returns a `ReportDataDto` with all report data
+
+### ReportEmailBackgroundService
+
+A .NET `BackgroundService` that runs on a configurable interval to send report emails to opted-in users.
+
+- Registered in `Program.cs` via `AddHostedService<ReportEmailBackgroundService>()`
+- Uses `PeriodicTimer` with `IServiceScopeFactory` for DI scope per execution
+
 ### RateLimiterService
 
 Implements in-memory rate limiting to avoid abuse of authentication and password reset endpoints.
@@ -196,6 +213,11 @@ These variables are read directly by ASP.NET Core and used by the OpenTelemetry 
     "Username": "...",
     "Password": "...",
     "From": "noreply@example.com"
+  },
+  "ReportSettings": {
+    "IntervalMinutes": 4320,
+    "ExpiryWarningDays": 7,
+    "Enabled": true
   },
   "OTEL_EXPORTER_OTLP_ENDPOINT": "https://.../api/default",
   "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Basic ..."
