@@ -23,6 +23,10 @@ services:
       - Email__Password=${Email__Password}
       - Email__From=${Email__From}
 
+      - ReportSettings__IntervalMinutes=${ReportSettings__IntervalMinutes:-4320}
+      - ReportSettings__ExpiryWarningDays=${ReportSettings__ExpiryWarningDays:-7}
+      - ReportSettings__Enabled=${ReportSettings__Enabled:-true}
+
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-}
       - OTEL_EXPORTER_OTLP_HEADERS=${OTEL_EXPORTER_OTLP_HEADERS:-}
     ports:

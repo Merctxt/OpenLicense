@@ -7,6 +7,7 @@ using OpenLicenseApi.Middleware.ErrorHandling;
 using OpenLicenseApi.Middleware.Security;
 using OpenLicenseApi.Middleware.Documentation;
 using OpenLicenseApi.Middleware.Observability;
+using OpenLicenseApi.Middleware.Reports;
 using DotNetEnv;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Text.Json.Serialization;
@@ -56,6 +57,10 @@ namespace OpenLicenseApi
             builder.Services.AddSingleton<IRateLimiterService, RateLimiterService>();
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
             builder.Services.AddScoped<IEmailService, EmailService>();
+
+            builder.Services.Configure<ReportSettings>(builder.Configuration.GetSection("ReportSettings"));
+            builder.Services.AddScoped<IReportService, ReportService>();
+            builder.Services.AddHostedService<ReportEmailBackgroundService>();
 
             var app = builder.Build();
 
