@@ -88,28 +88,32 @@ export function LicenseDetailsModal({ license, onClose }) {
         <EmptyState title="No activations yet" description="Activations will appear here when users activate this license." />
       ) : (
         <div className="table-responsive custom-scrollbar" style={{ maxHeight: '350px', overflowY: 'auto' }}>
-          <table className="table-shadcn mb-0">
+          <table className="table-shadcn mb-0" style={{ minWidth: '760px' }}>
             <thead className="sticky-top" style={{ background: 'var(--bs-body-bg)' }}>
               <tr>
-                <th>Activated At</th>
-                <th>Last Seen</th>
-                <th>Status</th>
-                <th>Hardware ID</th>
-                <th className="text-end">Actions</th>
+                <th style={{ width: '22%' }}>Activated At</th>
+                <th style={{ width: '22%' }}>Last Seen</th>
+                <th style={{ width: '12%' }}>Status</th>
+                <th style={{ width: '26%' }}>Hardware ID</th>
+                <th className="text-end" style={{ width: '18%' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {activations.map((act) => (
                 <tr key={act.id}>
-                  <td className="text-body-secondary">{new Date(act.activatedAt).toLocaleString()}</td>
-                  <td className="text-body-secondary">{act.lastSeenAt ? new Date(act.lastSeenAt).toLocaleString() : '-'}</td>
-                  <td>
+                  <td className="text-body-secondary align-middle" style={{ whiteSpace: 'nowrap', lineHeight: '1.4' }}>{new Date(act.activatedAt).toLocaleString()}</td>
+                  <td className="text-body-secondary align-middle" style={{ whiteSpace: 'nowrap', lineHeight: '1.4' }}>{act.lastSeenAt ? new Date(act.lastSeenAt).toLocaleString() : '-'}</td>
+                  <td className="align-middle">
                     <span className="badge bg-success-subtle text-success-emphasis border border-success-subtle">
                       {act.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td><code className="mono">{act.hardwareId}</code></td>
-                  <td className="text-end">
+                  <td className="align-middle" style={{ maxWidth: '220px' }}>
+                    <code className="mono d-block text-truncate" title={act.hardwareId} style={{ maxWidth: '100%' }}>
+                      {act.hardwareId}
+                    </code>
+                  </td>
+                  <td className="text-end align-middle">
                     <button
                       className="btn btn-sm btn-shadcn-destructive p-0"
                       style={{ minWidth: 'auto', padding: '0.35rem 0.5rem' }}
