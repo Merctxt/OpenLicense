@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../../../shared/context/AuthContext'
 import { useAlert } from '../../../shared/context/AlertContext'
-import { updateAccount, deleteAccount, createApiKey, deleteApiKey } from '../../../shared/api/endpoints'
+import { updateAccount, deleteAccount, createApiKey, deleteApiKey, updateReportPreferences } from '../../../shared/api/endpoints'
 import { useNavigate } from 'react-router-dom'
 import { validatePassword } from '../../../shared/components/PasswordValidation/PasswordValidation'
 
@@ -84,6 +84,19 @@ export default function useAccount() {
     }
   }
 
+  const handleToggleReports = async (value) => {
+    setSubmitting(true)
+    try {
+      await updateReportPreferences(value)
+      await loadUser()
+      showSuccess(value ? 'You\'ll now receive report emails.' : 'Report emails disabled.')
+    } catch (err) {
+      showError(err.response?.data?.message || 'Failed to update preferences')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return {
     user,
     apiKeyModal, setApiKeyModal,
@@ -99,5 +112,6 @@ export default function useAccount() {
     handleDeleteAccount,
     handleCreateApiKey,
     handleDeleteApiKey,
+    handleToggleReports,
   }
 }

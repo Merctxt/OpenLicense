@@ -373,5 +373,21 @@ namespace OpenLicenseApi.Services
             return Convert.ToHexString(bytes).ToLower().Replace("0O", "aB");
         }
         #endregion
+
+        public async Task<Users> UpdateReportPreferencesAsync(Guid userId, bool reportsOptIn)
+        {
+            await EnsureUserActiveAsync(userId);
+
+            var user = await _dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+
+            user.ReportsOptIn = reportsOptIn;
+            await _dbContext.SaveChangesAsync();
+
+            return user;
+        }
     }
 }

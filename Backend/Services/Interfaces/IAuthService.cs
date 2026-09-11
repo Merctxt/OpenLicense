@@ -30,5 +30,7 @@ namespace OpenLicenseApi.Services
         Task ForgotPasswordAsync(string email);
         Task<bool> VerifyResetTokenAsync(string email, string token);
         Task ResetPasswordAsync(string email, string token, string newPassword);
+
+        Task<Users> UpdateReportPreferencesAsync(Guid userId, bool reportsOptIn);
     }
 }

@@ -128,6 +128,15 @@ namespace OpenLicenseApi.Controllers
             return Ok(new { message = "Password reset successfully." });
         }
 
+        [Authorize]
+        [HttpPut("report-preferences")]
+        public async Task<IActionResult> UpdateReportPreferences([FromBody] UpdateReportPreferencesRequest request)
+        {
+            var userId = GetUserId();
+            var user = await _authService.UpdateReportPreferencesAsync(userId, request.ReportsOptIn);
+            return Ok(new { reportsOptIn = user.ReportsOptIn });
+        }
+
         private Guid GetUserId()
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);

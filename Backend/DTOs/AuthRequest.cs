@@ -63,4 +63,9 @@ namespace OpenLicenseApi.DTOs
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
     }
+
+    public class UpdateReportPreferencesRequest
+    {
+        public bool ReportsOptIn { get; set; }
+    }
 }
