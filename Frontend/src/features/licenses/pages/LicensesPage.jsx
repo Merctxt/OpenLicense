@@ -1,9 +1,11 @@
-import { Fragment, useCallback } from 'react'
+import { Fragment, useCallback, useState } from 'react'
 import Modal from '../../../shared/components/Modal/Modal'
 import { EmptyState } from '../../../shared/components/EmptyState'
 import { LoadingState } from '../../../shared/components/LoadingState'
+import { LicenseDetailsModal } from '../components/LicenseDetailsModal'
 import useLicenses from './useLicenses'
 import { Alert } from '../../../shared/components/Alert'
+import { Eye } from 'lucide-react'
 
 export default function Licenses() {
   const {
@@ -23,6 +25,7 @@ export default function Licenses() {
   } = useLicenses()
 
   const handleLicenseModalClose = useCallback(() => setLicenseModal(null), [setLicenseModal])
+  const [detailsLicense, setDetailsLicense] = useState(null)
 
   if (loading) {
     return <LoadingState full message="Loading licenses..." />
@@ -125,6 +128,9 @@ export default function Licenses() {
                       <td>{lic.expiresAt ? new Date(lic.expiresAt).toLocaleDateString() : 'Never'}</td>
                       <td>
                         <div className="d-flex gap-2 justify-content-end">
+                          <button className="btn btn-link btn-sm text-decoration-none p-0" onClick={() => setDetailsLicense(lic)} title="Details">
+                            <Eye size={16} />
+                          </button>
                           <button className="btn btn-link btn-sm text-decoration-none p-0" onClick={() => setLicenseModal({ mode: 'edit', license: lic, productId: lic.productId })}>Edit</button>
                           <button className="btn btn-link btn-sm text-decoration-none text-danger p-0" onClick={() => handleDeleteLicense(lic.id)}>Delete</button>
                         </div>
@@ -233,6 +239,13 @@ export default function Licenses() {
             </form>
           )}
         </Modal>
+      )}
+
+      {detailsLicense && (
+        <LicenseDetailsModal
+          license={detailsLicense}
+          onClose={() => setDetailsLicense(null)}
+        />
       )}
     </div>
   )

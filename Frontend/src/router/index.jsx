@@ -9,7 +9,6 @@ import VerifyTokenPage from '../features/auth/pages/verify-token/VerifyTokenPage
 import ResetPasswordPage from '../features/auth/pages/reset-password/ResetPasswordPage'
 import ProductsPage from '../features/products/pages/ProductsPage'
 import LicensesPage from '../features/licenses/pages/LicensesPage'
-import ActivationsPage from '../features/activations/pages/ActivationsPage'
 import AccountPage from '../features/account/pages/AccountPage'
 
 const registrationEnabled = import.meta.env.VITE_REGISTRATION_ENABLED !== 'false'
@@ -26,7 +25,6 @@ export default function Router() {
         <Route path="/" element={<Navigate to="/products" replace />} />
         <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
         <Route path="/licenses" element={<ProtectedRoute><LicensesPage /></ProtectedRoute>} />
-        <Route path="/activations" element={<ProtectedRoute><ActivationsPage /></ProtectedRoute>} />
         <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
       </Route>
       <Route path="*" element={<Navigate to="/products" replace />} />

@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   Activity,
   Code2,
-  HardDrive,
   LogOut,
   Menu,
   Moon,
@@ -24,7 +23,6 @@ const sourceUrl = import.meta.env.VITE_SOURCE_URL
 const sidebarLinks = [
   { to: '/products', label: 'Products', icon: Package },
   { to: '/licenses', label: 'Licenses', icon: Star },
-  { to: '/activations', label: 'Activations', icon: HardDrive },
   { href: import.meta.env.VITE_STATUS_URL, label: 'Status', icon: Activity, external: true },
   { href: sourceUrl, label: 'Docs', icon: Code2, external: true },
   { href: `${import.meta.env.VITE_API_URL}/scalar/v1`, label: 'API', icon: Zap, external: true },
