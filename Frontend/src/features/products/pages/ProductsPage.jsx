@@ -1,5 +1,7 @@
 import { useCallback } from 'react'
 import Modal from '../../../shared/components/Modal/Modal'
+import { EmptyState } from '../../../shared/components/EmptyState'
+import { LoadingState } from '../../../shared/components/LoadingState'
 import useProducts from './useProducts'
 import { Alert } from '../../../shared/components/Alert'
 
@@ -7,6 +9,7 @@ export default function Products() {
   const {
     products, loading,
     productModal, setProductModal,
+    submitting,
     error, success, info,
     clearAlert,
     handleCreateProduct,
@@ -17,13 +20,7 @@ export default function Products() {
   const handleProductModalClose = useCallback(() => setProductModal(null), [setProductModal])
 
   if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center py-5">
-        <div className="spinner-border text-secondary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    )
+    return <LoadingState full message="Loading products..." />
   }
 
   return (
@@ -38,11 +35,12 @@ export default function Products() {
       {success && <Alert type="success" message={success} onDismiss={clearAlert} />}
 
       {products.length === 0 ? (
-        <div className="card text-center">
-          <div className="card-body py-5">
-            <p className="text-body-secondary mb-3">No products yet. Create your first product to start managing licenses.</p>
-            <button className="btn btn-primary" onClick={() => setProductModal({ mode: 'create' })}>Create Product</button>
-          </div>
+        <div className="card">
+          <EmptyState
+            title="No products yet"
+            description="Create your first product to start managing licenses."
+            action={<button className="btn btn-primary" onClick={() => setProductModal({ mode: 'create' })}>Create Product</button>}
+          />
         </div>
       ) : (
         <div className="d-flex flex-column gap-3">
@@ -68,6 +66,7 @@ export default function Products() {
         <Modal
           title={productModal.mode === 'create' ? 'New Product' : 'Edit Product'}
           onClose={handleProductModalClose}
+          footerLoading={submitting}
           footer={
             <>
               <button className="btn btn-secondary" onClick={handleProductModalClose}>Cancel</button>

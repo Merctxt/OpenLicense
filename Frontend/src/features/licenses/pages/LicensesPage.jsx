@@ -1,11 +1,13 @@
 import { Fragment, useCallback } from 'react'
 import Modal from '../../../shared/components/Modal/Modal'
+import { EmptyState } from '../../../shared/components/EmptyState'
+import { LoadingState } from '../../../shared/components/LoadingState'
 import useLicenses from './useLicenses'
 import { Alert } from '../../../shared/components/Alert'
 
 export default function Licenses() {
   const {
-    products, loading, displayLicenses,
+    products, loading, displayLicenses, submitting,
     licenseModal, setLicenseModal,
     error, success,
     licSearch, setLicSearch,
@@ -23,13 +25,7 @@ export default function Licenses() {
   const handleLicenseModalClose = useCallback(() => setLicenseModal(null), [setLicenseModal])
 
   if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center py-5">
-        <div className="spinner-border text-secondary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    )
+    return <LoadingState full message="Loading licenses..." />
   }
 
   return (
@@ -86,9 +82,15 @@ export default function Licenses() {
 
       {displayLicenses.length === 0 ? (
         <div className="card">
-          <div className="card-body py-4">
-            <p className="text-body-secondary mb-0 text-center">No licenses found.</p>
-          </div>
+          <EmptyState
+            title="No licenses found"
+            description={licSearch || licStatusFilter !== 'all' || selectedProductId !== 'all' ? 'Try adjusting your search or filters.' : 'Create your first license to get started.'}
+            action={
+              (licSearch || licStatusFilter !== 'all' || selectedProductId !== 'all') ? null : (
+                <button className="btn btn-primary" onClick={() => setLicenseModal({ mode: 'create', productId: products[0]?.id })}>Create License</button>
+              )
+            }
+          />
         </div>
       ) : (
         <div>
@@ -185,6 +187,7 @@ export default function Licenses() {
         <Modal
           title={licenseModal.mode === 'create' ? 'New License' : 'Edit License'}
           onClose={handleLicenseModalClose}
+          footerLoading={submitting}
           footer={
             licenseModal.createdKey ? (
               <button className="btn btn-primary" onClick={handleLicenseModalClose}>Done</button>

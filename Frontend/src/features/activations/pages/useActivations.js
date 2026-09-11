@@ -11,6 +11,7 @@ export default function useActivations() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [licenseSearch, setLicenseSearch] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const clearAlert = () => {
     setError('')
@@ -82,6 +83,7 @@ export default function useActivations() {
   const handleRemoveActivation = async (licenseKey, hardwareId) => {
     if (!confirm(`Remove activation for hardware "${hardwareId}"?`)) return
     clearAlert()
+    setSubmitting(true)
     try {
       await deactivateLicense({ licenseKey, hardwareId })
       if (selectedLicenseId) {
@@ -90,11 +92,13 @@ export default function useActivations() {
       setSuccess('Activation removed successfully')
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to remove activation')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   return {
-    products, allLicenses, filteredLicenses, loading,
+    products, allLicenses, filteredLicenses, loading, submitting,
     licenseSearch, setLicenseSearch,
     selectedLicenseId, setSelectedLicenseId,
     selectedLicense,

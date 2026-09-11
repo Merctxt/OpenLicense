@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { Modal as BsModal } from 'bootstrap'
+import { Loader2 } from 'lucide-react'
 
-export default function Modal({ title, children, onClose, footer, size }) {
+export default function Modal({ title, children, onClose, footer, size, footerLoading }) {
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -30,7 +31,10 @@ export default function Modal({ title, children, onClose, footer, size }) {
             {children}
           </div>
           {footer && (
-            <div className="modal-footer">
+            <div className="modal-footer" style={{ opacity: footerLoading ? 0.5 : 1, pointerEvents: footerLoading ? 'none' : 'auto' }}>
+              {footerLoading && (
+                <Loader2 className="animate-spin me-2" size={16} />
+              )}
               {footer}
             </div>
           )}

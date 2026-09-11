@@ -12,6 +12,7 @@ export default function useLicenses() {
   const [licPage, setLicPage] = useState(1)
   const [licPageSize, setLicPageSize] = useState(5)
   const [selectedProductId, setSelectedProductId] = useState('all')
+  const [submitting, setSubmitting] = useState(false)
 
   const clearAlert = () => {
     setError('')
@@ -75,8 +76,9 @@ export default function useLicenses() {
   const handleCreateLicense = async (e) => {
     e.preventDefault()
     clearAlert()
-    const fd = new FormData(e.target)
+    setSubmitting(true)
     try {
+      const fd = new FormData(e.target)
       const payload = {
         productId: licenseModal.productId,
         name: fd.get('name'),
@@ -89,14 +91,17 @@ export default function useLicenses() {
       await load()
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create license')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleEditLicense = async (e) => {
     e.preventDefault()
     clearAlert()
-    const fd = new FormData(e.target)
+    setSubmitting(true)
     try {
+      const fd = new FormData(e.target)
       const payload = { licenseId: licenseModal.license.id }
       const statusAtual = licenseModal.license.status
       const name = fd.get('name')
@@ -120,6 +125,8 @@ export default function useLicenses() {
       setSuccess('License updated')
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update license')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -137,7 +144,7 @@ export default function useLicenses() {
   }
 
   return {
-    products, loading,
+    products, loading, submitting,
     allLicenses, filteredLicenses, displayLicenses,
     licenseModal, setLicenseModal,
     error, success,

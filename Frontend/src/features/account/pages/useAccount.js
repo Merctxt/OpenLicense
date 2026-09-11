@@ -14,6 +14,7 @@ export default function useAccount() {
   const [newKeyName, setNewKeyName] = useState('')
   const [createdKey, setCreatedKey] = useState('')
   const [editing, setEditing] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [name, setName] = useState(user?.name || '')
   const [email, setEmail] = useState(user?.email || '')
   const [password, setPassword] = useState('')
@@ -29,6 +30,7 @@ export default function useAccount() {
   const handleUpdateProfile = async (e) => {
     e.preventDefault()
     clearAlert()
+    setSubmitting(true)
     try {
       await updateAccount({ name, email, password: password || undefined })
       await loadUser()
@@ -41,24 +43,30 @@ export default function useAccount() {
       } else {
         setError(msg)
       }
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleDeleteAccount = async () => {
     if (!confirm('Are you sure? This will permanently delete your account, all products, and licenses.')) return
     clearAlert()
+    setSubmitting(true)
     try {
       await deleteAccount()
       logout()
       navigate('/login')
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete account')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleCreateApiKey = async (e) => {
     e.preventDefault()
     clearAlert()
+    setSubmitting(true)
     try {
       const res = await createApiKey({ name: newKeyName })
       setCreatedKey(res.data.apiKey)
@@ -70,6 +78,8 @@ export default function useAccount() {
       } else {
         setError(msg)
       }
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -92,6 +102,7 @@ export default function useAccount() {
     newKeyName, setNewKeyName,
     createdKey, setCreatedKey,
     editing, setEditing,
+    submitting,
     name, setName,
     email, setEmail,
     password, setPassword,

@@ -1,5 +1,7 @@
 import { useCallback } from 'react'
 import Modal from '../../../shared/components/Modal/Modal'
+import { EmptyState } from '../../../shared/components/EmptyState'
+import { LoadingState } from '../../../shared/components/LoadingState'
 import { useTheme } from '../../../shared/context/ThemeContext'
 import useAccount from './useAccount'
 import PasswordValidation from '../../../shared/components/PasswordValidation/PasswordValidation'
@@ -15,6 +17,7 @@ export default function Account() {
     newKeyName, setNewKeyName,
     createdKey, setCreatedKey,
     editing, setEditing,
+    submitting,
     name, setName,
     email, setEmail,
     password, setPassword,
@@ -93,7 +96,7 @@ export default function Account() {
         <div className="card-body">
           <p className="text-body-secondary small mb-3">Use API keys to authenticate requests from your application. Maximum 3 keys per account.</p>
           {(!user.apiKeys || user.apiKeys.length === 0) ? (
-            <p className="text-body-secondary small mb-0">No API keys yet.</p>
+            <EmptyState title="No API keys yet" />
           ) : (
             <div className="table-responsive">
               <table className="table table-sm align-middle mb-0">
@@ -135,6 +138,7 @@ export default function Account() {
         <Modal
           title="Create API Key"
           onClose={handleModalClose}
+          footerLoading={submitting}
           footer={
             createdKey ? (
               <button className="btn btn-primary" onClick={handleModalClose}>Done</button>

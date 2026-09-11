@@ -6,6 +6,7 @@ export default function useProducts() {
   const [loading, setLoading] = useState(true)
   const [expandedId, setExpandedId] = useState(null)
   const [productModal, setProductModal] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [info, setInfo] = useState('')
@@ -32,6 +33,7 @@ export default function useProducts() {
   const handleCreateProduct = async (e) => {
     e.preventDefault()
     clearAlert()
+    setSubmitting(true)
     const fd = new FormData(e.target)
     try {
       await createProduct({ name: fd.get('name'), description: fd.get('description') || undefined })
@@ -45,12 +47,15 @@ export default function useProducts() {
       } else {
         setError(msg)
       }
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleEditProduct = async (e) => {
     e.preventDefault()
     clearAlert()
+    setSubmitting(true)
     const fd = new FormData(e.target)
     try {
       await updateProduct({ productId: productModal.product.id, name: fd.get('name'), description: fd.get('description') || undefined })
@@ -59,6 +64,8 @@ export default function useProducts() {
       setSuccess('Product updated')
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update product')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -83,6 +90,7 @@ export default function useProducts() {
     products, loading,
     expandedId, setExpandedId,
     productModal, setProductModal,
+    submitting,
     error, success, info,
     clearAlert,
     handleCreateProduct,

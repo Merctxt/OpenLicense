@@ -1,9 +1,11 @@
 import { Alert } from '../../../shared/components/Alert'
+import { EmptyState } from '../../../shared/components/EmptyState'
+import { LoadingState } from '../../../shared/components/LoadingState'
 import useActivations from './useActivations'
 
 export default function Activations() {
   const {
-    filteredLicenses, allLicenses, loading,
+    filteredLicenses, allLicenses, loading, submitting,
     licenseSearch, setLicenseSearch,
     selectedLicenseId, selectedLicense,
     activationsData, activationsLoading,
@@ -17,13 +19,7 @@ export default function Activations() {
   const showSearch = licenseSearch.trim() !== ''
 
   if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center py-5">
-        <div className="spinner-border text-secondary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    )
+    return <LoadingState full message="Loading activations..." />
   }
 
   return (
@@ -37,9 +33,7 @@ export default function Activations() {
 
       {!hasLicenses ? (
         <div className="card">
-          <div className="card-body py-4">
-            <p className="text-body-secondary mb-0 text-center">No licenses available.</p>
-          </div>
+          <EmptyState title="No licenses available" description="Create licenses from the Licenses page first." />
         </div>
       ) : (
         <div className="mb-3 bg-body-tertiary p-3 rounded border">
@@ -86,9 +80,7 @@ export default function Activations() {
             <div className="text-center py-3 text-body-secondary">Loading activations...</div>
           ) : !activationsData || activationsData.length === 0 ? (
             <div className="card">
-              <div className="card-body py-4">
-                <p className="text-body-secondary mb-0 text-center">No activations yet.</p>
-              </div>
+              <EmptyState title="No activations yet" description="Activations will appear here when users activate this license." />
             </div>
           ) : (
             <div className="table-responsive">
