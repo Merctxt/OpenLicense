@@ -1,17 +1,14 @@
 import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { CheckCircle, AlertTriangle } from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
 import useVerifyToken from './useVerifyToken'
 import Background from '../../../../shared/components/Background/Background'
-import { Alert } from '../../../../shared/components/Alert'
 
 export default function VerifyToken() {
   const {
     email,
     token, setToken,
-    error, success,
     submitting,
-    clearAlert,
     handleVerify,
   } = useVerifyToken()
   const navigate = useNavigate()
@@ -35,8 +32,6 @@ export default function VerifyToken() {
             <label className="form-label">Email</label>
             <input type="email" className="form-control" value={email} readOnly />
           </div>
-          {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
-          {success && <Alert type="success" message={success} onDismiss={clearAlert} />}
           <form onSubmit={handleVerify}>
             <div className="mb-3">
               <label className="form-label">Recovery Token</label>

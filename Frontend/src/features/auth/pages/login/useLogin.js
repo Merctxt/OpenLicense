@@ -1,40 +1,34 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { login, getMe } from '../../../../shared/api/endpoints'
+import { login } from '../../../../shared/api/endpoints'
 import { useAuth } from '../../../../shared/context/AuthContext'
+import { useAlert } from '../../../../shared/context/AlertContext'
 
 export default function useLogin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const { user, loading, loadUser } = useAuth()
+  const { showSuccess, showError } = useAlert()
   const navigate = useNavigate()
   const location = useLocation()
 
   useEffect(() => {
     if (location.state?.successMessage) {
-      setSuccess(location.state.successMessage)
+      showSuccess(location.state.successMessage)
       navigate(location.pathname, { replace: true, state: {} })
     }
-  }, [location, navigate])
-
-  const clearAlert = () => {
-    setError('')
-    setSuccess('')
-  }
+  }, [location, navigate, showSuccess])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    clearAlert()
     setSubmitting(true)
     try {
       await login({ email, password })
       await loadUser()
       navigate('/')
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid credentials')
+      showError(err.response?.data?.message || 'Invalid credentials')
     } finally {
       setSubmitting(false)
     }
@@ -43,10 +37,8 @@ export default function useLogin() {
   return {
     email, setEmail,
     password, setPassword,
-    error, success,
     submitting,
     user, loading,
-    clearAlert,
     handleSubmit,
   }
 }

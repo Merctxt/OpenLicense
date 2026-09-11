@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../../../shared/context/AuthContext'
+import { useAlert } from '../../../shared/context/AlertContext'
 import { updateAccount, deleteAccount, createApiKey, deleteApiKey } from '../../../shared/api/endpoints'
 import { useNavigate } from 'react-router-dom'
 import { validatePassword } from '../../../shared/components/PasswordValidation/PasswordValidation'
@@ -7,9 +8,7 @@ import { validatePassword } from '../../../shared/components/PasswordValidation/
 export default function useAccount() {
   const { user, logout, loadUser } = useAuth()
   const navigate = useNavigate()
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
-  const [info, setInfo] = useState('')
+  const { showError, showSuccess, showInfo } = useAlert()
   const [apiKeyModal, setApiKeyModal] = useState(false)
   const [newKeyName, setNewKeyName] = useState('')
   const [createdKey, setCreatedKey] = useState('')
@@ -21,27 +20,20 @@ export default function useAccount() {
 
   const { allPassed: pwAllPassed } = validatePassword(password)
 
-  const clearAlert = () => {
-    setError('')
-    setSuccess('')
-    setInfo('')
-  }
-
   const handleUpdateProfile = async (e) => {
     e.preventDefault()
-    clearAlert()
     setSubmitting(true)
     try {
       await updateAccount({ name, email, password: password || undefined })
       await loadUser()
       setEditing(false)
-      setSuccess('Profile updated')
+      showSuccess('Profile updated')
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to update profile'
       if (msg.toLowerCase().includes('email change') || msg.toLowerCase().includes('maximum')) {
-        setInfo(msg)
+        showInfo(msg)
       } else {
-        setError(msg)
+        showError(msg)
       }
     } finally {
       setSubmitting(false)
@@ -50,14 +42,13 @@ export default function useAccount() {
 
   const handleDeleteAccount = async () => {
     if (!confirm('Are you sure? This will permanently delete your account, all products, and licenses.')) return
-    clearAlert()
     setSubmitting(true)
     try {
       await deleteAccount()
       logout()
       navigate('/login')
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to delete account')
+      showError(err.response?.data?.message || 'Failed to delete account')
     } finally {
       setSubmitting(false)
     }
@@ -65,7 +56,6 @@ export default function useAccount() {
 
   const handleCreateApiKey = async (e) => {
     e.preventDefault()
-    clearAlert()
     setSubmitting(true)
     try {
       const res = await createApiKey({ name: newKeyName })
@@ -74,9 +64,9 @@ export default function useAccount() {
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to create API key'
       if (msg.toLowerCase().includes('limit reached')) {
-        setInfo(msg)
+        showInfo(msg)
       } else {
-        setError(msg)
+        showError(msg)
       }
     } finally {
       setSubmitting(false)
@@ -85,19 +75,17 @@ export default function useAccount() {
 
   const handleDeleteApiKey = async (id) => {
     if (!confirm('Delete this API key?')) return
-    clearAlert()
     try {
       await deleteApiKey({ apiKeyId: id })
       await loadUser()
-      setSuccess('API key deleted')
+      showSuccess('API key deleted')
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to delete API key')
+      showError(err.response?.data?.message || 'Failed to delete API key')
     }
   }
 
   return {
     user,
-    error, success, info,
     apiKeyModal, setApiKeyModal,
     newKeyName, setNewKeyName,
     createdKey, setCreatedKey,
@@ -107,7 +95,6 @@ export default function useAccount() {
     email, setEmail,
     password, setPassword,
     pwAllPassed,
-    clearAlert,
     handleUpdateProfile,
     handleDeleteAccount,
     handleCreateApiKey,

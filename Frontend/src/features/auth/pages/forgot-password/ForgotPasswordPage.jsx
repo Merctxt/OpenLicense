@@ -2,14 +2,11 @@ import { Link } from 'react-router-dom'
 import { KeyRound } from 'lucide-react'
 import useForgotPassword from './useForgotPassword'
 import Background from '../../../../shared/components/Background/Background'
-import { Alert } from '../../../../shared/components/Alert'
 
 export default function ForgotPassword() {
   const {
     email, setEmail,
-    error, success,
     submitting,
-    clearAlert,
     handleSubmit,
   } = useForgotPassword()
 
@@ -21,8 +18,6 @@ export default function ForgotPassword() {
             <h1 className="h4 fw-bold d-flex align-items-center gap-2"><KeyRound />Recover Password</h1>
             <p className="text-body-secondary mb-0">Enter your email to receive a recovery token</p>
           </div>
-          {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
-          {success && <Alert type="success" message={success} onDismiss={clearAlert} />}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label">Email</label>

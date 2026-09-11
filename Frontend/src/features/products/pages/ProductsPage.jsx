@@ -3,15 +3,12 @@ import Modal from '../../../shared/components/Modal/Modal'
 import { EmptyState } from '../../../shared/components/EmptyState'
 import { LoadingState } from '../../../shared/components/LoadingState'
 import useProducts from './useProducts'
-import { Alert } from '../../../shared/components/Alert'
 
 export default function Products() {
   const {
     products, loading,
     productModal, setProductModal,
     submitting,
-    error, success, info,
-    clearAlert,
     handleCreateProduct,
     handleEditProduct,
     handleDeleteProduct,
@@ -29,10 +26,6 @@ export default function Products() {
         <h1 className="h4 mb-0">Products</h1>
         <button className="btn btn-primary btn-sm" onClick={() => setProductModal({ mode: 'create' })}>+ New Product</button>
       </div>
-
-      {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
-      {info && <Alert type="info" message={info} onDismiss={clearAlert} />}
-      {success && <Alert type="success" message={success} onDismiss={clearAlert} />}
 
       {products.length === 0 ? (
         <div className="card">

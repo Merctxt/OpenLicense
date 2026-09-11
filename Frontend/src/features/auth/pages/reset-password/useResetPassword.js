@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { resetPassword } from '../../../../shared/api/endpoints'
 import { useAuth } from '../../../../shared/context/AuthContext'
+import { useAlert } from '../../../../shared/context/AlertContext'
 import { validatePassword } from '../../../../shared/components/PasswordValidation/PasswordValidation'
 
 export default function useResetPassword() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const { user, loading } = useAuth()
+  const { showError } = useAlert()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -34,17 +35,14 @@ export default function useResetPassword() {
   const { allPassed: allRulesPassed } = validatePassword(password)
   const passwordsMatch = confirmPassword && password === confirmPassword
 
-  const clearAlert = () => setError('')
-
   const handleSubmit = async (e) => {
     e.preventDefault()
-    clearAlert()
     setSubmitting(true)
     try {
       await resetPassword({ email, token, password })
       navigate('/login', { state: { successMessage: 'Password reset successfully! Please sign in.' } })
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to reset password')
+      showError(err.response?.data?.message || 'Failed to reset password')
     } finally {
       setSubmitting(false)
     }
@@ -54,12 +52,10 @@ export default function useResetPassword() {
     email,
     password, setPassword,
     confirmPassword, setConfirmPassword,
-    error,
     submitting,
     allRulesPassed,
     passwordsMatch,
     user, loading,
-    clearAlert,
     handleSubmit,
   }
 }

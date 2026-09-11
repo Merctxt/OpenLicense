@@ -3,17 +3,15 @@ import { LogIn } from 'lucide-react'
 import useRegister from './useRegister'
 import PasswordValidation from '../../../../shared/components/PasswordValidation/PasswordValidation'
 import Background from '../../../../shared/components/Background/Background'
-import { Alert } from '../../../../shared/components/Alert'
 
 export default function Register() {
   const {
     name, setName,
     email, setEmail,
     password, setPassword,
-    error, submitting,
+    submitting,
     user, loading,
     allRulesPassed,
-    clearAlert,
     handleSubmit,
   } = useRegister()
 
@@ -39,7 +37,6 @@ export default function Register() {
             <h1 className="h4 fw-bold d-flex align-items-center gap-2"><img src="/favicon.svg" alt="" style={{ height: '24px' }} />OpenLicense</h1>
             <p className="text-body-secondary mb-0">Create your account</p>
           </div>
-          {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label">Name</label>

@@ -4,12 +4,10 @@ import { EmptyState } from '../../../shared/components/EmptyState'
 import { LoadingState } from '../../../shared/components/LoadingState'
 import useAccount from './useAccount'
 import PasswordValidation from '../../../shared/components/PasswordValidation/PasswordValidation'
-import { Alert } from '../../../shared/components/Alert'
 
 export default function Account() {
   const {
     user,
-    error, success, info,
     apiKeyModal, setApiKeyModal,
     newKeyName, setNewKeyName,
     createdKey, setCreatedKey,
@@ -19,7 +17,6 @@ export default function Account() {
     email, setEmail,
     password, setPassword,
     pwAllPassed,
-    clearAlert,
     handleUpdateProfile,
     handleDeleteAccount,
     handleCreateApiKey,
@@ -33,10 +30,6 @@ export default function Account() {
   return (
     <div>
       <h1 className="h4 mb-3">Account</h1>
-
-      {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
-      {info && <Alert type="info" message={info} onDismiss={clearAlert} />}
-      {success && <Alert type="success" message={success} onDismiss={clearAlert} />}
 
       <div className="card mb-3">
         <div className="card-header d-flex justify-content-between align-items-center">

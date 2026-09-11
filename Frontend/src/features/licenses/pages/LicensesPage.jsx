@@ -4,21 +4,18 @@ import { EmptyState } from '../../../shared/components/EmptyState'
 import { LoadingState } from '../../../shared/components/LoadingState'
 import { LicenseDetailsModal } from '../components/LicenseDetailsModal'
 import useLicenses from './useLicenses'
-import { Alert } from '../../../shared/components/Alert'
 import { Eye } from 'lucide-react'
 
 export default function Licenses() {
   const {
     products, loading, displayLicenses, submitting,
     licenseModal, setLicenseModal,
-    error, success,
     licSearch, setLicSearch,
     licStatusFilter, setLicStatusFilter,
     licPage, setLicPage,
     licPageSize, setLicPageSize,
     selectedProductId, setSelectedProductId,
     totalItems, totalPages, activePage, startIndex,
-    clearAlert,
     handleCreateLicense,
     handleEditLicense,
     handleDeleteLicense,
@@ -37,9 +34,6 @@ export default function Licenses() {
         <h1 className="h4 mb-0">Licenses</h1>
         <button className="btn btn-primary btn-sm" onClick={() => setLicenseModal({ mode: 'create', productId: selectedProductId !== 'all' ? selectedProductId : products[0]?.id })}>+ Add License</button>
       </div>
-
-      {error && <Alert type="error" message={error} onDismiss={clearAlert} />}
-      {success && <Alert type="success" message={success} onDismiss={clearAlert} />}
 
       <div className="d-flex flex-wrap gap-2 mb-3 bg-body-tertiary p-3 rounded border">
         <div className="flex-grow-1 position-relative">

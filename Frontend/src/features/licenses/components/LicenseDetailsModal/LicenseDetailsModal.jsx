@@ -4,14 +4,13 @@ import { EmptyState } from '../../../../shared/components/EmptyState'
 import { LoadingState } from '../../../../shared/components/LoadingState'
 import { UserX, UserCheck } from 'lucide-react'
 import { getLicenseActivations, deactivateLicense } from '../../../../shared/api/endpoints'
-import { Alert } from '../../../../shared/components/Alert'
+import { useAlert } from '../../../../shared/context/AlertContext'
 
 export function LicenseDetailsModal({ license, onClose }) {
   const [activations, setActivations] = useState([])
   const [activationsLoading, setActivationsLoading] = useState(false)
   const [removeLoading, setRemoveLoading] = useState(null)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const { showError, showSuccess } = useAlert()
 
   useEffect(() => {
     if (!license) return
@@ -25,7 +24,7 @@ export function LicenseDetailsModal({ license, onClose }) {
       const res = await getLicenseActivations(license.id)
       setActivations(res.data)
     } catch {
-      setError('Failed to load activations')
+      showError('Failed to load activations')
     } finally {
       setActivationsLoading(false)
     }
@@ -37,9 +36,9 @@ export function LicenseDetailsModal({ license, onClose }) {
     try {
       await deactivateLicense({ licenseKey: license.licenseKey, hardwareId })
       await loadActivations()
-      setSuccess('Activation removed')
+      showSuccess('Activation removed')
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to remove activation')
+      showError(err.response?.data?.message || 'Failed to remove activation')
     } finally {
       setRemoveLoading(null)
     }
@@ -51,9 +50,6 @@ export function LicenseDetailsModal({ license, onClose }) {
       onClose={onClose}
       size="lg"
     >
-      {error && <Alert type="error" message={error} onDismiss={() => setError('')} />}
-      {success && <Alert type="success" message={success} onDismiss={() => setSuccess('')} />}
-
       <div className="mb-3">
         <div className="row g-2">
           <div className="col-sm-6">

@@ -1,34 +1,29 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { getProducts, createLicense, updateLicense, deleteLicense } from '../../../shared/api/endpoints'
+import { useAlert } from '../../../shared/context/AlertContext'
 
 export default function useLicenses() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [licenseModal, setLicenseModal] = useState(null)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [licSearch, setLicSearch] = useState('')
   const [licStatusFilter, setLicStatusFilter] = useState('all')
   const [licPage, setLicPage] = useState(1)
   const [licPageSize, setLicPageSize] = useState(5)
   const [selectedProductId, setSelectedProductId] = useState('all')
   const [submitting, setSubmitting] = useState(false)
-
-  const clearAlert = () => {
-    setError('')
-    setSuccess('')
-  }
+  const { showError, showSuccess } = useAlert()
 
   const load = useCallback(async () => {
     try {
       const res = await getProducts()
       setProducts(res.data)
     } catch {
-      setError('Failed to load licenses')
+      showError('Failed to load licenses')
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [showError])
 
   useEffect(() => { load() }, [load])
 
@@ -75,7 +70,6 @@ export default function useLicenses() {
 
   const handleCreateLicense = async (e) => {
     e.preventDefault()
-    clearAlert()
     setSubmitting(true)
     try {
       const fd = new FormData(e.target)
@@ -90,7 +84,7 @@ export default function useLicenses() {
       setLicenseModal({ ...licenseModal, createdKey: res.data.licenseKey })
       await load()
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create license')
+      showError(err.response?.data?.message || 'Failed to create license')
     } finally {
       setSubmitting(false)
     }
@@ -98,7 +92,6 @@ export default function useLicenses() {
 
   const handleEditLicense = async (e) => {
     e.preventDefault()
-    clearAlert()
     setSubmitting(true)
     try {
       const fd = new FormData(e.target)
@@ -122,9 +115,9 @@ export default function useLicenses() {
       await updateLicense(payload)
       setLicenseModal(null)
       await load()
-      setSuccess('License updated')
+      showSuccess('License updated')
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update license')
+      showError(err.response?.data?.message || 'Failed to update license')
     } finally {
       setSubmitting(false)
     }
@@ -132,14 +125,13 @@ export default function useLicenses() {
 
   const handleDeleteLicense = async (id) => {
     if (!confirm('Delete this license?')) return
-    clearAlert()
     try {
       await deleteLicense({ licenseId: id })
       setLicenseModal(null)
       await load()
-      setSuccess('License deleted')
+      showSuccess('License deleted')
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to delete license')
+      showError(err.response?.data?.message || 'Failed to delete license')
     }
   }
 
@@ -147,14 +139,12 @@ export default function useLicenses() {
     products, loading, submitting,
     allLicenses, filteredLicenses, displayLicenses,
     licenseModal, setLicenseModal,
-    error, success,
     licSearch, setLicSearch,
     licStatusFilter, setLicStatusFilter,
     licPage, setLicPage,
     licPageSize, setLicPageSize,
     selectedProductId, setSelectedProductId,
     totalItems, totalPages, activePage, startIndex,
-    clearAlert,
     handleCreateLicense,
     handleEditLicense,
     handleDeleteLicense,

@@ -1,34 +1,28 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { verifyToken } from '../../../../shared/api/endpoints'
+import { useAlert } from '../../../../shared/context/AlertContext'
 
 export default function useVerifyToken() {
   const [token, setToken] = useState('')
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const { showError, showSuccess } = useAlert()
 
   const email = location.state?.email || ''
 
-  const clearAlert = () => {
-    setError('')
-    setSuccess('')
-  }
-
   const handleVerify = async (e) => {
     e.preventDefault()
-    clearAlert()
     setSubmitting(true)
     try {
       await verifyToken({ email, token })
-      setSuccess('Token verified! Redirecting...')
+      showSuccess('Token verified! Redirecting...')
       setTimeout(() => {
         navigate('/reset-password', { state: { email, token } })
       }, 1500)
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid token')
+      showError(err.response?.data?.message || 'Invalid token')
     } finally {
       setSubmitting(false)
     }
@@ -37,9 +31,7 @@ export default function useVerifyToken() {
   return {
     email,
     token, setToken,
-    error, success,
     submitting,
-    clearAlert,
     handleVerify,
   }
 }
