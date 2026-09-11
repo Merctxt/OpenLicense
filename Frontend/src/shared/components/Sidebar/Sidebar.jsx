@@ -6,14 +6,17 @@ import {
   HardDrive,
   LogOut,
   Menu,
+  Moon,
   Package,
   Star,
+  Sun,
   User,
   X,
   Zap,
 } from 'lucide-react'
 import { logout } from '../../api/endpoints'
 import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
 import Background from '../Background/Background'
 
 const sourceUrl = import.meta.env.VITE_SOURCE_URL
@@ -68,6 +71,7 @@ function MenuItem({ link, isActive, onNavigate }) {
 }
 
 function UserMenu({ user, onLogout }) {
+  const { theme, setTheme } = useTheme()
   const [open, setOpen] = useState(false)
   const buttonRef = useRef(null)
   const menuRef = useRef(null)
@@ -124,11 +128,37 @@ function UserMenu({ user, onLogout }) {
           <div className="dropdown-item-text text-body-secondary small" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {user.email}
           </div>
+          <div className="dropdown-item" style={{ cursor: 'default' }}>
+            <span className="me-2">Theme</span>
+            <div className="d-flex gap-1 ms-4">
+              <button
+                className={`btn btn-sm ${theme === 'light' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
+                onClick={() => { setTheme('light'); setOpen(false) }}
+              >
+                <Sun size={12} className="me-1" />
+                Light
+              </button>
+              <button
+                className={`btn btn-sm ${theme === 'dark' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
+                onClick={() => { setTheme('dark'); setOpen(false) }}
+              >
+                <Moon size={12} className="me-1" />
+                Dark
+              </button>
+              <button
+                className={`btn btn-sm ${theme === 'system' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
+                onClick={() => { setTheme('system'); setOpen(false) }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="me-1"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Auto
+              </button>
+            </div>
+          </div>
           <Link className="dropdown-item" to="/account" onClick={() => setOpen(false)}>
-            Profile
-          </Link>
-          <Link className="dropdown-item" to="/account" onClick={() => setOpen(false)}>
-            Settings
+            Account
           </Link>
           <div className="dropdown-divider" />
           <button

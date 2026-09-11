@@ -2,14 +2,11 @@ import { useCallback } from 'react'
 import Modal from '../../../shared/components/Modal/Modal'
 import { EmptyState } from '../../../shared/components/EmptyState'
 import { LoadingState } from '../../../shared/components/LoadingState'
-import { useTheme } from '../../../shared/context/ThemeContext'
 import useAccount from './useAccount'
 import PasswordValidation from '../../../shared/components/PasswordValidation/PasswordValidation'
 import { Alert } from '../../../shared/components/Alert'
 
 export default function Account() {
-  const { theme, setTheme } = useTheme()
-
   const {
     user,
     error, success, info,
@@ -185,38 +182,6 @@ export default function Account() {
               <div className="text-body-secondary small text-uppercase fw-semibold">API Key Limit</div>
               <div className="fs-5 fw-semibold">3</div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="card mb-3">
-        <div className="card-header">
-          <span className="fw-semibold">Theme</span>
-        </div>
-        <div className="card-body">
-          <p className="text-body-secondary small mb-3">Choose your preferred appearance for the dashboard.</p>
-          <div className="d-flex flex-column gap-2">
-            <label className="d-flex align-items-center gap-3 p-3 border rounded" style={{ cursor: 'pointer' }}>
-              <input type="radio" name="theme" value="system" checked={theme === 'system'} onChange={() => setTheme('system')} className="form-check-input m-0" />
-              <div>
-                <div className="fw-semibold">System</div>
-                <div className="text-body-secondary small">Follows your browser or device setting</div>
-              </div>
-            </label>
-            <label className="d-flex align-items-center gap-3 p-3 border rounded" style={{ cursor: 'pointer' }}>
-              <input type="radio" name="theme" value="light" checked={theme === 'light'} onChange={() => setTheme('light')} className="form-check-input m-0" />
-              <div>
-                <div className="fw-semibold">Light</div>
-                <div className="text-body-secondary small">Light background with dark text</div>
-              </div>
-            </label>
-            <label className="d-flex align-items-center gap-3 p-3 border rounded" style={{ cursor: 'pointer' }}>
-              <input type="radio" name="theme" value="dark" checked={theme === 'dark'} onChange={() => setTheme('dark')} className="form-check-input m-0" />
-              <div>
-                <div className="fw-semibold">Dark</div>
-                <div className="text-body-secondary small">Dark background with light text</div>
-              </div>
-            </label>
           </div>
         </div>
       </div>
