@@ -20,7 +20,7 @@ OpenLicense/
 ├── .env.example           # root environment template
 ├── .gitignore
 ├── README.md
-├── start.ps1              # starts backend + frontend locally
+├── start.sh               # starts backend + frontend locally
 └── LICENSE.md
 ```
 
@@ -56,10 +56,9 @@ Edit the `.env` file with:
 
 ### Option A: use the project script
 
-In PowerShell:
-
-```powershell
-.\start.ps1
+```bash
+chmod +x start.sh
+./start.sh
 ```
 
 This script starts:
