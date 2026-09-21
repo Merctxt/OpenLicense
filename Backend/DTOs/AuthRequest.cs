@@ -55,6 +55,12 @@ namespace OpenLicenseApi.DTOs
         public Guid ApiKeyId { get; set; }
     }
 
+    public class ToggleApiKeyRequest
+    {
+        [Required]
+        public Guid ApiKeyId { get; set; }
+    }
+
     public class CreateApiKeyResponse
     {
         public Guid Id { get; set; }

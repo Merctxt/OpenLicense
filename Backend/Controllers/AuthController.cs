@@ -100,6 +100,15 @@ namespace OpenLicenseApi.Controllers
             return NoContent();
         }
 
+        [Authorize]
+        [HttpPut("apikey/toggle")]
+        public async Task<IActionResult> ToggleApiKey([FromBody] ToggleApiKeyRequest request)
+        {
+            var userId = GetUserId();
+            var isActive = await _authService.ToggleApiKeyAsync(userId, request.ApiKeyId);
+            return Ok(new { isActive });
+        }
+
         [HttpPost("forgot-password")]
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)

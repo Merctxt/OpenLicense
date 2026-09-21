@@ -26,6 +26,7 @@ namespace OpenLicenseApi.Services
 
         Task<CreateApiKeyResponse> CreateApiKeyAsync(Guid userId, CreateApiKeyRequest request);
         Task DeleteApiKeyAsync(Guid userId, Guid apiKeyId);
+        Task<bool> ToggleApiKeyAsync(Guid userId, Guid apiKeyId);
 
         Task ForgotPasswordAsync(string email);
         Task<bool> VerifyResetTokenAsync(string email, string token);

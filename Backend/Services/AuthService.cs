@@ -219,6 +219,23 @@ namespace OpenLicenseApi.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<bool> ToggleApiKeyAsync(Guid userId, Guid apiKeyId)
+        {
+            await EnsureUserActiveAsync(userId);
+
+            var apiKey = await _dbContext.ApiKeys
+                .FirstOrDefaultAsync(k => k.Id == apiKeyId && k.UserId == userId);
+            if (apiKey == null)
+            {
+                throw new KeyNotFoundException("API key not found.");
+            }
+
+            apiKey.IsActive = !apiKey.IsActive;
+            await _dbContext.SaveChangesAsync();
+
+            return apiKey.IsActive;
+        }
+
         private static string GenerateApiKey()
         {
             var randomBytes = RandomNumberGenerator.GetBytes(ApiKeyBodyLength);
