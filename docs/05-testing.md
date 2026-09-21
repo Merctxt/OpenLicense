@@ -2,7 +2,7 @@
 
 ## Overview
 
-OpenLicense uses xUnit for integration testing with FluentAssertions for expressive assertions. The test suite contains **79 tests** that validate all API endpoints against a real PostgreSQL database.
+OpenLicense uses xUnit for integration testing with FluentAssertions for expressive assertions. The test suite contains **93 tests** that validate all API endpoints against a real PostgreSQL database.
 
 
 ## Architecture
@@ -59,6 +59,8 @@ dotnet test --filter "FullyQualifiedName~LoginTests"
 dotnet test --filter "FullyQualifiedName~ProductsTests"
 dotnet test --filter "FullyQualifiedName~LicensesTests"
 dotnet test --filter "FullyQualifiedName~EmailChangeRateLimitTests"
+dotnet test --filter "FullyQualifiedName~ApiKeyToggleTests"
+dotnet test --filter "FullyQualifiedName~ActivationToggleTests"
 ```
 
 ### Specific Test Method
@@ -130,6 +132,12 @@ Requirements:
 | Delete API Key | Covered |
 | Create 4th API Key returns 400 | Covered |
 | Delete non-existent API Key returns 404 | Covered |
+| Toggle API Key active to inactive | Covered |
+| Toggle API Key inactive to active | Covered |
+| Toggle non-existent API Key returns 404 | Covered |
+| Toggle API Key belonging to another user returns 404 | Covered |
+| Toggle API Key without authentication returns 401 | Covered |
+| Inactive API Key cannot authenticate requests | Covered |
 
 ### Products
 
@@ -181,6 +189,13 @@ Requirements:
 | List activations with data | Covered |
 | List activations for non-existent license returns 404 | Covered |
 | List activations without authentication returns 401 | Covered |
+| Toggle activation active to inactive | Covered |
+| Toggle activation inactive to active | Covered |
+| Toggle non-existent license returns 404 | Covered |
+| Toggle non-existent activation returns 404 | Covered |
+| Toggle activation belonging to another user returns 404 | Covered |
+| Toggle activation without authentication returns 401 | Covered |
+| Cannot reactivate activation for inactive license returns 400 | Covered |
 
 ### Shared
 

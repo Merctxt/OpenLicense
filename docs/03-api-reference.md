@@ -294,6 +294,76 @@ Authorization: Bearer <token>
 
 ---
 
+### PUT `/api/auth/apikey/toggle`
+
+Toggle an API key active/inactive status.
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Body:**
+```json
+{
+  "apiKeyId": "660e8400-e29b-41d4-a716-446655440001"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "isActive": true
+}
+```
+
+**Behavior:**
+- If the key is active, toggling sets it to inactive (key can no longer be used for authentication)
+- If the key is inactive, toggling sets it to active (key can be used again)
+- The key remains in the database (soft toggle, not hard delete)
+
+**Error Response (404):**
+```json
+{
+  "message": "API key not found."
+}
+```
+
+---
+
+### PUT `/api/auth/apikey/toggle`
+
+Toggle an API key active/inactive status.
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Body:**
+```json
+{
+  "apiKeyId": "660e8400-e29b-41d4-a716-446655440001"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "isActive": true
+}
+```
+
+
+**Error Response (404):**
+```json
+{
+  "message": "API key not found."
+}
+```
+
+---
+
 ### POST `/api/auth/forgot-password`
 
 Send password recovery email.
@@ -861,6 +931,55 @@ Authorization: Bearer <token>
   "message": "License deactivated successfully."
 }
 ```
+
+---
+
+### PUT `/api/licenses/activations/toggle`
+
+Toggle an activation active/inactive status. This endpoint uses JWT authentication (dashboard access only).
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Body:**
+```json
+{
+  "licenseId": "aa0e8400-e29b-41d4-a716-446655440000",
+  "hardwareId": "HW-12345-ABCDEF"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "isActive": true
+}
+```
+
+
+**Error Response (404) — License not found:**
+```json
+{
+  "message": "License not found."
+}
+```
+
+**Error Response (404) — Activation not found:**
+```json
+{
+  "message": "Activation not found."
+}
+```
+
+**Error Response (400) — Cannot reactivate for inactive license:**
+```json
+{
+  "message": "Cannot reactivate activation for an inactive license."
+}
+```
+
 
 ## Health Check
 
