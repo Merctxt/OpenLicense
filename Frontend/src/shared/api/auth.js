@@ -43,3 +43,7 @@ export function createApiKey(data) {
 export function deleteApiKey(data) {
   return api.delete('/api/auth/apikey', { data })
 }
+
+export function toggleApiKey(data) {
+  return api.put('/api/auth/apikey/toggle', data)
+}

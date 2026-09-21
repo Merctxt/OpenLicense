@@ -23,3 +23,7 @@ export function getLicenseActivations(licenseId) {
 export function deactivateLicense(data) {
   return api.post('/api/licenses/deactivate-by-jwt', data)
 }
+
+export function toggleActivation(data) {
+  return api.put('/api/licenses/activations/toggle', data)
+}
