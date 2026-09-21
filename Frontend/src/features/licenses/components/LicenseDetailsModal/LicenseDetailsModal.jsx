@@ -3,7 +3,7 @@ import Modal from '../../../../shared/components/Modal/Modal'
 import { EmptyState } from '../../../../shared/components/EmptyState'
 import { LoadingState } from '../../../../shared/components/LoadingState'
 import { UserX, UserCheck } from 'lucide-react'
-import { getLicenseActivations, deactivateLicense } from '../../../../shared/api/endpoints'
+import { getLicenseActivations, deactivateLicense, toggleActivation } from '../../../../shared/api/endpoints'
 import { useAlert } from '../../../../shared/context/AlertContext'
 
 export function LicenseDetailsModal({ license, onClose }) {
@@ -27,6 +27,24 @@ export function LicenseDetailsModal({ license, onClose }) {
       showError('Failed to load activations')
     } finally {
       setActivationsLoading(false)
+    }
+  }
+
+  const handleToggleActivation = async (hardwareId) => {
+    if (!license) return
+    const act = activations.find(a => a.hardwareId === hardwareId)
+    if (!act) return
+    const action = act.isActive ? 'deactivate' : 'activate'
+    if (!confirm(`Are you sure you want to ${action} this activation?`)) return
+    setRemoveLoading(hardwareId)
+    try {
+      await toggleActivation({ licenseId: license.id, hardwareId })
+      await loadActivations()
+      showSuccess(`Activation ${action === 'deactivate' ? 'deactivated' : 'activated'}`)
+    } catch (err) {
+      showError(err.response?.data?.message || `Failed to ${action} activation`)
+    } finally {
+      setRemoveLoading(null)
     }
   }
 
@@ -104,7 +122,7 @@ export function LicenseDetailsModal({ license, onClose }) {
                   <td className="text-body-secondary align-middle" style={{ whiteSpace: 'nowrap', lineHeight: '1.4' }}>{new Date(act.activatedAt).toLocaleString()}</td>
                   <td className="text-body-secondary align-middle" style={{ whiteSpace: 'nowrap', lineHeight: '1.4' }}>{act.lastSeenAt ? new Date(act.lastSeenAt).toLocaleString() : '-'}</td>
                   <td className="align-middle">
-                    <span className="badge bg-success-subtle text-success-emphasis border border-success-subtle">
+                    <span className={`badge ${act.isActive ? 'bg-success-subtle text-success-emphasis border border-success-subtle' : 'bg-danger-subtle text-danger-emphasis border border-danger-subtle'}`}>
                       {act.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
@@ -114,15 +132,23 @@ export function LicenseDetailsModal({ license, onClose }) {
                     </code>
                   </td>
                   <td className="text-end align-middle">
-                    <button
-                      className="btn btn-sm btn-shadcn-destructive p-0"
-                      style={{ minWidth: 'auto', padding: '0.35rem 0.5rem' }}
-                      onClick={() => handleRemoveActivation(act.hardwareId)}
-                      disabled={removeLoading === act.hardwareId}
-                    >
-                      <UserX size={14} />
-                      {removeLoading === act.hardwareId ? ' Removing...' : ' Remove'}
-                    </button>
+                    <div className="d-flex gap-2 justify-content-end flex-wrap">
+                      <button
+                        className={`btn btn-link btn-sm text-decoration-none p-0 ${act.isActive ? 'text-warning' : 'text-primary'}`}
+                        onClick={() => handleToggleActivation(act.hardwareId)}
+                        disabled={removeLoading === act.hardwareId}
+                      >
+                        {act.isActive ? 'Deactivate' : 'Activate'}
+                      </button>
+                      <button
+                        className="btn btn-link btn-sm text-decoration-none text-danger p-0"
+                        onClick={() => handleRemoveActivation(act.hardwareId)}
+                        disabled={removeLoading === act.hardwareId}
+                      >
+                        <UserX size={14} className="me-1" />
+                        {removeLoading === act.hardwareId ? 'Removing...' : 'Remove'}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../../../shared/context/AuthContext'
 import { useAlert } from '../../../shared/context/AlertContext'
-import { updateAccount, deleteAccount, createApiKey, deleteApiKey, updateReportPreferences } from '../../../shared/api/endpoints'
+import { updateAccount, deleteAccount, createApiKey, deleteApiKey, toggleApiKey, updateReportPreferences } from '../../../shared/api/endpoints'
 import { useNavigate } from 'react-router-dom'
 import { validatePassword } from '../../../shared/components/PasswordValidation/PasswordValidation'
 
@@ -84,6 +84,22 @@ export default function useAccount() {
     }
   }
 
+  const handleToggleApiKey = async (id) => {
+    const key = user.apiKeys?.find(k => k.id === id)
+    const action = key?.isActive ? 'disable' : 'enable'
+    if (action === 'disable' && !confirm(`Are you sure you want to disable this API key?`)) return
+    setSubmitting(true)
+    try {
+      await toggleApiKey({ apiKeyId: id })
+      await loadUser()
+      showSuccess(`API key ${action === 'disable' ? 'disabled' : 'enabled'}`)
+    } catch (err) {
+      showError(err.response?.data?.message || `Failed to ${action} API key`)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   const handleToggleReports = async (value) => {
     setSubmitting(true)
     try {
@@ -112,6 +128,7 @@ export default function useAccount() {
     handleDeleteAccount,
     handleCreateApiKey,
     handleDeleteApiKey,
+    handleToggleApiKey,
     handleToggleReports,
   }
 }

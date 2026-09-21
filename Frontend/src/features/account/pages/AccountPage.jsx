@@ -22,6 +22,7 @@ export default function Account() {
     handleDeleteAccount,
     handleCreateApiKey,
     handleDeleteApiKey,
+    handleToggleApiKey,
     handleToggleReports,
   } = useAccount()
 
@@ -115,7 +116,22 @@ export default function Account() {
                         )}
                       </td>
                       <td className="text-end">
-                        <button className="btn btn-link btn-sm text-decoration-none text-danger p-0" onClick={() => handleDeleteApiKey(key.id)}>Delete</button>
+                        <div className="d-flex gap-2 justify-content-end">
+                          <button
+                            className={`btn btn-link btn-sm text-decoration-none p-0 ${key.isActive ? 'text-body-secondary' : 'text-success'}`}
+                            onClick={() => handleToggleApiKey(key.id)}
+                            disabled={submitting}
+                          >
+                            {key.isActive ? 'Disable' : 'Enable'}
+                          </button>
+                          <button
+                            className="btn btn-link btn-sm text-decoration-none text-danger p-0"
+                            onClick={() => handleDeleteApiKey(key.id)}
+                            disabled={submitting}
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
