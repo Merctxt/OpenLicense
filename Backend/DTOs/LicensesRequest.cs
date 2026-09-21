@@ -54,6 +54,15 @@ namespace OpenLicenseApi.DTOs
         public string HardwareId { get; set; } = string.Empty;
     }
 
+    public class ToggleActivationRequest
+    {
+        [Required]
+        public Guid LicenseId { get; set; }
+
+        [Required]
+        public string HardwareId { get; set; } = string.Empty;
+    }
+
     public class ValidateLicenseResponse
     {
         public bool IsValid { get; set; }

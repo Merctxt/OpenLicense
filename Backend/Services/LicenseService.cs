@@ -192,30 +192,37 @@ namespace OpenLicenseApi.Services
                 throw new InvalidOperationException("Inactive license.");
             }
 
-            var existingActivation = await _dbContext.Activations
-                .FirstOrDefaultAsync(a => a.LicenseId == license.Id && a.HardwareId == request.HardwareId && a.IsActive);
+            var existingActivation = license.Activations
+                .FirstOrDefault(a => a.HardwareId == request.HardwareId);
 
             if (existingActivation != null)
             {
-                existingActivation.LastSeenAt = DateTime.UtcNow;
-                await _dbContext.SaveChangesAsync();
-
-                var currentActivations = await _dbContext.Activations
-                    .CountAsync(a => a.LicenseId == license.Id && a.IsActive);
-
-                return new ValidateLicenseResponse
+                if (existingActivation.IsActive)
                 {
-                    IsValid = true,
-                    Message = "License is valid.",
-                    ReusedActivation = true,
-                    CurrentActivations = currentActivations,
-                    MaxActivations = license.MaxActivations,
-                    ExpiresAt = license.ExpiresAt
-                };
+                    existingActivation.LastSeenAt = DateTime.UtcNow;
+                    await _dbContext.SaveChangesAsync();
+
+                    var currentActivations = await _dbContext.Activations
+                        .CountAsync(a => a.LicenseId == license.Id && a.IsActive);
+
+                    return new ValidateLicenseResponse
+                    {
+                        IsValid = true,
+                        Message = "License is valid.",
+                        ReusedActivation = true,
+                        CurrentActivations = currentActivations,
+                        MaxActivations = license.MaxActivations,
+                        ExpiresAt = license.ExpiresAt
+                    };
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid activation.");
+                }
             }
 
             var activationCount = await _dbContext.Activations
-                .CountAsync(a => a.LicenseId == license.Id && a.IsActive);
+                .CountAsync(a => a.LicenseId == license.Id);
 
             if (activationCount >= license.MaxActivations)
             {
@@ -277,6 +284,42 @@ namespace OpenLicenseApi.Services
 
             _dbContext.Activations.Remove(activation);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> ToggleActivationAsync(Guid userId, Guid licenseId, string hardwareId)
+        {
+            await EnsureUserActiveAsync(userId);
+
+            var license = await _dbContext.Licenses
+                .Include(l => l.Product)
+                .FirstOrDefaultAsync(l =>
+                    l.Id == licenseId
+                    && l.Product.UserId == userId);
+
+            if (license == null)
+            {
+                throw new KeyNotFoundException("License not found.");
+            }
+
+            var activation = await _dbContext.Activations
+                .FirstOrDefaultAsync(a =>
+                    a.LicenseId == licenseId
+                    && a.HardwareId == hardwareId);
+
+            if (activation == null)
+            {
+                throw new KeyNotFoundException("Activation not found.");
+            }
+
+            if (!activation.IsActive && !license.Status)
+            {
+                throw new InvalidOperationException("Cannot reactivate activation for an inactive license.");
+            }
+
+            activation.IsActive = !activation.IsActive;
+            await _dbContext.SaveChangesAsync();
+
+            return activation.IsActive;
         }
 
         private async Task EnsureUserActiveAsync(Guid userId)

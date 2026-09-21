@@ -121,6 +121,16 @@ namespace OpenLicenseApi.Controllers
             return Ok(new { message = "License deactivated successfully." });
         }
 
+        [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpPut("activations/toggle")]
+        public async Task<IActionResult> ToggleActivation([FromBody] ToggleActivationRequest request)
+        {
+            var userId = GetUserId();
+            var isActive = await _licenseService.ToggleActivationAsync(userId, request.LicenseId, request.HardwareId);
+            return Ok(new { isActive });
+        }
+
         private Guid GetUserId()
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);

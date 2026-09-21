@@ -13,5 +13,6 @@ namespace OpenLicenseApi.Services
         Task<bool> LicenseBelongsToScopeAsync(Guid userId, Guid licenseId, Guid? productId);
         Task<ValidateLicenseResponse> ValidateLicenseAsync(Guid userId, ValidateLicenseRequest request);
         Task DeactivateLicenseAsync(Guid userId, Guid? productId, DeactivateLicenseRequest request);
+        Task<bool> ToggleActivationAsync(Guid userId, Guid licenseId, string hardwareId);
     }
 }
