@@ -48,12 +48,13 @@ Database / Email / JWT / API Key flow
 
 Execution order matters:
 
-1. `ExceptionHandlingMiddleware` — catches exceptions and converts them into HTTP responses
-2. `RateLimitMiddleware` — limits requests per IP and route
-3. `CookieToBearerMiddleware` — reads the session cookie and forwards it as a Bearer token
-4. `Authentication` — validates JWT or API key
-5. `Authorization` — checks permission rules
-6. `Controllers` — executes the final business logic
+1. `AuditMiddleware` — resolves client IP from proxy headers, logs all requests (IP, method, path, status, duration), emits audit events for critical endpoints. All logs sent to OpenObserve via OTLP.
+2. `ExceptionHandlingMiddleware` — catches exceptions and converts them into HTTP responses
+3. `RateLimitMiddleware` — limits requests per IP and route
+4. `CookieToBearerMiddleware` — reads the session cookie and forwards it as a Bearer token
+5. `Authentication` — validates JWT or API key
+6. `Authorization` — checks permission rules
+7. `Controllers` — executes the final business logic
 
 ## Authentication
 
@@ -172,9 +173,42 @@ In local development, the database is usually run in a container or in an extern
 
 ## Observability
 
-The API also supports OTLP export to OpenObserve/OpenTelemetry.
+The API exports Traces, Metrics, and Logs to OpenObserve via OpenTelemetry OTLP.
 
-Relevant variables:
+### Audit Logging
+
+`AuditMiddleware` runs on every request and captures:
+
+**Request log (every request):**
+- Client IP (resolved from proxy headers)
+- HTTP method and path
+- Status code
+- Duration in ms
+- User agent
+- Correlation ID
+- Authenticated user (if any)
+
+**Audit events (critical endpoints only):**
+- `user_register` / `user_login` / `user_logout`
+- `api_key_operation` / `license_operation` / `product_operation`
+- `password_reset_requested` / `password_reset`
+- `license_validate` / `license_deactivate`
+
+All logs are structured and sent to OpenObserve via OTLP for centralized querying.
+
+### IP Resolution Priority
+
+Headers checked in order:
+1. `cf-connecting-ip` (Cloudflare)
+2. `x-real-ip` (Nginx)
+3. `x-forwarded-for` (multi-hop proxies — first valid IP used)
+4. `RemoteIpAddress` (direct connection)
+
+IPv4 and IPv6 are both supported. Private/reserved IPs are filtered.
+
+### Telemetry Configuration
+
+Relevant environment variables:
 
 - `OTEL_EXPORTER_OTLP_ENDPOINT`
 - `OTEL_EXPORTER_OTLP_HEADERS`

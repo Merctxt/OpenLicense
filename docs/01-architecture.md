@@ -26,14 +26,15 @@
 
 ### Request Lifecycle
 
-1. **Request arrives** at the API (directly in dev, or through Nginx reverse proxy in production)
-2. **ExceptionHandlingMiddleware** — wraps all requests, catches unhandled exceptions, returns proper HTTP codes
-3. **RateLimitMiddleware** — checks IP-based rate limits on `/api/auth` POST endpoints (login, register, password recovery)
-4. **CookieToBearerMiddleware** — reads `auth_token` HttpOnly cookie and injects `Authorization: Bearer <token>` header (bridges React's `withCredentials: true` to JWT auth)
-5. **Authentication** — JWT Bearer or API Key authentication via hybrid policy scheme (`SmartAuth`)
-6. **Authorization** — checks `[Authorize]` policy on controllers/actions
-7. **Controller** → **Service** → **Database**
-8. **Response** returned as JSON
+1. **Request arrives** at the API (directly in dev, or through Nginx/Cloudflare reverse proxy in production)
+2. **AuditMiddleware** — resolves client IP from proxy headers (`cf-connecting-ip`, `x-real-ip`, `x-forwarded-for`), logs all requests with IP/status/duration, emits audit events for critical endpoints
+3. **ExceptionHandlingMiddleware** — wraps all requests, catches unhandled exceptions, returns proper HTTP codes
+4. **RateLimitMiddleware** — checks IP-based rate limits on `/api/auth` POST endpoints (login, register, password recovery)
+5. **CookieToBearerMiddleware** — reads `auth_token` HttpOnly cookie and injects `Authorization: Bearer <token>` header (bridges React's `withCredentials: true` to JWT auth)
+6. **Authentication** — JWT Bearer or API Key authentication via hybrid policy scheme (`SmartAuth`)
+7. **Authorization** — checks `[Authorize]` policy on controllers/actions
+8. **Controller** → **Service** → **Database**
+9. **Response** returned as JSON
 
 ### Authentication Flow
 
