@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Net;
 using System.Security.Claims;
 
 namespace OpenLicenseApi.Middleware.Observability
@@ -10,7 +11,6 @@ namespace OpenLicenseApi.Middleware.Observability
         private readonly RequestDelegate _next;
         private readonly ILogger<AuditMiddleware> _logger;
 
-        // Audit event patterns: endpoint prefix -> (eventType, isAudit)
         private static readonly Dictionary<string, string> _auditEvents = new(StringComparer.OrdinalIgnoreCase)
         {
             { "/api/auth/register", "user_register" },
@@ -60,7 +60,6 @@ namespace OpenLicenseApi.Middleware.Observability
                     _ => LogLevel.Information
                 };
 
-                // Request log
                 _logger.Log(
                     logLevel,
                     0,
@@ -80,7 +79,6 @@ namespace OpenLicenseApi.Middleware.Observability
                     (state, ex) => $"[{state.Timestamp}] {state.Method} {state.Path} -> {state.StatusCode} | IP={state.ClientIp} | Duration={state.DurationMs}ms | UserAgent={state.UserAgent} | CorrelationId={state.CorrelationId} | User={state.User}"
                 );
 
-                // Audit log for known endpoints
                 var auditEvent = GetAuditEvent(path, method);
                 if (auditEvent != null && (statusCode >= 200 && statusCode < 400))
                 {
@@ -103,48 +101,53 @@ namespace OpenLicenseApi.Middleware.Observability
         private static string ResolveClientIp(HttpContext context)
         {
             var cfIp = context.Request.Headers["cf-connecting-ip"].FirstOrDefault();
-            if (!string.IsNullOrEmpty(cfIp) && IsValidIp(cfIp))
-                return cfIp;
+            if (IsValidPublicIp(cfIp!))
+                return cfIp!;
 
             var realIp = context.Request.Headers["x-real-ip"].FirstOrDefault();
-            if (!string.IsNullOrEmpty(realIp) && IsValidIp(realIp))
-                return realIp;
-
-            var plainForwarded = context.Request.Headers["x-forwarded-for-plain"].FirstOrDefault();
-            if (!string.IsNullOrEmpty(plainForwarded) && IsValidIp(plainForwarded))
-                return plainForwarded;
+            if (IsValidPublicIp(realIp!))
+                return realIp!;
 
             var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
             if (!string.IsNullOrEmpty(forwardedFor))
             {
-                var firstIp = forwardedFor.Split(',')[0].Trim();
-                if (IsValidIp(firstIp))
-                    return firstIp;
+                foreach (var ip in forwardedFor.Split(','))
+                {
+                    var clean = ip.Trim().Trim('[').Trim(']');
+                    if (IsValidPublicIp(clean))
+                        return clean;
+                }
             }
 
             var remoteIp = context.Connection.RemoteIpAddress?.ToString();
-            if (!string.IsNullOrEmpty(remoteIp) && !IsPrivateIp(remoteIp))
-                return remoteIp;
+            if (IsValidPublicIp(remoteIp!))
+                return remoteIp!;
 
             return remoteIp ?? "unknown";
         }
 
-        private static bool IsValidIp(string ip)
+        private static bool IsValidPublicIp(string? ip)
         {
-            return System.Net.IPAddress.TryParse(ip, out _);
+            if (string.IsNullOrEmpty(ip))
+                return false;
+
+            if (!System.Net.IPAddress.TryParse(ip, out var address))
+                return false;
+
+            return !IsPrivateOrReserved(address);
         }
 
-        private static bool IsPrivateIp(string ip)
+        private static bool IsPrivateOrReserved(System.Net.IPAddress address)
         {
-            if (System.Net.IPAddress.TryParse(ip, out var address))
-            {
-                var bytes = address.GetAddressBytes();
-                if (bytes[0] == 10) return true;
-                if (bytes[0] == 172 && bytes[1] >= 16 && bytes[1] <= 31) return true;
-                if (bytes[0] == 192 && bytes[1] == 168) return true;
-                if (bytes[0] == 127) return true;
-            }
-            return false;
+            if (IPAddress.IsLoopback(address)) return true;
+
+            if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                return address.IsIPv6LinkLocal || address.IsIPv6SiteLocal;
+
+            var bytes = address.GetAddressBytes();
+            return bytes[0] == 10
+                || (bytes[0] == 172 && bytes[1] >= 16 && bytes[1] <= 31)
+                || (bytes[0] == 192 && bytes[1] == 168);
         }
 
         private static string? GetAuditEvent(string path, string method)
