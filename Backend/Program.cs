@@ -92,6 +92,7 @@ namespace OpenLicenseApi
             );
 
             // ── Middleware Pipeline ──────────────────────────────────────
+            app.UseMiddleware<AuditMiddleware>();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseMiddleware<RateLimitMiddleware>();
             app.UseMiddleware<CookieToBearerMiddleware>();
