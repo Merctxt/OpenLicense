@@ -20,12 +20,22 @@ import Background from '../Background/Background'
 
 const sourceUrl = import.meta.env.VITE_SOURCE_URL
 
-const sidebarLinks = [
-  { to: '/products', label: 'Products', icon: Package },
-  { to: '/licenses', label: 'Licenses', icon: Star },
-  { href: import.meta.env.VITE_STATUS_URL, label: 'Status', icon: Activity, external: true },
-  { href: sourceUrl, label: 'Docs', icon: Code2, external: true },
-  { href: `${import.meta.env.VITE_API_URL}/scalar/v1`, label: 'API', icon: Zap, external: true },
+const sidebarCategories = [
+  {
+    label: 'Main',
+    links: [
+      { to: '/products', label: 'Products', icon: Package },
+      { to: '/licenses', label: 'Licenses', icon: Star },
+    ],
+  },
+  {
+    label: 'Resources',
+    links: [
+      { href: import.meta.env.VITE_STATUS_URL, label: 'Status', icon: Activity, external: true },
+      { href: sourceUrl, label: 'Docs', icon: Code2, external: true },
+      { href: `${import.meta.env.VITE_API_URL}/scalar/v1`, label: 'API', icon: Zap, external: true },
+    ],
+  },
 ]
 
 function MenuItem({ link, isActive, onNavigate }) {
@@ -230,18 +240,24 @@ export default function Sidebar({ children }) {
           <div className="d-flex flex-column justify-content-between pt-0 px-3 flex-grow-1">
             <div>
               <hr className="mt-0" />
-              <ul className="nav nav-pills flex-column mb-auto">
-                {user &&
-                  sidebarLinks.map((link) => (
-                    <li key={link.label || link.to} className="nav-item">
-                      <MenuItem
-                        link={link}
-                        isActive={link.external ? false : location.pathname === link.to}
-                        onNavigate={() => setMobileOpen(false)}
-                      />
-                    </li>
-                  ))}
-              </ul>
+              {user && sidebarCategories.map((category) => (
+                <div key={category.label} className="mb-3">
+                  <small className="text-body-secondary text-uppercase fw-semibold" style={{ fontSize: '0.7rem', letterSpacing: '0.05rem' }}>
+                    {category.label}
+                  </small>
+                  <ul className="nav nav-pills flex-column mt-2">
+                    {category.links.map((link) => (
+                      <li key={link.label || link.to} className="nav-item">
+                        <MenuItem
+                          link={link}
+                          isActive={link.external ? false : location.pathname === link.to}
+                          onNavigate={() => setMobileOpen(false)}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
 
             <div className="pb-3">
