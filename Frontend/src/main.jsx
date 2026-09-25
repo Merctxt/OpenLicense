@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import './shared/styles/System.css'
+import './shared/styles/Animations.css'
 import { ThemeProvider } from './shared/context/ThemeContext'
 import App from './App.jsx'
 

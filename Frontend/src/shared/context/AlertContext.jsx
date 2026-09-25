@@ -1,4 +1,5 @@
 import { createContext, useContext, useCallback, useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { AlertToast } from '../components/Alert/Alert'
 
 const AlertContext = createContext(null)
@@ -28,16 +29,19 @@ export function AlertProvider({ children }) {
   return (
     <AlertContext.Provider value={{ showAlert, showSuccess, showError, showInfo, dismissAlert }}>
       {children}
-      <div className="toast-container position-fixed top-0 end-0 p-3" style={{ zIndex: 1080, pointerEvents: 'auto' }}>
-        {items.map((item) => (
-          <AlertToast
-            key={item.id}
-            id={item.id}
-            type={item.type}
-            message={item.message}
-            onDismiss={dismissAlert}
-          />
-        ))}
+      <div className="toast-container position-fixed top-0 end-0 p-3" style={{ zIndex: 1080, pointerEvents: 'none' }}>
+        <AnimatePresence mode="wait">
+          {items.map((item) => (
+            <div key={item.id} style={{ pointerEvents: 'auto' }}>
+              <AlertToast
+                id={item.id}
+                type={item.type}
+                message={item.message}
+                onDismiss={dismissAlert}
+              />
+            </div>
+          ))}
+        </AnimatePresence>
       </div>
     </AlertContext.Provider>
   )

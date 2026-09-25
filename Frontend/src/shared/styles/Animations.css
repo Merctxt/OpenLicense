@@ -1,0 +1,309 @@
+/* ===========================
+   Global Animation System
+   ===========================
+   Animations are applied via data attributes and CSS classes.
+   No per-component code changes needed.
+   */
+
+/* === Page Content Animation === */
+[data-animate="page"] {
+  animation: pageIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Card Animation === */
+[data-animate="card"] {
+  animation: cardIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* === Card hover effect === */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="dark"] .card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* === Staggered list items === */
+[data-animate="stagger"] > * {
+  animation: staggerIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+[data-animate="stagger"] > *:nth-child(1) { animation-delay: 0.03s; }
+[data-animate="stagger"] > *:nth-child(2) { animation-delay: 0.06s; }
+[data-animate="stagger"] > *:nth-child(3) { animation-delay: 0.09s; }
+[data-animate="stagger"] > *:nth-child(4) { animation-delay: 0.12s; }
+[data-animate="stagger"] > *:nth-child(5) { animation-delay: 0.15s; }
+[data-animate="stagger"] > *:nth-child(6) { animation-delay: 0.18s; }
+[data-animate="stagger"] > *:nth-child(7) { animation-delay: 0.21s; }
+[data-animate="stagger"] > *:nth-child(8) { animation-delay: 0.24s; }
+[data-animate="stagger"] > *:nth-child(9) { animation-delay: 0.27s; }
+[data-animate="stagger"] > *:nth-child(10) { animation-delay: 0.30s; }
+
+@keyframes staggerIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Button hover effect === */
+.btn {
+  transition: all 0.15s ease;
+}
+
+.btn:not(.btn-link):not([disabled]):not(.disabled):hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn:not(.btn-link):not([disabled]):not(.disabled):active {
+  transform: translateY(0);
+  filter: brightness(0.95);
+}
+
+/* === Badge animation === */
+.badge {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.badge:hover {
+  transform: scale(1.08);
+}
+
+/* === Table row hover === */
+.table > tbody > tr {
+  transition: background-color 0.15s ease;
+}
+
+.table > tbody > tr:hover {
+  background-color: rgba(var(--bs-primary-rgb), 0.06);
+}
+
+[data-bs-theme="dark"] .table > tbody > tr:hover {
+  background-color: rgba(var(--bs-primary-rgb), 0.12);
+}
+
+/* === Smooth input focus === */
+.form-control:focus,
+.form-select:focus {
+  transition: all 0.2s ease;
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.15);
+}
+
+/* === Sidebar nav link animations === */
+.nav-pills .nav-link {
+  position: relative;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  border-radius: 0.375rem;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: rgba(var(--bs-light-rgb), 0.1);
+  transform: translateX(3px);
+}
+
+[data-bs-theme="dark"] .nav-pills .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* === Dropdown menu animation === */
+.dropdown-menu {
+  animation: dropdownIn 0.15s ease both;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* === Modal animation === */
+.modal-content {
+  animation: modalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* === Toast notification animations === */
+.toast-enter {
+  animation: toastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.toast-exit {
+  animation: toastOut 0.25s ease both;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+}
+
+/* === Header/title animation === */
+[data-animate="title"] {
+  animation: titleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes titleIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Filter/search bar animation === */
+[data-animate="filter"] {
+  animation: filterIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes filterIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Staggered children via CSS custom property === */
+[data-animate="stagger-children"] > * {
+  animation: staggerChildIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+[data-animate-delay="0"] > *:nth-child(1) { animation-delay: 0s; }
+[data-animate-delay="1"] > *:nth-child(1) { animation-delay: 0.04s; }
+[data-animate-delay="2"] > *:nth-child(1) { animation-delay: 0.08s; }
+[data-animate-delay="3"] > *:nth-child(1) { animation-delay: 0.12s; }
+[data-animate-delay="1"] > *:nth-child(2) { animation-delay: 0.08s; }
+[data-animate-delay="2"] > *:nth-child(2) { animation-delay: 0.16s; }
+[data-animate-delay="3"] > *:nth-child(2) { animation-delay: 0.24s; }
+[data-animate-delay="1"] > *:nth-child(3) { animation-delay: 0.12s; }
+[data-animate-delay="2"] > *:nth-child(3) { animation-delay: 0.24s; }
+[data-animate-delay="3"] > *:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes staggerChildIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Pulse animation for empty state icons === */
+[data-animate="pulse"] {
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* === Rotate animation (replacement for animate-spin) === */
+[data-animate="spin"] {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* === Fade-in for loading text === */
+[data-animate="fade-text"] {
+  animation: fadeText 1.5s ease-in-out infinite;
+}
+
+@keyframes fadeText {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* === Skeleton loading === */
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(var(--bs-body-color-rgb), 0.06) 25%,
+    rgba(var(--bs-body-color-rgb), 0.12) 50%,
+    rgba(var(--bs-body-color-rgb), 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton 1.5s ease-in-out infinite;
+  border-radius: 0.25rem;
+}
+
+@keyframes skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
