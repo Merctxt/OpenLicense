@@ -59,3 +59,26 @@ pre,
 *::-webkit-scrollbar-thumb:hover {
   background: rgba(128, 128, 128, 0.5);
 }
+
+.table-rounded {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.table-rounded th,
+.table-rounded td {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.table-rounded thead:first-child tr:first-child th,
+.table-rounded thead:first-child tr:first-child td {
+  border-bottom: 0;
+}
+
+.table-rounded tbody tr:last-child td {
+  border-bottom: 0;
+}

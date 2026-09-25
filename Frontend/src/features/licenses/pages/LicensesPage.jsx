@@ -92,7 +92,7 @@ export default function Licenses() {
       ) : (
         <div>
           <div className="table-responsive">
-            <table className="table table-sm align-middle mb-0">
+            <table className="table table-sm align-middle mb-0 table-rounded">
               <thead>
                 <tr>
                   <th>Product</th>
