@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../../../shared/api/endpoints'
 import { useAlert } from '../../../shared/context/AlertContext'
+import { useConfirmation } from '../../../shared/context/ConfirmationContext'
 
 export default function useProducts() {
   const [products, setProducts] = useState([])
@@ -9,6 +10,7 @@ export default function useProducts() {
   const [productModal, setProductModal] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const { showError, showSuccess, showInfo } = useAlert()
+  const { confirm } = useConfirmation()
 
   const load = useCallback(async () => {
     try {
@@ -61,7 +63,8 @@ export default function useProducts() {
   }
 
   const handleDeleteProduct = async (id) => {
-    if (!confirm('Delete this product and all its licenses?')) return
+    const c = await confirm('Delete product', 'Delete this product and all its licenses?')
+    if (!c) return
     try {
       await deleteProduct({ productId: id })
       setExpandedId(null)

@@ -5,12 +5,14 @@ import { LoadingState } from '../../../../shared/components/LoadingState'
 import { UserX, UserCheck } from 'lucide-react'
 import { getLicenseActivations, deactivateLicense, toggleActivation } from '../../../../shared/api/endpoints'
 import { useAlert } from '../../../../shared/context/AlertContext'
+import { useConfirmation } from '../../../../shared/context/ConfirmationContext'
 
 export function LicenseDetailsModal({ license, onClose }) {
   const [activations, setActivations] = useState([])
   const [activationsLoading, setActivationsLoading] = useState(false)
   const [removeLoading, setRemoveLoading] = useState(null)
   const { showError, showSuccess } = useAlert()
+  const { confirm } = useConfirmation()
 
   useEffect(() => {
     if (!license) return
@@ -35,7 +37,8 @@ export function LicenseDetailsModal({ license, onClose }) {
     const act = activations.find(a => a.hardwareId === hardwareId)
     if (!act) return
     const action = act.isActive ? 'deactivate' : 'activate'
-    if (!confirm(`Are you sure you want to ${action} this activation?`)) return
+    const c = await confirm(`Deactivate activation`, `Are you sure you want to ${action} this activation?`)
+    if (!c) return
     setRemoveLoading(hardwareId)
     try {
       await toggleActivation({ licenseId: license.id, hardwareId })

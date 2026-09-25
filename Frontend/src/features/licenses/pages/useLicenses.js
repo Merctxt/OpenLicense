@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { getProducts, createLicense, updateLicense, deleteLicense } from '../../../shared/api/endpoints'
 import { useAlert } from '../../../shared/context/AlertContext'
+import { useConfirmation } from '../../../shared/context/ConfirmationContext'
 
 export default function useLicenses() {
   const [products, setProducts] = useState([])
@@ -13,6 +14,7 @@ export default function useLicenses() {
   const [selectedProductId, setSelectedProductId] = useState('all')
   const [submitting, setSubmitting] = useState(false)
   const { showError, showSuccess } = useAlert()
+  const { confirm } = useConfirmation()
 
   const load = useCallback(async () => {
     try {
@@ -124,7 +126,8 @@ export default function useLicenses() {
   }
 
   const handleDeleteLicense = async (id) => {
-    if (!confirm('Delete this license?')) return
+    const c = await confirm('Delete license', 'Delete this license?')
+    if (!c) return
     try {
       await deleteLicense({ licenseId: id })
       setLicenseModal(null)
