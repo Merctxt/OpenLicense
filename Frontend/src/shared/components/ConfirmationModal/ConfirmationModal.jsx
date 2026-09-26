@@ -20,7 +20,7 @@ export default function ConfirmationModal({ title, message, onConfirm, onClose }
   }, [onClose])
 
   return (
-    <div className="modal fade" ref={modalRef} tabIndex="-1" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+    <div className="modal fade" ref={modalRef} tabIndex="-1">
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header border-bottom">

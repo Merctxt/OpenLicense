@@ -20,7 +20,7 @@ export default function Modal({ title, children, onClose, footer, size, footerLo
   }, [onClose])
 
   return (
-    <div className="modal fade" ref={modalRef} tabIndex="-1" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+    <div className="modal fade" ref={modalRef} tabIndex="-1">
       <div className={`modal-dialog ${size === 'lg' ? 'modal-lg' : size === 'sm' ? 'modal-sm' : ''}`}>
         <div className="modal-content">
           <div className="modal-header">
