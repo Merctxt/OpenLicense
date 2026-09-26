@@ -2,10 +2,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace OpenLicenseApi.Middleware.Auth
 {
-    /// <summary>
-    /// Reads the JWT from an HttpOnly cookie and injects it into the Authorization header.
-    /// This allows the existing JWT Bearer authentication pipeline to work unchanged.
-    /// </summary>
     public class CookieToBearerMiddleware
     {
         private readonly RequestDelegate _next;
@@ -17,6 +13,12 @@ namespace OpenLicenseApi.Middleware.Auth
 
         public async Task InvokeAsync(HttpContext context)
         {
+            if (context.Request.Headers.ContainsKey(ApiKeyAuthenticationHandler.HeaderName))
+            {
+                await _next(context);
+                return;
+            }
+
             var token = context.Request.Cookies["auth_token"];
             if (!string.IsNullOrEmpty(token))
             {
