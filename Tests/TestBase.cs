@@ -90,7 +90,7 @@ public abstract class TestBase : IAsyncLifetime
             Password = password ?? "TestPass1!"
         };
 
-        var response = await Client.PostAsJsonAsync("/api/v1/auth/register", payload);
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/register", payload);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var user = await response.Content.ReadFromJsonAsync<Users>();
@@ -101,7 +101,7 @@ public abstract class TestBase : IAsyncLifetime
     public async Task<string> LoginAndGetToken(string email, string password)
     {
         var payload = new { Email = email, Password = password };
-        var response = await Client.PostAsJsonAsync("/api/v1/auth/login", payload);
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/login", payload);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result = await response.Content.ReadFromJsonAsync<LoginResponse>();

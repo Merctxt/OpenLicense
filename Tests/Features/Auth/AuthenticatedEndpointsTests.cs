@@ -8,7 +8,7 @@ public class AuthenticatedEndpointsTests : TestBase
         var (token, user) = await GetAuthenticatedUser("me@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await Client.GetAsync("/api/v1/auth/me");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/auth/me");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var me = await response.Content.ReadFromJsonAsync<Users>();
@@ -21,7 +21,7 @@ public class AuthenticatedEndpointsTests : TestBase
     [Fact]
     public async Task ShouldReturn401WhenNotAuthenticated()
     {
-        var response = await Client.GetAsync("/api/v1/auth/me");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/auth/me");
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
@@ -32,7 +32,7 @@ public class AuthenticatedEndpointsTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var payload = new { Name = "Updated Name" };
-        var response = await Client.PutAsJsonAsync("/api/auth", payload);
+        var response = await Client.PutAsJsonAsync($"{ApiVersion.Path}/auth", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var updated = await response.Content.ReadFromJsonAsync<Users>();
@@ -47,7 +47,7 @@ public class AuthenticatedEndpointsTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var payload = new { Email = "new@test.com" };
-        var response = await Client.PutAsJsonAsync("/api/auth", payload);
+        var response = await Client.PutAsJsonAsync($"{ApiVersion.Path}/auth", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var updated = await response.Content.ReadFromJsonAsync<Users>();
@@ -61,12 +61,12 @@ public class AuthenticatedEndpointsTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var payload = new { Password = "NewPass1!" };
-        var response = await Client.PutAsJsonAsync("/api/auth", payload);
+        var response = await Client.PutAsJsonAsync($"{ApiVersion.Path}/auth", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var newLoginPayload = new { Email = "pwup@test.com", Password = "NewPass1!" };
-        var loginResponse = await Client.PostAsJsonAsync("/api/v1/auth/login", newLoginPayload);
+        var loginResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/login", newLoginPayload);
         loginResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
@@ -78,7 +78,7 @@ public class AuthenticatedEndpointsTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token1);
 
         var payload = new { Email = "user2@test.com" };
-        var response = await Client.PutAsJsonAsync("/api/auth", payload);
+        var response = await Client.PutAsJsonAsync($"{ApiVersion.Path}/auth", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -87,7 +87,7 @@ public class AuthenticatedEndpointsTests : TestBase
     public async Task ShouldReturn401WhenUpdatingWithoutAuth()
     {
         var payload = new { Name = "Hacker" };
-        var response = await Client.PutAsJsonAsync("/api/auth", payload);
+        var response = await Client.PutAsJsonAsync($"{ApiVersion.Path}/auth", payload);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
@@ -97,19 +97,19 @@ public class AuthenticatedEndpointsTests : TestBase
         var (token, user) = await GetAuthenticatedUser("del@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await Client.DeleteAsync("/api/auth");
+        var response = await Client.DeleteAsync($"{ApiVersion.Path}/auth");
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         var loginPayload = new { Email = "del@test.com", Password = "TestPass1!" };
-        var loginResponse = await Client.PostAsJsonAsync("/api/v1/auth/login", loginPayload);
+        var loginResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/login", loginPayload);
         loginResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
     public async Task ShouldReturn401WhenDeletingWithoutAuth()
     {
-        var response = await Client.DeleteAsync("/api/auth");
+        var response = await Client.DeleteAsync($"{ApiVersion.Path}/auth");
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
@@ -119,11 +119,11 @@ public class AuthenticatedEndpointsTests : TestBase
         var (token, user) = await GetAuthenticatedUser("logout@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await Client.PostAsJsonAsync("/api/v1/auth/logout", new { });
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/logout", new { });
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var loginPayload = new { Email = "logout@test.com", Password = "TestPass1!" };
-        var loginResponse = await Client.PostAsJsonAsync("/api/v1/auth/login", loginPayload);
+        var loginResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/login", loginPayload);
         loginResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }

@@ -8,7 +8,7 @@ public class GetLicensesTests : TestBase
         var (productId, token) = await CreateProductAndGetToken("getlic1@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await Client.GetAsync($"/api/licenses?productId={productId}");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/licenses?productId={productId}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var licenses = await response.Content.ReadFromJsonAsync<List<License>>();
@@ -24,7 +24,7 @@ public class GetLicensesTests : TestBase
 
         await CreateLicense(token, productId, "License 1");
 
-        var response = await Client.GetAsync($"/api/licenses?productId={productId}");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/licenses?productId={productId}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var licenses = await response.Content.ReadFromJsonAsync<List<License>>();
@@ -38,7 +38,7 @@ public class GetLicensesTests : TestBase
         var (productId, token) = await CreateProductAndGetToken("getlic3@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await Client.GetAsync("/api/licenses");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/licenses");
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -49,7 +49,7 @@ public class GetLicensesTests : TestBase
         var (productId, token) = await CreateProductAndGetToken("getlic4@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await Client.GetAsync($"/api/licenses?productId={Guid.NewGuid()}");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/licenses?productId={Guid.NewGuid()}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -83,7 +83,7 @@ public class GetLicensesTests : TestBase
         dbContext.Products.Add(product);
         await dbContext.SaveChangesAsync();
 
-        var response = await Client.GetAsync($"/api/licenses?productId={product.Id}");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/licenses?productId={product.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -96,7 +96,7 @@ public class GetLicensesTests : TestBase
         var (productId2, token2) = await CreateProductAndGetToken("other@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token2);
 
-        var response = await Client.GetAsync($"/api/licenses?productId={productId1}");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/licenses?productId={productId1}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -106,7 +106,7 @@ public class GetLicensesTests : TestBase
         var (token, user) = await GetAuthenticatedUser(email);
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/v1/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
         var product = await createResponse.Content.ReadFromJsonAsync<Product>();
 
         return (product!.Id, token);
@@ -116,7 +116,7 @@ public class GetLicensesTests : TestBase
     {
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         var payload = new { ProductId = productId, Name = name, MaxActivations = 3 };
-        var response = await Client.PostAsJsonAsync("/api/licenses", payload);
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", payload);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }
@@ -130,7 +130,7 @@ public class CreateLicenseTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var payload = new { ProductId = productId, Name = "License 1", MaxActivations = 3 };
-        var response = await Client.PostAsJsonAsync("/api/licenses", payload);
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var license = await response.Content.ReadFromJsonAsync<License>();
@@ -151,7 +151,7 @@ public class CreateLicenseTests : TestBase
         await CreateLicenseRequest(token, productId, "License A");
         await CreateLicenseRequest(token, productId, "License B");
 
-        var allResponse = await Client.GetAsync($"/api/licenses?productId={productId}");
+        var allResponse = await Client.GetAsync($"{ApiVersion.Path}/licenses?productId={productId}");
         var licenses = await allResponse.Content.ReadFromJsonAsync<List<License>>();
 
         var keys = licenses!.Select(l => l.LicenseKey).ToList();
@@ -165,7 +165,7 @@ public class CreateLicenseTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var payload = new { ProductId = Guid.Empty, Name = "Bad", MaxActivations = 1 };
-        var response = await Client.PostAsJsonAsync("/api/licenses", payload);
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -177,7 +177,7 @@ public class CreateLicenseTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var payload = new { ProductId = productId, Name = "Bad", MaxActivations = 0 };
-        var response = await Client.PostAsJsonAsync("/api/licenses", payload);
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -189,7 +189,7 @@ public class CreateLicenseTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var payload = new { ProductId = Guid.NewGuid(), Name = "Ghost", MaxActivations = 1 };
-        var response = await Client.PostAsJsonAsync("/api/licenses", payload);
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -198,7 +198,7 @@ public class CreateLicenseTests : TestBase
     public async Task ShouldReturn401WhenNotAuthenticated()
     {
         var payload = new { ProductId = Guid.NewGuid(), Name = "Hacker", MaxActivations = 1 };
-        var response = await Client.PostAsJsonAsync("/api/licenses", payload);
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -208,7 +208,7 @@ public class CreateLicenseTests : TestBase
         var (token, user) = await GetAuthenticatedUser(email);
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/v1/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
         var product = await createResponse.Content.ReadFromJsonAsync<Product>();
 
         return (product!.Id, token);
@@ -218,7 +218,7 @@ public class CreateLicenseTests : TestBase
     {
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         var payload = new { ProductId = productId, Name = name, MaxActivations = 1 };
-        var response = await Client.PostAsJsonAsync("/api/licenses", payload);
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", payload);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }
@@ -231,11 +231,11 @@ public class UpdateLicenseTests : TestBase
         var (productId, token) = await CreateProductAndGetToken("uplic1@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/licenses", new { ProductId = productId, Name = "Old", MaxActivations = 1 });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", new { ProductId = productId, Name = "Old", MaxActivations = 1 });
         var license = await createResponse.Content.ReadFromJsonAsync<License>();
 
         var updatePayload = new { LicenseId = license!.Id, Name = "Updated" };
-        var updateResponse = await Client.PutAsJsonAsync("/api/licenses", updatePayload);
+        var updateResponse = await Client.PutAsJsonAsync($"{ApiVersion.Path}/licenses", updatePayload);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var updated = await updateResponse.Content.ReadFromJsonAsync<License>();
@@ -248,11 +248,11 @@ public class UpdateLicenseTests : TestBase
         var (productId, token) = await CreateProductAndGetToken("uplic2@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/licenses", new { ProductId = productId, Name = "Test", MaxActivations = 1 });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", new { ProductId = productId, Name = "Test", MaxActivations = 1 });
         var license = await createResponse.Content.ReadFromJsonAsync<License>();
 
         var updatePayload = new { LicenseId = license!.Id, MaxActivations = 10 };
-        var updateResponse = await Client.PutAsJsonAsync("/api/licenses", updatePayload);
+        var updateResponse = await Client.PutAsJsonAsync($"{ApiVersion.Path}/licenses", updatePayload);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var updated = await updateResponse.Content.ReadFromJsonAsync<License>();
@@ -265,11 +265,11 @@ public class UpdateLicenseTests : TestBase
         var (productId, token) = await CreateProductAndGetToken("uplic3@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/licenses", new { ProductId = productId, Name = "Test", MaxActivations = 1 });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", new { ProductId = productId, Name = "Test", MaxActivations = 1 });
         var license = await createResponse.Content.ReadFromJsonAsync<License>();
 
         var updatePayload = new { LicenseId = license!.Id, Status = false };
-        var updateResponse = await Client.PutAsJsonAsync("/api/licenses", updatePayload);
+        var updateResponse = await Client.PutAsJsonAsync($"{ApiVersion.Path}/licenses", updatePayload);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var updated = await updateResponse.Content.ReadFromJsonAsync<License>();
@@ -283,7 +283,7 @@ public class UpdateLicenseTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var updatePayload = new { LicenseId = Guid.NewGuid(), Name = "Ghost" };
-        var updateResponse = await Client.PutAsJsonAsync("/api/licenses", updatePayload);
+        var updateResponse = await Client.PutAsJsonAsync($"{ApiVersion.Path}/licenses", updatePayload);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -294,14 +294,14 @@ public class UpdateLicenseTests : TestBase
         var (productId1, token1) = await CreateProductAndGetToken("ownerlic@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token1);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/licenses", new { ProductId = productId1, Name = "Owner License", MaxActivations = 1 });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", new { ProductId = productId1, Name = "Owner License", MaxActivations = 1 });
         var license = await createResponse.Content.ReadFromJsonAsync<License>();
 
         var (productId2, token2) = await CreateProductAndGetToken("otherlic@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token2);
 
         var updatePayload = new { LicenseId = license!.Id, Name = "Hacked" };
-        var updateResponse = await Client.PutAsJsonAsync("/api/licenses", updatePayload);
+        var updateResponse = await Client.PutAsJsonAsync($"{ApiVersion.Path}/licenses", updatePayload);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -312,11 +312,11 @@ public class UpdateLicenseTests : TestBase
         var (productId, token) = await CreateProductAndGetToken("uplic5@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/licenses", new { ProductId = productId, Name = "Test", MaxActivations = 1 });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", new { ProductId = productId, Name = "Test", MaxActivations = 1 });
         var license = await createResponse.Content.ReadFromJsonAsync<License>();
 
         var updatePayload = new { LicenseId = license!.Id, Status = true };
-        var updateResponse = await Client.PutAsJsonAsync("/api/licenses", updatePayload);
+        var updateResponse = await Client.PutAsJsonAsync($"{ApiVersion.Path}/licenses", updatePayload);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -325,7 +325,7 @@ public class UpdateLicenseTests : TestBase
     public async Task ShouldReturn401WhenNotAuthenticated()
     {
         var updatePayload = new { LicenseId = Guid.NewGuid(), Name = "Hacked" };
-        var updateResponse = await Client.PutAsJsonAsync("/api/licenses", updatePayload);
+        var updateResponse = await Client.PutAsJsonAsync($"{ApiVersion.Path}/licenses", updatePayload);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -335,7 +335,7 @@ public class UpdateLicenseTests : TestBase
         var (token, user) = await GetAuthenticatedUser(email);
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/v1/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
         var product = await createResponse.Content.ReadFromJsonAsync<Product>();
 
         return (product!.Id, token);
@@ -350,15 +350,15 @@ public class DeleteLicenseTests : TestBase
         var (productId, token) = await CreateProductAndGetToken("delic1@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/licenses", new { ProductId = productId, Name = "Delete Me", MaxActivations = 1 });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", new { ProductId = productId, Name = "Delete Me", MaxActivations = 1 });
         var license = await createResponse.Content.ReadFromJsonAsync<License>();
 
         var deletePayload = new { LicenseId = license!.Id };
-        var deleteResponse = await Client.DeleteAsJsonAsync("/api/licenses", deletePayload);
+        var deleteResponse = await Client.DeleteAsJsonAsync($"{ApiVersion.Path}/licenses", deletePayload);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var allResponse = await Client.GetAsync($"/api/licenses?productId={productId}");
+        var allResponse = await Client.GetAsync($"{ApiVersion.Path}/licenses?productId={productId}");
         var licenses = await allResponse.Content.ReadFromJsonAsync<List<License>>();
         licenses!.Should().BeEmpty();
     }
@@ -370,7 +370,7 @@ public class DeleteLicenseTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var deletePayload = new { LicenseId = Guid.NewGuid() };
-        var deleteResponse = await Client.DeleteAsJsonAsync("/api/licenses", deletePayload);
+        var deleteResponse = await Client.DeleteAsJsonAsync($"{ApiVersion.Path}/licenses", deletePayload);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -381,14 +381,14 @@ public class DeleteLicenseTests : TestBase
         var (productId1, token1) = await CreateProductAndGetToken("ownerdel@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token1);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/licenses", new { ProductId = productId1, Name = "Owner License", MaxActivations = 1 });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", new { ProductId = productId1, Name = "Owner License", MaxActivations = 1 });
         var license = await createResponse.Content.ReadFromJsonAsync<License>();
 
         var (productId2, token2) = await CreateProductAndGetToken("otherdel@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token2);
 
         var deletePayload = new { LicenseId = license!.Id };
-        var deleteResponse = await Client.DeleteAsJsonAsync("/api/licenses", deletePayload);
+        var deleteResponse = await Client.DeleteAsJsonAsync($"{ApiVersion.Path}/licenses", deletePayload);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -397,7 +397,7 @@ public class DeleteLicenseTests : TestBase
     public async Task ShouldReturn401WhenNotAuthenticated()
     {
         var deletePayload = new { LicenseId = Guid.NewGuid() };
-        var deleteResponse = await Client.DeleteAsJsonAsync("/api/licenses", deletePayload);
+        var deleteResponse = await Client.DeleteAsJsonAsync($"{ApiVersion.Path}/licenses", deletePayload);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -407,7 +407,7 @@ public class DeleteLicenseTests : TestBase
         var (token, user) = await GetAuthenticatedUser(email);
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/v1/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
         var product = await createResponse.Content.ReadFromJsonAsync<Product>();
 
         return (product!.Id, token);
@@ -422,7 +422,7 @@ public class ActivationsTests : TestBase
         var (licenseId, token) = await CreateLicenseAndGetId("act1@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await Client.GetAsync($"/api/v1/licenses/activations?licenseId={licenseId}");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/licenses/activations?licenseId={licenseId}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var activations = await response.Content.ReadFromJsonAsync<List<Activation>>();
@@ -450,7 +450,7 @@ public class ActivationsTests : TestBase
         dbContext.Activations.Add(activation);
         await dbContext.SaveChangesAsync();
 
-        var response = await Client.GetAsync($"/api/v1/licenses/activations?licenseId={licenseId}");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/licenses/activations?licenseId={licenseId}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var activations = await response.Content.ReadFromJsonAsync<List<Activation>>();
@@ -464,7 +464,7 @@ public class ActivationsTests : TestBase
         var (licenseId, token) = await CreateLicenseAndGetId("act3@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await Client.GetAsync($"/api/v1/licenses/activations?licenseId={Guid.NewGuid()}");
+        var response = await Client.GetAsync($"{ApiVersion.Path}/licenses/activations?licenseId={Guid.NewGuid()}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -472,7 +472,7 @@ public class ActivationsTests : TestBase
     [Fact]
     public async Task ShouldReturn401WhenNotAuthenticated()
     {
-        var response = await Client.GetAsync("/api/v1/licenses/activations?licenseId=" + Guid.NewGuid());
+        var response = await Client.GetAsync($"{ApiVersion.Path}/licenses/activations?licenseId=" + Guid.NewGuid());
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -482,10 +482,10 @@ public class ActivationsTests : TestBase
         var (token, user) = await GetAuthenticatedUser(email);
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var productResponse = await Client.PostAsJsonAsync("/api/v1/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
+        var productResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
         var product = await productResponse.Content.ReadFromJsonAsync<Product>();
 
-        var licenseResponse = await Client.PostAsJsonAsync("/api/licenses", new { ProductId = product!.Id, Name = "License", MaxActivations = 1 });
+        var licenseResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/licenses", new { ProductId = product!.Id, Name = "License", MaxActivations = 1 });
         var license = await licenseResponse.Content.ReadFromJsonAsync<License>();
 
         return (license!.Id, token);

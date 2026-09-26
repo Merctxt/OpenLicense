@@ -9,7 +9,7 @@ public class ApiKeyTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var payload = new { Name = "My API Key" };
-        var response = await Client.PostAsJsonAsync("/api/v1/auth/apikey", payload);
+        var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/apikey", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var apiKey = await response.Content.ReadFromJsonAsync<CreateApiKeyResponse>();
@@ -29,12 +29,12 @@ public class ApiKeyTests : TestBase
         for (int i = 0; i < 3; i++)
         {
             var payload = new { Name = $"Key {i}" };
-            var response = await Client.PostAsJsonAsync("/api/v1/auth/apikey", payload);
+            var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/apikey", payload);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         var fourthPayload = new { Name = "Fourth Key" };
-        var fourthResponse = await Client.PostAsJsonAsync("/api/v1/auth/apikey", fourthPayload);
+        var fourthResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/apikey", fourthPayload);
 
         fourthResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -46,15 +46,15 @@ public class ApiKeyTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var createPayload = new { Name = "Delete Me" };
-        var createResponse = await Client.PostAsJsonAsync("/api/v1/auth/apikey", createPayload);
+        var createResponse = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/apikey", createPayload);
         var apiKey = await createResponse.Content.ReadFromJsonAsync<CreateApiKeyResponse>();
 
         var deletePayload = new { ApiKeyId = apiKey!.Id };
-        var deleteResponse = await Client.DeleteAsJsonAsync("/api/v1/auth/apikey", deletePayload);
+        var deleteResponse = await Client.DeleteAsJsonAsync($"{ApiVersion.Path}/auth/apikey", deletePayload);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        var meResponse = await Client.GetAsync("/api/v1/auth/me");
+        var meResponse = await Client.GetAsync($"{ApiVersion.Path}/auth/me");
         meResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var me = await meResponse.Content.ReadFromJsonAsync<GetUserResponse>();
         me!.ApiKeys.Should().BeEmpty();
@@ -67,7 +67,7 @@ public class ApiKeyTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var deletePayload = new { ApiKeyId = Guid.NewGuid() };
-        var deleteResponse = await Client.DeleteAsJsonAsync("/api/v1/auth/apikey", deletePayload);
+        var deleteResponse = await Client.DeleteAsJsonAsync($"{ApiVersion.Path}/auth/apikey", deletePayload);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }

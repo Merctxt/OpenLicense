@@ -20,7 +20,7 @@ public class ExceptionHandlingTests
     public async Task ShouldReturn404ForNonExistentEndpoint()
     {
         var client = new WebApplicationFactory<Program>().CreateClient();
-        var response = await client.GetAsync("/api/nonexistent");
+        var response = await client.GetAsync($"{ApiVersion.Path}/nonexistent");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -38,7 +38,7 @@ public class ExceptionHandlingTests
     public async Task ShouldReturn400ForInvalidJson()
     {
         var client = new WebApplicationFactory<Program>().CreateClient();
-        var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/register")
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{ApiVersion.Path}/auth/register")
         {
             Content = new StringContent("not valid json{{{")
         };
