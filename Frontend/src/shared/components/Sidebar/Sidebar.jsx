@@ -268,7 +268,7 @@ export default function Sidebar({ children }) {
         </aside>
 
         {isMobile && mobileOpen && (
-          <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50" style={{ zIndex: 1035 }} onClick={() => setMobileOpen(false)} />
+          <div className="position-fixed top-0 start-0 w-100 h-100 sidebar-backdrop" style={{ zIndex: 1035 }} onClick={() => setMobileOpen(false)} />
         )}
 
         <div className="flex-grow-1 d-flex flex-column" style={{ minWidth: 0 }}>

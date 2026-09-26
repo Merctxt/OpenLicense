@@ -154,6 +154,12 @@
   }
 }
 
+/* === Sidebar mobile backdrop === */
+.sidebar-backdrop {
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+}
+
 /* === Modal animation === */
 .modal {
   background-color: rgba(0, 0, 0, 0.3);
