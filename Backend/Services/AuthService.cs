@@ -312,6 +312,10 @@ namespace OpenLicenseApi.Services
                 return;
             }
 
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiry = null;
+            await _dbContext.SaveChangesAsync();
+
             var token = GenerateResetToken();
 
             await _emailService.SendPasswordResetEmailAsync(user.Email, token);
