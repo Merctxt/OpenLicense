@@ -27,7 +27,10 @@ namespace OpenLicenseApi.Services
                 throw new KeyNotFoundException("Product not found.");
             }
 
-            return await _dbContext.Licenses.Where(l => l.ProductId == productId).ToListAsync();
+            return await _dbContext.Licenses
+                .Where(l => l.ProductId == productId && l.Product.UserId == userId)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<License> CreateLicenseAsync(Guid userId, Guid productId, CreateLicenseRequest request)
