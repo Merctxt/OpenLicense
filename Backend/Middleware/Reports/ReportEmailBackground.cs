@@ -17,13 +17,16 @@ namespace OpenLicenseApi.Middleware.Reports
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ReportSettings _settings;
+        private readonly ILogger<ReportEmailBackgroundService> _logger;
 
         public ReportEmailBackgroundService(
             IServiceScopeFactory scopeFactory,
-            IOptions<ReportSettings> options)
+            IOptions<ReportSettings> options,
+            ILogger<ReportEmailBackgroundService> logger)
         {
             _scopeFactory = scopeFactory;
             _settings = options.Value;
+            _logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -59,15 +62,15 @@ namespace OpenLicenseApi.Middleware.Reports
                             var subject = $"License Report - {report.GeneratedAt.ToString("MMM dd, yyyy")}";
                             await emailService.SendReportEmailAsync(user.Email, subject, report);
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            // Silently handle per-user errors
+                            _logger.LogError(ex, "Failed to generate/send report for user {UserId} ({UserEmail})", user.Id, user.Email);
                         }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Silently handle loop errors
+                    _logger.LogError(ex, "Error in report email background service loop iteration");
                 }
             }
         }
