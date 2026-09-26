@@ -52,7 +52,7 @@ namespace OpenLicenseApi.Services
             using var client = new SmtpClient();
 
             var socketOptions = _settings.Secure
-                ? SecureSocketOptions.SslOnConnect
+                ? SecureSocketOptions.Auto
                 : SecureSocketOptions.StartTlsWhenAvailable;
 
             try
@@ -220,7 +220,7 @@ EXPIRED LICENSES
             using var client = new SmtpClient();
 
             var socketOptions = _settings.Secure
-                ? SecureSocketOptions.SslOnConnect
+                ? SecureSocketOptions.Auto
                 : SecureSocketOptions.StartTlsWhenAvailable;
 
             try
