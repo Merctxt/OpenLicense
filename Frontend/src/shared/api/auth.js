@@ -1,49 +1,52 @@
 import api from './client'
+import { API_VERSION } from './version'
+
+const apiPrefix = `/api/${API_VERSION}`
 
 export function register(data) {
-  return api.post('/api/v1/auth/register', data)
+  return api.post(`${apiPrefix}/auth/register`, data)
 }
 
 export function login(data) {
-  return api.post('/api/v1/auth/login', data)
+  return api.post(`${apiPrefix}/auth/login`, data)
 }
 
 export function logout() {
-  return api.post('/api/v1/auth/logout')
+  return api.post(`${apiPrefix}/auth/logout`)
 }
 
 export function getMe() {
-  return api.get('/api/v1/auth/me')
+  return api.get(`${apiPrefix}/auth/me`)
 }
 
 export function updateAccount(data) {
-  return api.put('/api/v1/auth', data)
+  return api.put(`${apiPrefix}/auth`, data)
 }
 
 export function deleteAccount() {
-  return api.delete('/api/v1/auth')
+  return api.delete(`${apiPrefix}/auth`)
 }
 
 export function forgotPassword(data) {
-  return api.post('/api/v1/auth/forgot-password', data)
+  return api.post(`${apiPrefix}/auth/forgot-password`, data)
 }
 
 export function verifyToken(data) {
-  return api.post('/api/v1/auth/reset-password/verify', data)
+  return api.post(`${apiPrefix}/auth/reset-password/verify`, data)
 }
 
 export function resetPassword(data) {
-  return api.post('/api/v1/auth/reset-password', data)
+  return api.post(`${apiPrefix}/auth/reset-password`, data)
 }
 
 export function createApiKey(data) {
-  return api.post('/api/v1/auth/apikey', data)
+  return api.post(`${apiPrefix}/auth/apikey`, data)
 }
 
 export function deleteApiKey(data) {
-  return api.delete('/api/v1/auth/apikey', { data })
+  return api.delete(`${apiPrefix}/auth/apikey`, { data })
 }
 
 export function toggleApiKey(data) {
-  return api.put('/api/v1/auth/apikey/toggle', data)
+  return api.put(`${apiPrefix}/auth/apikey/toggle`, data)
 }

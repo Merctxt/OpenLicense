@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 namespace OpenLicenseApi.Controllers
 {
     [ApiController]
-    [ApiVersion("1.0")]
+    [ApiVersion(ApiVersion.Current)]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Route("api/v{version:apiVersion}/products")]
     public class ProductsController : ControllerBase

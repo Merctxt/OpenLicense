@@ -1,5 +1,8 @@
 import api from './client'
+import { API_VERSION } from './version'
+
+const apiPrefix = `/api/${API_VERSION}`
 
 export function updateReportPreferences(reportsOptIn) {
-  return api.put('/api/v1/auth/report-preferences', { reportsOptIn })
+  return api.put(`${apiPrefix}/auth/report-preferences`, { reportsOptIn })
 }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 namespace OpenLicenseApi.Controllers
 {
     [ApiController]
-    [ApiVersion("1.0")]
+    [ApiVersion(ApiVersion.Current)]
     [Route("api/v{version:apiVersion}/licenses")]
     public class LicensesController : ControllerBase
     {
