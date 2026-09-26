@@ -11,7 +11,7 @@ api.interceptors.response.use(
   (err) => {
     if (err.response?.status === 401) {
       const url = err.config?.url || ''
-      if (!url.includes('/api/auth/login') && !url.includes('/api/auth/me')) {
+      if (!url.includes('/api/v1/auth/login') && !url.includes('/api/v1/auth/me')) {
         window.location.href = '/login'
       }
       if (url.includes('/api/auth/login')) {

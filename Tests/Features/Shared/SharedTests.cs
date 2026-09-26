@@ -38,7 +38,7 @@ public class ExceptionHandlingTests
     public async Task ShouldReturn400ForInvalidJson()
     {
         var client = new WebApplicationFactory<Program>().CreateClient();
-        var request = new HttpRequestMessage(HttpMethod.Post, "/api/auth/register")
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/register")
         {
             Content = new StringContent("not valid json{{{")
         };

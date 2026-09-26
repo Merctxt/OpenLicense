@@ -5,11 +5,13 @@ using OpenLicenseApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using OpenLicenseApi.Middleware.Auth;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace OpenLicenseApi.Controllers
 {
     [ApiController]
-    [Route("api/licenses")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/licenses")]
     public class LicensesController : ControllerBase
     {
         private readonly ILicenseService _licenseService;

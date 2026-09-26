@@ -1,11 +1,19 @@
 # API Reference
 
-Complete reference for all Backend API endpoints.
+Complete reference for all API endpoints.
 
 ## Base URL
 
-Development: `http://localhost:5000`
+All endpoints are prefixed with the API version.
+
+Development: `http://localhost:5049/api/v1`
 Production: Depends on deployment configuration
+
+## Versioning
+
+The API uses URL path versioning (`/v{version}`). The current version is **v1**.
+
+Future versions will be deployed alongside v1 during transition periods. Breaking changes will only occur in new major versions (e.g., `/v2/`).
 
 ## Authentication
 
@@ -34,7 +42,7 @@ Authentication is handled via a hybrid "SmartAuth" policy that auto-selects base
 
 ## Authentication Endpoints
 
-### POST `/api/auth/register`
+### POST `/api/v1/auth/register`
 
 Register a new user account.
 
@@ -85,7 +93,7 @@ Register a new user account.
 
 ---
 
-### POST `/api/auth/login`
+### POST `/api/v1/auth/login`
 
 Authenticate user and receive JWT token.
 
@@ -125,7 +133,7 @@ Authenticate user and receive JWT token.
 
 ---
 
-### POST `/api/auth/logout`
+### POST `/api/v1/auth/logout`
 
 Clear the authentication cookie.
 
@@ -138,7 +146,7 @@ Clear the authentication cookie.
 
 ---
 
-### GET `/api/auth/me`
+### GET `/api/v1/auth/me`
 
 Get current user profile with API keys.
 
@@ -179,7 +187,7 @@ Authorization: Bearer <token>
 
 ---
 
-### PUT `/api/auth`
+### PUT `/api/v1/auth`
 
 Update user profile.
 
@@ -216,7 +224,7 @@ Authorization: Bearer <token>
 
 ---
 
-### DELETE `/api/auth`
+### DELETE `/api/v1/auth`
 
 Delete user account and all associated data.
 
@@ -229,7 +237,7 @@ Authorization: Bearer <token>
 
 ---
 
-### POST `/api/auth/apikey`
+### POST `/api/v1/auth/apikey`
 
 Create a new API key (max 3 per user).
 
@@ -267,7 +275,7 @@ Authorization: Bearer <token>
 
 ---
 
-### DELETE `/api/auth/apikey`
+### DELETE `/api/v1/auth/apikey`
 
 Delete an API key.
 
@@ -294,7 +302,7 @@ Authorization: Bearer <token>
 
 ---
 
-### PUT `/api/auth/apikey/toggle`
+### PUT `/api/v1/auth/apikey/toggle`
 
 Toggle an API key active/inactive status.
 
@@ -331,7 +339,7 @@ Authorization: Bearer <token>
 
 ---
 
-### PUT `/api/auth/apikey/toggle`
+### PUT `/api/v1/auth/apikey/toggle`
 
 Toggle an API key active/inactive status.
 
@@ -364,7 +372,7 @@ Authorization: Bearer <token>
 
 ---
 
-### POST `/api/auth/forgot-password`
+### POST `/api/v1/auth/forgot-password`
 
 Send password recovery email.
 
@@ -386,7 +394,7 @@ Send password recovery email.
 
 ---
 
-### POST `/api/auth/reset-password/verify`
+### POST `/api/v1/auth/reset-password/verify`
 
 Verify password reset token.
 
@@ -414,7 +422,7 @@ Verify password reset token.
 
 ---
 
-### POST `/api/auth/reset-password`
+### POST `/api/v1/auth/reset-password`
 
 Reset password with verified token.
 
@@ -443,7 +451,7 @@ Reset password with verified token.
 
 ---
 
-### PUT `/api/auth/report-preferences`
+### PUT `/api/v1/auth/report-preferences`
 
 Update email report opt-in preference. User will receive periodic license status reports if opted in.
 
@@ -475,7 +483,7 @@ Authorization: Bearer <token>
 
 ## Products Endpoints
 
-### GET `/api/products/all`
+### GET `/api/v1/products/all`
 
 List all products owned by the authenticated user.
 
@@ -512,7 +520,7 @@ Authorization: Bearer <token>
 
 ---
 
-### POST `/api/products/create`
+### POST `/api/v1/products/create`
 
 Create a new product.
 
@@ -554,7 +562,7 @@ Authorization: Bearer <token>
 
 ---
 
-### PUT `/api/products/update`
+### PUT `/api/v1/products/update`
 
 Update an existing product.
 
@@ -590,7 +598,7 @@ Authorization: Bearer <token>
 
 ---
 
-### DELETE `/api/products`
+### DELETE `/api/v1/products`
 
 Delete a product and all its licenses.
 
@@ -617,7 +625,7 @@ Authorization: Bearer <token>
 
 ## Licenses Endpoints
 
-### GET `/api/licenses`
+### GET `/api/v1/licenses`
 
 List licenses for a specific product.
 
@@ -662,7 +670,7 @@ Authorization: Bearer <token>
 
 ---
 
-### POST `/api/licenses`
+### POST `/api/v1/licenses`
 
 Create a new license.
 
@@ -703,7 +711,7 @@ Authorization: Bearer <token>
 
 ---
 
-### PUT `/api/licenses`
+### PUT `/api/v1/licenses`
 
 Update a license.
 
@@ -748,7 +756,7 @@ Authorization: Bearer <token>
 
 ---
 
-### DELETE `/api/licenses`
+### DELETE `/api/v1/licenses`
 
 Delete a license.
 
@@ -773,7 +781,7 @@ Authorization: Bearer <token>
 
 ---
 
-### GET `/api/licenses/activations`
+### GET `/api/v1/licenses/activations`
 
 List activations for a specific license.
 
@@ -810,7 +818,7 @@ Authorization: Bearer <token>
 
 ---
 
-### POST `/api/licenses/validate`
+### POST `/api/v1/licenses/validate`
 
 Validate a license key and activate hardware. This endpoint uses API Key authentication.
 
@@ -882,7 +890,7 @@ X-Api-Key: api_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ---
 
-### POST `/api/licenses/deactivate`
+### POST `/api/v1/licenses/deactivate`
 
 Deactivate hardware activation. Uses API Key authentication.
 
@@ -908,7 +916,7 @@ X-Api-Key: api_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ---
 
-### POST `/api/licenses/deactivate-by-jwt`
+### POST `/api/v1/licenses/deactivate-by-jwt`
 
 Deactivate hardware activation. Uses JWT authentication.
 
@@ -934,7 +942,7 @@ Authorization: Bearer <token>
 
 ---
 
-### PUT `/api/licenses/activations/toggle`
+### PUT `/api/v1/licenses/activations/toggle`
 
 Toggle an activation active/inactive status. This endpoint uses JWT authentication (dashboard access only).
 
@@ -1005,15 +1013,15 @@ Check if the API is healthy. Excluded from OpenAPI documentation.
 
 ## Rate Limiting
 
-Applied to `/api/auth` POST endpoints (IP-based sliding window):
+Applied to `/api/v1/auth` POST endpoints (IP-based sliding window):
 
 | Endpoint | Limit | Window |
 |----------|-------|--------|
-| `/api/auth/login` | 10 | 1 minute |
-| `/api/auth/register` | 5 | 5 minutes |
-| `/api/auth/forgot-password` | 3 | 5 minutes |
-| `/api/auth/reset-password/verify` | 6 | 5 minutes |
-| `/api/auth/reset-password` | 3 | 5 minutes |
+| `/api/v1/auth/login` | 10 | 1 minute |
+| `/api/v1/auth/register` | 5 | 5 minutes |
+| `/api/v1/auth/forgot-password` | 3 | 5 minutes |
+| `/api/v1/auth/reset-password/verify` | 6 | 5 minutes |
+| `/api/v1/auth/reset-password` | 3 | 5 minutes |
 
 **Rate Limit Exceeded Response (429):**
 ```json
@@ -1113,5 +1121,5 @@ Characters: A-Z, 0-9 only (uppercase).
 ## Interactive API Documentation
 
 The Scalar API reference is available at:
-- Development: `http://localhost:5000/scalar/v1`
+- Development: `http://localhost:5049/scalar/v1`
 - Production: `https://your-domain/scalar/v1`

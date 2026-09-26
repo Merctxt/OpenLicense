@@ -12,6 +12,18 @@ The application is organized in clear layers:
 - Models: domain entities
 - Middleware: authentication, rate limiting, error handling, and proxy compatibility
 
+## API Versioning
+
+The API uses **URL path versioning** (`/api/v{version}`). The current version is **v1**.
+
+All routes are prefixed with `/api/v1/...`:
+- Auth: `/api/v1/auth/...`
+- Products: `/api/v1/products/...`
+- Licenses: `/api/v1/licenses/...`
+
+Future versions will be deployed alongside v1 during transition periods. Breaking changes will only occur in new major versions (e.g., `/api/v2/`).
+
+
 ## Main structure
 
 ```text
@@ -61,54 +73,56 @@ Execution order matters:
 The API supports two auth flows:
 
 - JWT Bearer for authenticated users
-- X-Api-Key for external license validation clients
+- X-Api-Key for external license validation
 
 ## Controllers and endpoints
 
 ### AuthController
 
-Base path: `/api/auth`
+Base path: `/api/v{version}/auth`
 
 | Method | Endpoint | Authentication | Description |
 |---|---|---|---|
-| POST | `/api/auth/register` | None | User registration |
-| POST | `/api/auth/login` | None | Login and token response |
-| POST | `/api/auth/logout` | None | Clear auth cookie |
-| GET | `/api/auth/me` | JWT | Current user profile |
-| PUT | `/api/auth` | JWT | Update profile |
-| DELETE | `/api/auth` | JWT | Delete account |
-| POST | `/api/auth/apikey` | JWT | Create API key |
-| DELETE | `/api/auth/apikey` | JWT | Remove API key |
-| POST | `/api/auth/forgot-password` | None | Request password recovery |
-| POST | `/api/auth/reset-password/verify` | None | Validate reset token |
-| POST | `/api/auth/reset-password` | None | Reset password |
-| PUT | `/api/auth/report-preferences` | JWT | Update email report opt-in preference |
+| POST | `/api/v1/auth/register` | None | User registration |
+| POST | `/api/v1/auth/login` | None | Login and token response |
+| POST | `/api/v1/auth/logout` | None | Clear auth cookie |
+| GET | `/api/v1/auth/me` | JWT | Current user profile |
+| PUT | `/api/v1/auth` | JWT | Update profile |
+| DELETE | `/api/v1/auth` | JWT | Delete account |
+| POST | `/api/v1/auth/apikey` | JWT | Create API key |
+| DELETE | `/api/v1/auth/apikey` | JWT | Remove API key |
+| PUT | `/api/v1/auth/apikey/toggle` | JWT | Toggle API key status |
+| POST | `/api/v1/auth/forgot-password` | None | Request password recovery |
+| POST | `/api/v1/auth/reset-password/verify` | None | Validate reset token |
+| POST | `/api/v1/auth/reset-password` | None | Reset password |
+| PUT | `/api/v1/auth/report-preferences` | JWT | Update email report opt-in preference |
 
 ### ProductsController
 
-Base path: `/api/products`
+Base path: `/api/v{version}/products`
 
 | Method | Endpoint | Authentication | Description |
 |---|---|---|---|
-| GET | `/api/products/all` | JWT | List user products |
-| POST | `/api/products/create` | JWT | Create product |
-| PUT | `/api/products/update` | JWT | Update product |
-| DELETE | `/api/products` | JWT | Delete product |
+| GET | `/api/v1/products/all` | JWT | List user products |
+| POST | `/api/v1/products/create` | JWT | Create product |
+| PUT | `/api/v1/products/update` | JWT | Update product |
+| DELETE | `/api/v1/products` | JWT | Delete product |
 
 ### LicensesController
 
-Base path: `/api/licenses`
+Base path: `/api/v{version}/licenses`
 
 | Method | Endpoint | Authentication | Description |
 |---|---|---|---|
-| GET | `/api/licenses` | JWT | List licenses |
-| POST | `/api/licenses` | JWT | Create license |
-| PUT | `/api/licenses` | JWT | Update license |
-| DELETE | `/api/licenses` | JWT | Delete license |
-| GET | `/api/licenses/activations` | JWT | List activations |
-| POST | `/api/licenses/validate` | API Key | Validate license and activate hardware |
-| POST | `/api/licenses/deactivate` | API Key | Deactivate hardware |
-| POST | `/api/licenses/deactivate-by-jwt` | JWT | Deactivate by user |
+| GET | `/api/v1/licenses` | JWT | List licenses |
+| POST | `/api/v1/licenses` | JWT | Create license |
+| PUT | `/api/v1/licenses` | JWT | Update license |
+| DELETE | `/api/v1/licenses` | JWT | Delete license |
+| GET | `/api/v1/licenses/activations` | JWT | List activations |
+| POST | `/api/v1/licenses/validate` | API Key | Validate license and activate hardware |
+| POST | `/api/v1/licenses/deactivate` | API Key | Deactivate hardware |
+| POST | `/api/v1/licenses/deactivate-by-jwt` | JWT | Deactivate by user |
+| PUT | `/api/v1/licenses/activations/toggle` | JWT | Toggle activation status |
 
 ## Main services
 

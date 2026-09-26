@@ -8,7 +8,7 @@ public class LoginTests : TestBase
         await RegisterUser(email: "login@test.com");
         var payload = new { Email = "login@test.com", Password = "TestPass1!" };
 
-        var response = await Client.PostAsJsonAsync("/api/auth/login", payload);
+        var response = await Client.PostAsJsonAsync("/api/v1/auth/login", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
@@ -22,7 +22,7 @@ public class LoginTests : TestBase
         await RegisterUser(email: "exists@test.com");
         var payload = new { Email = "nofind@test.com", Password = "TestPass1!" };
 
-        var response = await Client.PostAsJsonAsync("/api/auth/login", payload);
+        var response = await Client.PostAsJsonAsync("/api/v1/auth/login", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -33,7 +33,7 @@ public class LoginTests : TestBase
         await RegisterUser(email: "pw@test.com");
         var payload = new { Email = "pw@test.com", Password = "WrongPass1!" };
 
-        var response = await Client.PostAsJsonAsync("/api/auth/login", payload);
+        var response = await Client.PostAsJsonAsync("/api/v1/auth/login", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -44,7 +44,7 @@ public class LoginTests : TestBase
         await RegisterUser(email: "norm@test.com");
         var payload = new { Email = "NORM@TEST.COM", Password = "TestPass1!" };
 
-        var response = await Client.PostAsJsonAsync("/api/auth/login", payload);
+        var response = await Client.PostAsJsonAsync("/api/v1/auth/login", payload);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }

@@ -11,6 +11,7 @@ using OpenLicenseApi.Middleware.Reports;
 using DotNetEnv;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace OpenLicenseApi
 {
@@ -29,6 +30,13 @@ namespace OpenLicenseApi
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
             });
 
             // ── Database ─────────────────────────────────────────────────

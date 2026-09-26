@@ -3,12 +3,14 @@ using OpenLicenseApi.Services;
 using OpenLicenseApi.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace OpenLicenseApi.Controllers
 {
     [ApiController]
+    [ApiVersion("1.0")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    [Route("api/products")]
+    [Route("api/v{version:apiVersion}/products")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;

@@ -4,12 +4,14 @@ using OpenLicenseApi.DTOs;
 using OpenLicenseApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace OpenLicenseApi.Controllers
 {
     [ApiController]
+    [ApiVersion("1.0")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    [Route("api/auth")]
+    [Route("api/v{version:apiVersion}/auth")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;

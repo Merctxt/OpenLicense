@@ -9,7 +9,7 @@ public class CreateProductTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var payload = new { Name = "My Product" };
-        var response = await Client.PostAsJsonAsync("/api/products/create", payload);
+        var response = await Client.PostAsJsonAsync("/api/v1/products/create", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var product = await response.Content.ReadFromJsonAsync<Product>();
@@ -23,7 +23,7 @@ public class CreateProductTests : TestBase
     public async Task ShouldReturn401WhenNotAuthenticated()
     {
         var payload = new { Name = "Hacker Product" };
-        var response = await Client.PostAsJsonAsync("/api/products/create", payload);
+        var response = await Client.PostAsJsonAsync("/api/v1/products/create", payload);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
@@ -36,7 +36,7 @@ public class CreateProductTests : TestBase
         for (int i = 0; i < 5; i++)
         {
             var payload = new { Name = $"Product {i}" };
-            var response = await Client.PostAsJsonAsync("/api/products/create", payload);
+            var response = await Client.PostAsJsonAsync("/api/v1/products/create", payload);
             if (i < 3)
                 response.StatusCode.Should().Be(HttpStatusCode.OK);
             else
@@ -56,7 +56,7 @@ public class GetProductsTests : TestBase
         await CreateProduct(token, "Product 1");
         await CreateProduct(token, "Product 2");
 
-        var response = await Client.GetAsync("/api/products/all");
+        var response = await Client.GetAsync("/api/v1/products/all");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var products = await response.Content.ReadFromJsonAsync<List<Product>>();
@@ -70,7 +70,7 @@ public class GetProductsTests : TestBase
         var (token, user) = await GetAuthenticatedUser("emptyprod@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await Client.GetAsync("/api/products/all");
+        var response = await Client.GetAsync("/api/v1/products/all");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var products = await response.Content.ReadFromJsonAsync<List<Product>>();
@@ -81,7 +81,7 @@ public class GetProductsTests : TestBase
     [Fact]
     public async Task ShouldReturn401WhenNotAuthenticated()
     {
-        var response = await Client.GetAsync("/api/products/all");
+        var response = await Client.GetAsync("/api/v1/products/all");
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
@@ -89,7 +89,7 @@ public class GetProductsTests : TestBase
     {
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         var payload = new { Name = name };
-        var response = await Client.PostAsJsonAsync("/api/products/create", payload);
+        var response = await Client.PostAsJsonAsync("/api/v1/products/create", payload);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }
@@ -102,11 +102,11 @@ public class UpdateProductTests : TestBase
         var (token, user) = await GetAuthenticatedUser("updateprod@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/products/create", new { Name = "Old Name" });
+        var createResponse = await Client.PostAsJsonAsync("/api/v1/products/create", new { Name = "Old Name" });
         var product = await createResponse.Content.ReadFromJsonAsync<Product>();
 
         var updatePayload = new { ProductId = product!.Id, Name = "New Name" };
-        var updateResponse = await Client.PutAsJsonAsync("/api/products/update", updatePayload);
+        var updateResponse = await Client.PutAsJsonAsync("/api/v1/products/update", updatePayload);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var updated = await updateResponse.Content.ReadFromJsonAsync<Product>();
@@ -120,7 +120,7 @@ public class UpdateProductTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var payload = new { ProductId = Guid.NewGuid(), Name = "Ghost" };
-        var response = await Client.PutAsJsonAsync("/api/products/update", payload);
+        var response = await Client.PutAsJsonAsync("/api/v1/products/update", payload);
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
@@ -130,14 +130,14 @@ public class UpdateProductTests : TestBase
         var (token1, user1) = await GetAuthenticatedUser("ownerprod@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token1);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/products/create", new { Name = "Owner Product" });
+        var createResponse = await Client.PostAsJsonAsync("/api/v1/products/create", new { Name = "Owner Product" });
         var product = await createResponse.Content.ReadFromJsonAsync<Product>();
 
         var (token2, user2) = await GetAuthenticatedUser("otherprod@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token2);
 
         var payload = new { ProductId = product!.Id, Name = "Hacked" };
-        var response = await Client.PutAsJsonAsync("/api/products/update", payload);
+        var response = await Client.PutAsJsonAsync("/api/v1/products/update", payload);
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
@@ -145,7 +145,7 @@ public class UpdateProductTests : TestBase
     public async Task ShouldReturn401WhenNotAuthenticated()
     {
         var payload = new { ProductId = Guid.NewGuid(), Name = "Hacked" };
-        var response = await Client.PutAsJsonAsync("/api/products/update", payload);
+        var response = await Client.PutAsJsonAsync("/api/v1/products/update", payload);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }
@@ -158,7 +158,7 @@ public class DeleteProductTests : TestBase
         var (token, user) = await GetAuthenticatedUser("delprod@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/products/create", new { Name = "Delete Me" });
+        var createResponse = await Client.PostAsJsonAsync("/api/v1/products/create", new { Name = "Delete Me" });
         var product = await createResponse.Content.ReadFromJsonAsync<Product>();
 
         var deletePayload = new { ProductId = product!.Id };
@@ -166,7 +166,7 @@ public class DeleteProductTests : TestBase
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        var allResponse = await Client.GetAsync("/api/products/all");
+        var allResponse = await Client.GetAsync("/api/v1/products/all");
         var products = await allResponse.Content.ReadFromJsonAsync<List<Product>>();
         products!.Should().BeEmpty();
     }
@@ -188,7 +188,7 @@ public class DeleteProductTests : TestBase
         var (token1, user1) = await GetAuthenticatedUser("ownerdelprod@test.com");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token1);
 
-        var createResponse = await Client.PostAsJsonAsync("/api/products/create", new { Name = "Owner Product" });
+        var createResponse = await Client.PostAsJsonAsync("/api/v1/products/create", new { Name = "Owner Product" });
         var product = await createResponse.Content.ReadFromJsonAsync<Product>();
 
         var (token2, user2) = await GetAuthenticatedUser("otherdelprod@test.com");

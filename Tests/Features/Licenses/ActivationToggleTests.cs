@@ -23,7 +23,7 @@ public class ActivationToggleTests : TestBase
         await dbContext.SaveChangesAsync();
 
         var togglePayload = new { LicenseId = licenseId, HardwareId = "HW-TOGGLE-001" };
-        var toggleResponse = await Client.PutAsJsonAsync("/api/licenses/activations/toggle", togglePayload);
+        var toggleResponse = await Client.PutAsJsonAsync("/api/v1/licenses/activations/toggle", togglePayload);
 
         toggleResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var result = await toggleResponse.Content.ReadFromJsonAsync<ToggleResult>();
@@ -52,7 +52,7 @@ public class ActivationToggleTests : TestBase
         await dbContext.SaveChangesAsync();
 
         var togglePayload = new { LicenseId = licenseId, HardwareId = "HW-TOGGLE-002" };
-        var toggleResponse = await Client.PutAsJsonAsync("/api/licenses/activations/toggle", togglePayload);
+        var toggleResponse = await Client.PutAsJsonAsync("/api/v1/licenses/activations/toggle", togglePayload);
 
         toggleResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var result = await toggleResponse.Content.ReadFromJsonAsync<ToggleResult>();
@@ -66,7 +66,7 @@ public class ActivationToggleTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var togglePayload = new { LicenseId = Guid.NewGuid(), HardwareId = "HW-GHOST" };
-        var toggleResponse = await Client.PutAsJsonAsync("/api/licenses/activations/toggle", togglePayload);
+        var toggleResponse = await Client.PutAsJsonAsync("/api/v1/licenses/activations/toggle", togglePayload);
 
         toggleResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -78,7 +78,7 @@ public class ActivationToggleTests : TestBase
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var togglePayload = new { LicenseId = licenseId, HardwareId = "HW-NOTFOUND" };
-        var toggleResponse = await Client.PutAsJsonAsync("/api/licenses/activations/toggle", togglePayload);
+        var toggleResponse = await Client.PutAsJsonAsync("/api/v1/licenses/activations/toggle", togglePayload);
 
         toggleResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -106,7 +106,7 @@ public class ActivationToggleTests : TestBase
         await dbContext.SaveChangesAsync();
 
         var togglePayload = new { LicenseId = licenseId1, HardwareId = "HW-TOGGLE-003" };
-        var toggleResponse = await Client.PutAsJsonAsync("/api/licenses/activations/toggle", togglePayload);
+        var toggleResponse = await Client.PutAsJsonAsync("/api/v1/licenses/activations/toggle", togglePayload);
 
         toggleResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -115,7 +115,7 @@ public class ActivationToggleTests : TestBase
     public async Task ShouldReturn401WhenNotAuthenticated()
     {
         var togglePayload = new { LicenseId = Guid.NewGuid(), HardwareId = "HW-GHOST" };
-        var toggleResponse = await Client.PutAsJsonAsync("/api/licenses/activations/toggle", togglePayload);
+        var toggleResponse = await Client.PutAsJsonAsync("/api/v1/licenses/activations/toggle", togglePayload);
 
         toggleResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -145,7 +145,7 @@ public class ActivationToggleTests : TestBase
         await dbContext.SaveChangesAsync();
 
         var togglePayload = new { LicenseId = licenseId, HardwareId = "HW-TOGGLE-004" };
-        var toggleResponse = await Client.PutAsJsonAsync("/api/licenses/activations/toggle", togglePayload);
+        var toggleResponse = await Client.PutAsJsonAsync("/api/v1/licenses/activations/toggle", togglePayload);
 
         toggleResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -171,7 +171,7 @@ public class ActivationToggleTests : TestBase
         await dbContext.SaveChangesAsync();
 
         var togglePayload = new { LicenseId = licenseId, HardwareId = "HW-TOGGLE-005" };
-        var toggleResponse = await Client.PutAsJsonAsync("/api/licenses/activations/toggle", togglePayload);
+        var toggleResponse = await Client.PutAsJsonAsync("/api/v1/licenses/activations/toggle", togglePayload);
         toggleResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result = await toggleResponse.Content.ReadFromJsonAsync<ToggleResult>();
@@ -183,7 +183,7 @@ public class ActivationToggleTests : TestBase
         var (token, user) = await GetAuthenticatedUser(email);
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var productResponse = await Client.PostAsJsonAsync("/api/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
+        var productResponse = await Client.PostAsJsonAsync("/api/v1/products/create", new { Name = $"Product-{email.Split('@')[0]}" });
         var product = await productResponse.Content.ReadFromJsonAsync<Product>();
 
         var licenseResponse = await Client.PostAsJsonAsync("/api/licenses", new { ProductId = product!.Id, Name = "License", MaxActivations = 5 });
