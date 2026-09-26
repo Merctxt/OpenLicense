@@ -16,15 +16,36 @@ namespace OpenLicenseApi.Services
         public async Task<ReportDataDto> GenerateReportForUserAsync(Guid userId, int expiringDaysWarning)
         {
             var user = await _dbContext.Users
-                .Include(u => u.Products)
-                    .ThenInclude(p => p.Licenses)
-                        .ThenInclude(l => l.Activations)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found.");
             }
+
+            var products = await _dbContext.Products
+                .Where(p => p.UserId == userId)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var productIds = products.Select(p => p.Id).ToList();
+
+            var licenses = await _dbContext.Licenses
+                .Where(l => productIds.Contains(l.ProductId))
+                .Include(l => l.Product)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var licenseIds = licenses.Select(l => l.Id).ToList();
+
+            var activations = await _dbContext.Activations
+                .Where(a => licenseIds.Contains(a.LicenseId))
+                .AsNoTracking()
+                .ToListAsync();
+
+            var activationsByLicense = activations.GroupBy(a => a.LicenseId)
+                .ToDictionary(g => g.Key, g => g.ToList());
 
             var report = new ReportDataDto
             {
@@ -33,20 +54,18 @@ namespace OpenLicenseApi.Services
                 GeneratedAt = DateTime.UtcNow
             };
 
-            var allLicenses = user.Products
-                .SelectMany(p => p.Licenses)
-                .ToList();
+            var allLicenses = licenses.ToList();
 
             report.TotalLicenses = allLicenses.Count;
             report.ActiveLicenses = allLicenses.Count(l => l.Status);
             report.SuspendedLicenses = allLicenses.Count(l => !l.Status);
 
-            var now = DateTime.UtcNow;
-            var expiringThreshold = now.AddDays(expiringDaysWarning);
+            var productLookup = products.ToDictionary(p => p.Id);
+            var licenseLookup = allLicenses.ToDictionary(l => l.Id);
 
-            foreach (var product in user.Products)
+            foreach (var product in products)
             {
-                var productLicenses = product.Licenses.ToList();
+                var productLicenses = allLicenses.Where(l => l.ProductId == product.Id).ToList();
                 var total = productLicenses.Count;
                 var active = productLicenses.Count(l => l.Status);
                 var suspended = productLicenses.Count(l => !l.Status);
@@ -61,6 +80,9 @@ namespace OpenLicenseApi.Services
                 });
             }
 
+            var now = DateTime.UtcNow;
+            var expiringThreshold = now.AddDays(expiringDaysWarning);
+
             var expiringLicenses = allLicenses
                 .Where(l => l.Status && l.ExpiresAt.HasValue && l.ExpiresAt.Value <= expiringThreshold && l.ExpiresAt.Value > now)
                 .OrderBy(l => l.ExpiresAt)
@@ -73,7 +95,7 @@ namespace OpenLicenseApi.Services
                 {
                     LicenseName = license.Name,
                     LicenseKey = license.LicenseKey,
-                    ProductName = license.Product?.Name ?? "Unknown",
+                    ProductName = productLookup.TryGetValue(license.ProductId, out var product) ? product.Name : "Unknown",
                     ExpiresAt = license.ExpiresAt.Value,
                     DaysRemaining = daysRemaining
                 });
@@ -93,7 +115,7 @@ namespace OpenLicenseApi.Services
                 {
                     LicenseName = license.Name,
                     LicenseKey = license.LicenseKey,
-                    ProductName = license.Product?.Name ?? "Unknown",
+                    ProductName = productLookup.TryGetValue(license.ProductId, out var product) ? product.Name : "Unknown",
                     ExpiresAt = license.ExpiresAt.Value,
                     DaysExpired = daysExpired
                 });

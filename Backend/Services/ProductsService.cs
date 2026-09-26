@@ -20,10 +20,34 @@ namespace OpenLicenseApi.Services
         {
             await EnsureUserActiveAsync(userId);
 
-            return await _dbContext.Products
-                .Include(p => p.Licenses)
+            var products = await _dbContext.Products
                 .Where(p => p.UserId == userId)
+                .AsNoTracking()
                 .ToListAsync();
+
+            if (products.Count == 0)
+            {
+                return products;
+            }
+
+            var productIds = products.Select(p => p.Id).ToList();
+
+            var licenses = await _dbContext.Licenses
+                .Where(l => productIds.Contains(l.ProductId))
+                .AsNoTracking()
+                .ToListAsync();
+
+            var licensesByProduct = licenses.GroupBy(l => l.ProductId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            foreach (var product in products)
+            {
+                product.Licenses = licensesByProduct.TryGetValue(product.Id, out var productLicenses)
+                    ? new List<License>(productLicenses)
+                    : new List<License>();
+            }
+
+            return products;
         }
 
         public async Task<Product> CreateProductAsync(Guid userId, CreateProductRequest request)
