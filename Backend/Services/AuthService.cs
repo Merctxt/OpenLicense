@@ -384,10 +384,16 @@ namespace OpenLicenseApi.Services
 
         private static string GenerateResetToken()
         {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var bytes = new byte[TokenLength];
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(bytes);
-            return Convert.ToHexString(bytes).ToLower().Replace("0O", "aB");
+            var result = new char[TokenLength];
+            for (int i = 0; i < TokenLength; i++)
+            {
+                result[i] = chars[bytes[i] % chars.Length];
+            }
+            return new string(result);
         }
         #endregion
 

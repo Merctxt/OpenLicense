@@ -29,7 +29,7 @@ namespace OpenLicenseApi.Services
                     <h2 style=""color: #333;"">Password Recovery</h2>
                     <p>You requested a password recovery for your OpenLicense account.</p>
                     <p>Your recovery token is:</p>
-                    <div style=""background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 5px; margin: 20px 0;"">
+                    <div style=""background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 5px; margin: 20px 0; word-break: break-all; overflow-wrap: break-word;"">
                         {token}
                     </div>
                     <p style=""color: #666; font-size: 12px;"">This token expires in 15 minutes.</p>
