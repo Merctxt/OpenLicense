@@ -6,7 +6,6 @@ import './shared/styles/System.css'
 import './shared/styles/Animations.css'
 import { ThemeProvider } from './shared/context/ThemeContext'
 import App from './App.jsx'
-import './PWA/registerSW'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
