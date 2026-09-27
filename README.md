@@ -53,7 +53,7 @@ cd OpenLicense
 cp .env.example .env
 # Edit .env with your database, JWT secret, and telemetry settings
 
-# 3. Start the stack
+# 3. Start the stack (builds from local source)
 docker compose up -d
 ```
 
@@ -62,6 +62,23 @@ Then open:
 - API: http://localhost:5000
 - Dashboard: http://localhost:3000
 - API docs: http://localhost:5000/scalar/v1
+
+## Deployment options
+
+| Mode | Compose file | Source |
+|---|---|---|
+| Latest | `docker-compose.yml` | Local source code |
+| Release | `docker-compose.release.yml` | Git tag or branch from GitHub |
+
+```bash
+# Deploy from a release tag (downloads and builds from GitHub)
+RELEASE_VERSION=v1.0.1 docker compose -f docker-compose.release.yml up -d
+
+# Deploy from main branch (latest code from GitHub)
+RELEASE_VERSION=main docker compose -f docker-compose.release.yml up -d
+```
+
+See [docs/04-docker.md](docs/04-docker.md) for full deployment details.
 
 ## OpenObserve integration
 
@@ -91,10 +108,6 @@ See [docs/02-backend.md](docs/02-backend.md) and [docs/04-docker.md](docs/04-doc
 | [Docker](docs/04-docker.md) | Compose and deployment setup |
 | [Testing](docs/05-testing.md) | Test coverage and validation workflow |
 | [Development](docs/06-development.md) | Local setup, conventions, debugging |
-
-## Project status
-
-OpenLicense is built as a self-hosted SaaS-style platform for licensing operations, product access control, and production monitoring.
 
 ## License
 

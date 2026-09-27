@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+
+  # .NET API
+  api:
+    build:
+      context: "https://github.com/Merctxt/OpenLicense.git#${RELEASE_VERSION:-main}:Backend"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - ASPNETCORE_URLS=http://+:5000
+      - database_connection=${DATABASE_CONNECTION}
+      - Jwt__SecretKey=${JWT_SECRET_KEY}
+      - Jwt__Issuer=${JWT_ISSUER:-OpenLicenseApi}
+      - Jwt__Audience=${JWT_AUDIENCE:-OpenLicenseApiUsers}
+      - REGISTRATION_ENABLED=${REGISTRATION_ENABLED:-true}
+
+      - Email__Host=${Email__Host}
+      - Email__Port=${Email__Port:-587}
+      - Email__Secure=${Email__Secure:-false}
+      - Email__Username=${Email__Username}
+      - Email__Password=${Email__Password}
+      - Email__From=${Email__From}
+
+      - ReportSettings__IntervalMinutes=${ReportSettings__IntervalMinutes:-4320}
+      - ReportSettings__ExpiryWarningDays=${ReportSettings__ExpiryWarningDays:-7}
+      - ReportSettings__Enabled=${ReportSettings__Enabled:-true}
+
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      - OTEL_EXPORTER_OTLP_HEADERS=${OTEL_EXPORTER_OTLP_HEADERS:-}
+    ports:
+      - "${API_PORT:-5000}:5000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  # React Frontend
+  frontend:
+    build:
+      context: "https://github.com/Merctxt/OpenLicense.git#${RELEASE_VERSION:-main}:Frontend"
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_STATUS_URL: ${VITE_STATUS_URL}
+        VITE_SOURCE_URL: ${VITE_SOURCE_URL}
+        VITE_REGISTRATION_ENABLED: ${VITE_REGISTRATION_ENABLED:-true}
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
