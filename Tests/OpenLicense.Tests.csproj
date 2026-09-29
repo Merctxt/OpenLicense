@@ -14,6 +14,9 @@
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.8" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.19.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.19.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
@@ -23,7 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Backend\OpenLicenseApi.csproj" />
+    <ProjectReference Include="..\Backend\OpenLicense.Api\OpenLicense.Api.csproj" />
+    <ProjectReference Include="..\Backend\OpenLicense.Application\OpenLicense.Application.csproj" />
+    <ProjectReference Include="..\Backend\OpenLicense.Domain\OpenLicense.Domain.csproj" />
+    <ProjectReference Include="..\Backend\OpenLicense.Infrastructure\OpenLicense.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

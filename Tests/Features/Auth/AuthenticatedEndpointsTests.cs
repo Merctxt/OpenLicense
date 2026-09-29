@@ -11,7 +11,7 @@ public class AuthenticatedEndpointsTests : TestBase
         var response = await Client.GetAsync($"{ApiVersion.Path}/auth/me");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var me = await response.Content.ReadFromJsonAsync<Users>();
+        var me = await response.Content.ReadFromJsonAsync<User>();
         me.Should().NotBeNull();
         me!.Id.Should().Be(user.Id);
         me.Name.Should().Be(user.Name);
@@ -35,7 +35,7 @@ public class AuthenticatedEndpointsTests : TestBase
         var response = await Client.PutAsJsonAsync($"{ApiVersion.Path}/auth", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var updated = await response.Content.ReadFromJsonAsync<Users>();
+        var updated = await response.Content.ReadFromJsonAsync<User>();
         updated!.Name.Should().Be("Updated Name");
         updated.Email.Should().Be("update@test.com");
     }
@@ -50,7 +50,7 @@ public class AuthenticatedEndpointsTests : TestBase
         var response = await Client.PutAsJsonAsync($"{ApiVersion.Path}/auth", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var updated = await response.Content.ReadFromJsonAsync<Users>();
+        var updated = await response.Content.ReadFromJsonAsync<User>();
         updated!.Email.Should().Be("new@test.com");
     }
 

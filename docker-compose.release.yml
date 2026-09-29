@@ -5,7 +5,7 @@ services:
   # .NET API
   api:
     build:
-      context: "https://github.com/Merctxt/OpenLicense.git#${RELEASE_VERSION:-main}:Backend"
+      context: "https://github.com/Merctxt/OpenLicense.git#${RELEASE_VERSION:-main}:Backend/OpenLicense.Api"
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
       - ASPNETCORE_URLS=http://+:5000

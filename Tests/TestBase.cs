@@ -80,7 +80,7 @@ public abstract class TestBase : IAsyncLifetime
         _factory?.Dispose();
     }
 
-    public async Task<Users> RegisterUser(string? email = null, string? name = null, string? password = null)
+    public async Task<User> RegisterUser(string? email = null, string? name = null, string? password = null)
     {
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
         var payload = new
@@ -93,7 +93,7 @@ public abstract class TestBase : IAsyncLifetime
         var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/register", payload);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var user = await response.Content.ReadFromJsonAsync<Users>();
+        var user = await response.Content.ReadFromJsonAsync<User>();
         user.Should().NotBeNull();
         return user!;
     }
@@ -109,7 +109,7 @@ public abstract class TestBase : IAsyncLifetime
         return result!.Token;
     }
 
-    public async Task<(string token, Users user)> GetAuthenticatedUser(string? email = null, string? name = null, string? password = null)
+    public async Task<(string token, User user)> GetAuthenticatedUser(string? email = null, string? name = null, string? password = null)
     {
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
         var userEmail = email ?? $"test.{uniqueId}@test.com";
@@ -121,7 +121,7 @@ public abstract class TestBase : IAsyncLifetime
         return (token, user);
     }
 
-    public string GenerateJwtToken(Users user)
+    public string GenerateJwtToken(User user)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSecret!));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

@@ -10,8 +10,7 @@ public class RegisterTests : TestBase
         var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/register", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var user = await response.Content.ReadFromJsonAsync<Users>();
-        user.Should().NotBeNull();
+        var user = await response.Content.ReadFromJsonAsync<User>();
         user!.Name.Should().Be("Valid User");
         user.Email.Should().Be("valid@test.com");
         user.Id.Should().NotBeEmpty();
@@ -58,7 +57,7 @@ public class RegisterTests : TestBase
         var response = await Client.PostAsJsonAsync($"{ApiVersion.Path}/auth/register", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var user = await response.Content.ReadFromJsonAsync<Users>();
+        var user = await response.Content.ReadFromJsonAsync<User>();
         user!.Email.Should().Be("case@test.com");
     }
 

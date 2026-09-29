@@ -40,7 +40,7 @@ public class EmailChangeRateLimitTests : TestBase
         var response = await Client.PutAsJsonAsync($"{ApiVersion.Path}/auth", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var updated = await response.Content.ReadFromJsonAsync<Users>();
+        var updated = await response.Content.ReadFromJsonAsync<User>();
         updated!.Email.Should().Be("oldchange2@test.com");
         updated.LastEmailChangeAt.Should().NotBeNull();
     }
@@ -65,7 +65,7 @@ public class EmailChangeRateLimitTests : TestBase
         var response2 = await Client.PutAsJsonAsync($"{ApiVersion.Path}/auth", payload2);
 
         response2.StatusCode.Should().Be(HttpStatusCode.OK);
-        var updated = await response2.Content.ReadFromJsonAsync<Users>();
+        var updated = await response2.Content.ReadFromJsonAsync<User>();
         updated!.Name.Should().Be("New Name");
         updated.Email.Should().Be("namely2@test.com");
 
@@ -86,8 +86,9 @@ public class EmailChangeRateLimitTests : TestBase
         var response = await Client.PutAsJsonAsync($"{ApiVersion.Path}/auth", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var updated = await response.Content.ReadFromJsonAsync<Users>();
+        var updated = await response.Content.ReadFromJsonAsync<User>();
         updated!.Name.Should().Be("New Name");
         updated.Email.Should().Be("sameemail@test.com");
     }
 }
+

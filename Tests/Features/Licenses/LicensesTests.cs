@@ -60,12 +60,12 @@ public class GetLicensesTests : TestBase
         using var scope = _factory!.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        var user = new Users
+        var user = new User
         {
             Id = Guid.NewGuid(),
             Name = "Auth Test User",
             Email = $"auth-test-{Guid.NewGuid():N}@test.com",
-            PasswordHash = new Microsoft.AspNetCore.Identity.PasswordHasher<Users>().HashPassword(null!, "TestPass1!"),
+            PasswordHash = new Microsoft.AspNetCore.Identity.PasswordHasher<User>().HashPassword(null!, "TestPass1!"),
             ProductLimit = 5,
             LicenseLimit = 10,
             CreatedAt = DateTime.UtcNow
@@ -491,3 +491,4 @@ public class ActivationsTests : TestBase
         return (license!.Id, token);
     }
 }
+
