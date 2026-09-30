@@ -31,6 +31,23 @@ It is designed for teams that want a SaaS-style control layer without depending 
 
 The API includes native OpenTelemetry support for exporting traces, metrics, and logs to OpenObserve, making it easier to debug production issues, monitor usage patterns, and understand license-related events in real time.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph Backend["Backend (.NET 9)"]
+        Api["Api\nControllers"] --> App["Application\nCommands/Queries"]
+        App --> Domain["Domain\nEntities"]
+        Infra["Infrastructure\nDB/Services"] --> App
+        Infra --> Domain
+    end
+    Frontend["Frontend (React 19)"] --> Api
+    Tests["Tests (xUnit)"] --> Api
+
+    classDef layer fill:#ffffff,color:#333,stroke:#333,stroke-width:2px
+    class Api,App,Domain,Infra,Frontend,Tests layer
+```
+
 ## Quick start
 
 ```bash

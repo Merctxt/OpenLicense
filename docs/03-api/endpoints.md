@@ -586,24 +586,7 @@ Health check (excluded from OpenAPI documentation).
 
 ## Rate Limiting
 
-Rate limits per IP on sensitive endpoints:
-
-| Endpoint | Limit | Window |
-|----------|-------|--------|
-| `/api/v1/auth/login` | 10 | 1 minute |
-| `/api/v1/auth/register` | 5 | 5 minutes |
-| `/api/v1/auth/forgot-password` | 3 | 5 minutes |
-| `/api/v1/auth/reset-password/verify` | 6 | 5 minutes |
-| `/api/v1/auth/reset-password` | 3 | 5 minutes |
-
-**Rate Limit Exceeded (429):**
-```json
-{
-  "message": "Too many requests. Please try again later."
-}
-```
-
-Header: `Retry-After: 45`
+See [Error Handling — Rate Limiting](03-api/error-handling.md#rate-limiting) for configuration details.
 
 ## Formats
 
