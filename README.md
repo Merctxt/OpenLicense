@@ -31,17 +31,6 @@ It is designed for teams that want a SaaS-style control layer without depending 
 
 The API includes native OpenTelemetry support for exporting traces, metrics, and logs to OpenObserve, making it easier to debug production issues, monitor usage patterns, and understand license-related events in real time.
 
-## Core features
-
-- Product and license management
-- Secure user authentication and authorization
-- API key issuance and control
-- Customer activation flows
-- Email-based recovery and account protections
-- Scheduled license status reports (opt-in, background service)
-- Observability via OpenTelemetry / OTLP
-- Containerized deployment with Docker Compose
-
 ## Quick start
 
 ```bash
@@ -57,11 +46,6 @@ cp .env.example .env
 docker compose up -d
 ```
 
-Then open:
-
-- API: http://localhost:5000
-- Dashboard: http://localhost:3000
-- API docs: http://localhost:5000/scalar/v1
 
 ## Deployment options
 
@@ -78,36 +62,18 @@ RELEASE_VERSION=v1.0.1 docker compose -f docker-compose.release.yml up -d
 RELEASE_VERSION=main docker compose -f docker-compose.release.yml up -d
 ```
 
-See [docs/04-docker.md](docs/04-docker.md) for full deployment details.
-
-## OpenObserve integration
-
-OpenLicense can send telemetry directly to OpenObserve using OTLP. This is useful for:
-
-- monitoring API latency and errors
-- investigating suspicious license activity
-- observing request volume by endpoint
-- correlating logs, traces, and metrics in a single view
-
-Relevant environment variables include:
-
-```env
-OTEL_EXPORTER_OTLP_ENDPOINT=https://your-openobserve-instance/api/default
-OTEL_EXPORTER_OTLP_HEADERS=Authorization=Basic <token>
-```
-
-See [docs/02-backend.md](docs/02-backend.md) and [docs/04-docker.md](docs/04-docker.md) for the backend and deployment details.
-
 ## Documentation
 
-| Doc | Description |
-|-----|-------------|
-| [Architecture](docs/01-architecture.md) | System overview, data flow, auth architecture |
-| [Backend](docs/02-backend.md) | Controllers, services, models, middleware, observability |
-| [API Reference](docs/03-api-reference.md) | Endpoints, requests, payloads, responses |
-| [Docker](docs/04-docker.md) | Compose and deployment setup |
-| [Testing](docs/05-testing.md) | Test coverage and validation workflow |
-| [Development](docs/06-development.md) | Local setup, conventions, debugging |
+| Topic | Location |
+|-------|----------|
+| Architecture overview | [docs/01-architecture/overview](docs/01-architecture/overview.md) |
+| CQRS & MediatR | [docs/01-architecture/cqrs-and-mediatr](docs/01-architecture/cqrs-and-mediatr.md) |
+| Database design | [docs/01-architecture/database-design](docs/01-architecture/database-design.md) |
+| Environment setup | [docs/02-getting-started/environment-setup](docs/02-getting-started/environment-setup.md) |
+| Local development | [docs/02-getting-started/local-development](docs/02-getting-started/local-development.md) |
+| API endpoints | [docs/03-api/endpoints](docs/03-api/endpoints.md) |
+| Error handling | [docs/03-api/error-handling](docs/03-api/error-handling.md) |
+| Full docs index | [docs/README](docs/README.md) |
 
 ## License
 
