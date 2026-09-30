@@ -11,11 +11,11 @@ EXPOSE 5000
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY "OpenLicense.sln" .
-COPY "OpenLicense.Domain/OpenLicense.Domain.csproj" "OpenLicense.Domain/"
-COPY "OpenLicense.Application/OpenLicense.Application.csproj" "OpenLicense.Application/"
-COPY "OpenLicense.Infrastructure/OpenLicense.Infrastructure.csproj" "OpenLicense.Infrastructure/"
-COPY "OpenLicense.Api/OpenLicense.Api.csproj" "OpenLicense.Api/"
+COPY OpenLicense.sln .
+COPY OpenLicense.Domain/OpenLicense.Domain.csproj OpenLicense.Domain/
+COPY OpenLicense.Application/OpenLicense.Application.csproj OpenLicense.Application/
+COPY OpenLicense.Infrastructure/OpenLicense.Infrastructure.csproj OpenLicense.Infrastructure/
+COPY OpenLicense.Api/OpenLicense.Api.csproj OpenLicense.Api/
 RUN dotnet restore "OpenLicense.Api/OpenLicense.Api.csproj"
 COPY . .
 WORKDIR "/src/OpenLicense.Api"
