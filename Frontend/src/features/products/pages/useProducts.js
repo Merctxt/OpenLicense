@@ -6,7 +6,6 @@ import { useConfirmation } from '../../../shared/context/ConfirmationContext'
 export default function useProducts() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [expandedId, setExpandedId] = useState(null)
   const [productModal, setProductModal] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const { showError, showSuccess, showInfo } = useAlert()
@@ -67,7 +66,6 @@ export default function useProducts() {
     if (!c) return
     try {
       await deleteProduct({ productId: id })
-      setExpandedId(null)
       await load()
       showSuccess('Product deleted')
     } catch (err) {
@@ -75,19 +73,13 @@ export default function useProducts() {
     }
   }
 
-  const toggleExpand = (id) => {
-    setExpandedId(expandedId === id ? null : id)
-  }
-
   return {
     products, loading,
-    expandedId, setExpandedId,
     productModal, setProductModal,
     submitting,
     handleCreateProduct,
     handleEditProduct,
     handleDeleteProduct,
-    toggleExpand,
     load,
   }
 }

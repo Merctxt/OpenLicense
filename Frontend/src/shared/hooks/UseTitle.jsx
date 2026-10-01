@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom'
 const titleMap = {
   '/products': 'OpenLicense - Products',
   '/licenses': 'OpenLicense - Licenses',
-  '/activations': 'OpenLicense - Activations',
   '/login': 'OpenLicense - Login',
   '/register': 'OpenLicense - Register',
   '/forgot-password': 'OpenLicense - Forgot Password',

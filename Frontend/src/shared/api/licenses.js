@@ -3,10 +3,6 @@ import { API_VERSION } from './version'
 
 const apiPrefix = `/api/${API_VERSION}`
 
-export function getLicenses(productId) {
-  return api.get(`${apiPrefix}/licenses`, { params: { productId } })
-}
-
 export function createLicense(data) {
   return api.post(`${apiPrefix}/licenses`, data)
 }
