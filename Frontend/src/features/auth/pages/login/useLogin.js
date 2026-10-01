@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { login } from '../../../../shared/api/endpoints'
 import { useAuth } from '../../../../shared/context/AuthContext'
@@ -12,13 +12,16 @@ export default function useLogin() {
   const { showSuccess, showError } = useAlert()
   const navigate = useNavigate()
   const location = useLocation()
+  const shownRef = useRef(false)
 
   useEffect(() => {
-    if (location.state?.successMessage) {
+    if (location.state?.successMessage && !shownRef.current) {
+      const pathname = location.pathname
       showSuccess(location.state.successMessage)
-      navigate(location.pathname, { replace: true, state: {} })
+      navigate(pathname, { replace: true, state: {} })
+      shownRef.current = true
     }
-  }, [location, navigate, showSuccess])
+  }, [location.state?.successMessage, navigate, showSuccess, location.pathname])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
