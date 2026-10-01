@@ -284,7 +284,7 @@ export default function Sidebar({ children }) {
             </div>
           )}
 
-          <main className="flex-grow-1 px-3 px-md-4 py-4" style={{ width: '100%', margin: '0 auto', maxWidth: '1100px' }}>
+          <main className="flex-grow-1 px-3 px-md-4 py-4" style={{ width: '100%', margin: '0 auto', maxWidth: '1100px', minHeight: '100vh', overflowY: 'auto' }}>
             {children}
           </main>
         </div>
