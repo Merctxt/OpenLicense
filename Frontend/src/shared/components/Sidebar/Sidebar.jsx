@@ -80,24 +80,25 @@ function MenuItem({ link, isActive, onNavigate }) {
 
 function UserMenu({ user, onLogout }) {
   const { theme, setTheme } = useTheme()
+  const openRef = useRef(false)
   const [open, setOpen] = useState(false)
   const buttonRef = useRef(null)
   const menuRef = useRef(null)
 
   useEffect(() => {
-    if (!open) return
+    openRef.current = open
 
-    const handlePointerDown = (event) => {
-      const clickedOutsideButton = buttonRef.current && !buttonRef.current.contains(event.target)
-      const clickedOutsideMenu = menuRef.current && !menuRef.current.contains(event.target)
-
-      if (clickedOutsideButton && clickedOutsideMenu) {
+    const handleOutsideClick = (event) => {
+      if (!openRef.current) return
+      const clickedButton = buttonRef.current && buttonRef.current.contains(event.target)
+      const clickedMenu = menuRef.current && menuRef.current.contains(event.target)
+      if (!clickedButton && !clickedMenu) {
         setOpen(false)
       }
     }
 
-    document.addEventListener('mousedown', handlePointerDown)
-    return () => document.removeEventListener('mousedown', handlePointerDown)
+    document.addEventListener('mousedown', handleOutsideClick)
+    return () => document.removeEventListener('mousedown', handleOutsideClick)
   }, [open])
 
   return (
@@ -106,9 +107,8 @@ function UserMenu({ user, onLogout }) {
         ref={buttonRef}
         type="button"
         className="dropdown-toggle link-body-emphasis d-flex align-items-center text-decoration-none w-100 border-0 bg-transparent px-0 text-start"
-        data-bs-toggle="dropdown"
         aria-expanded={open}
-        onClick={() => setOpen((previous) => !previous)}
+        onClick={() => setOpen((prev) => !prev)}
         style={{
           fontWeight: 600,
           padding: '0.5rem 0',
@@ -126,6 +126,7 @@ function UserMenu({ user, onLogout }) {
           ref={menuRef}
           className="dropdown-menu show shadow"
           style={{
+            position: 'absolute',
             left: '0',
             bottom: '100%',
             marginBottom: '0.5rem',
@@ -142,7 +143,7 @@ function UserMenu({ user, onLogout }) {
               <button
                 className={`btn btn-sm ${theme === 'light' ? 'btn-primary' : 'btn-outline-secondary'}`}
                 style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
-                onClick={() => { setTheme('light'); setOpen(false) }}
+                onClick={() => setTheme('light')}
               >
                 <Sun size={12} className="me-1" />
                 Light
@@ -150,7 +151,7 @@ function UserMenu({ user, onLogout }) {
               <button
                 className={`btn btn-sm ${theme === 'dark' ? 'btn-primary' : 'btn-outline-secondary'}`}
                 style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
-                onClick={() => { setTheme('dark'); setOpen(false) }}
+                onClick={() => setTheme('dark')}
               >
                 <Moon size={12} className="me-1" />
                 Dark
@@ -158,14 +159,14 @@ function UserMenu({ user, onLogout }) {
               <button
                 className={`btn btn-sm ${theme === 'system' ? 'btn-primary' : 'btn-outline-secondary'}`}
                 style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
-                onClick={() => { setTheme('system'); setOpen(false) }}
+                onClick={() => setTheme('system')}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="me-1"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 Auto
               </button>
             </div>
           </div>
-          <Link className="dropdown-item" to="/account" onClick={() => setOpen(false)}>
+          <Link className="dropdown-item" to="/account">
             Account
           </Link>
           <div className="dropdown-divider" />
@@ -173,7 +174,6 @@ function UserMenu({ user, onLogout }) {
             type="button"
             className="dropdown-item text-danger"
             onClick={async () => {
-              setOpen(false)
               try {
                 await logout()
               } catch {
