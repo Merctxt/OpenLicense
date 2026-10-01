@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Modal as BsModal } from 'bootstrap'
 import { AlertTriangle } from 'lucide-react'
 
-export default function ConfirmationModal({ title, message, onConfirm, onClose }) {
+export default function ConfirmationModal({ title, message, onConfirm, onClose, confirmLabel }) {
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function ConfirmationModal({ title, message, onConfirm, onClose }
           </div>
           <div className="modal-footer">
             <button className="btn btn-sm btn-outline-secondary" onClick={onClose}>Cancel</button>
-            <button className="btn btn-sm btn-danger" onClick={onConfirm}>Delete</button>
+            <button className="btn btn-sm btn-danger" onClick={onConfirm}>{confirmLabel || 'Delete'}</button>
           </div>
         </div>
       </div>

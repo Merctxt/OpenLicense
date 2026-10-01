@@ -92,7 +92,7 @@ export default function useAccount() {
     const key = user.apiKeys?.find(k => k.id === id)
     const action = key?.isActive ? 'disable' : 'enable'
     if (action === 'disable') {
-      const c = await confirm('Disable API key', 'Are you sure you want to disable this API key?')
+      const c = await confirm('Disable API key', 'Are you sure you want to disable this API key?', { confirmLabel: 'Disable' })
       if (!c) return
     }
     setSubmitting(true)

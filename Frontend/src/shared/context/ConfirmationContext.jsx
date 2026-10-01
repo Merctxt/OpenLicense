@@ -6,9 +6,9 @@ const ConfirmationContext = createContext(null)
 export function ConfirmationProvider({ children }) {
   const [config, setConfig] = useState(null)
 
-  const confirm = useCallback((title, message) => {
+  const confirm = useCallback((title, message, options) => {
     return new Promise((resolve) => {
-      setConfig({ title, message, resolve })
+      setConfig({ title, message, resolve, confirmLabel: options?.confirmLabel })
     })
   }, [])
 
@@ -35,6 +35,7 @@ export function ConfirmationProvider({ children }) {
           message={config.message}
           onConfirm={handleConfirm}
           onClose={handleCancel}
+          confirmLabel={config.confirmLabel}
         />
       )}
     </ConfirmationContext.Provider>
