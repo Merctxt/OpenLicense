@@ -1,4 +1,4 @@
-import { EmptyState } from '../../../../shared/components/EmptyState'
+import { EmptyState } from '../../../../shared/components/EmptyState/EmptyState'
 
 export default function AccountApiKeysCard({ user, submitting, setShowApiKeyModal, handleDeleteApiKey, handleToggleApiKey }) {
   return (

@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import Modal from '../../../shared/components/Modal/Modal'
-import { EmptyState } from '../../../shared/components/EmptyState'
-import { LoadingState } from '../../../shared/components/LoadingState'
+import { EmptyState } from '../../../shared/components/EmptyState/EmptyState'
+import { LoadingState } from '../../../shared/components/LoadingState/LoadingState'
 import useProducts from './useProducts'
 
 export default function Products() {

@@ -1,1 +1,0 @@
-export { LicenseDetailsModal } from './LicenseDetailsModal'

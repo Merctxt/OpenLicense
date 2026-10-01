@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react'
-import { EmptyState } from '../../../shared/components/EmptyState'
-import { LoadingState } from '../../../shared/components/LoadingState'
-import { LicenseFormModal } from '../components/LicenseFormModal'
-import { LicenseDetailsModal } from '../components/LicenseDetailsModal'
-import { LicensesFilters } from '../components/LicensesFilters'
-import { LicensesTable } from '../components/LicensesTable'
-import { LicensesPagination } from '../components/LicensesPagination'
+import { EmptyState } from '../../../shared/components/EmptyState/EmptyState'
+import { LoadingState } from '../../../shared/components/LoadingState/LoadingState'
+import LicenseFormModal from '../components/LicenseFormModal/LicenseFormModal'
+import { LicenseDetailsModal } from '../components/LicenseDetailsModal/LicenseDetailsModal'
+import LicensesFilters from '../components/LicensesFilters/LicensesFilters'
+import LicensesTable from '../components/LicensesTable/LicensesTable'
+import LicensesPagination from '../components/LicensesPagination/LicensesPagination'
 import useLicenses from './useLicenses'
 
 export default function LicensesPage() {
