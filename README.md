@@ -2,9 +2,6 @@
 
 Self-hosted licensing platform for software vendors, SaaS teams, and digital product businesses that need to manage licenses, API access, activations, and operational visibility from one place.
 
-<p align="center">
-  <img src="assets/a4.png" alt="OpenLicense SaaS dashboard" width="1200" />
-</p>
 
 ## Why OpenLicense
 
@@ -18,18 +15,6 @@ OpenLicense helps teams automate the lifecycle of software access:
 
 It is designed for teams that want a SaaS-style control layer without depending on a third-party licensing platform.
 
-## Platform overview
-
-<p align="center">
-  <table>
-    <tr>
-      <td align="center"><img src="assets/b1.png" alt="OpenObserve visibility overview" width="560" /></td>
-      <td align="center"><img src="assets/b2.png" alt="OpenObserve monitoring details" width="560" /></td>
-    </tr>
-  </table>
-</p>
-
-The API includes native OpenTelemetry support for exporting traces, metrics, and logs to OpenObserve, making it easier to debug production issues, monitor usage patterns, and understand license-related events in real time.
 
 ## Architecture
 
