@@ -601,10 +601,10 @@ api_aB3cD4eF5gH6iJ7kL8mN9oP0qR1sT2uV3wX4yZ5aB6cD7eF8gH9iJ0kL1mN2oP3
 ### License Key Format
 
 ```
-A1B2-C3D4-E5F6-G7H8
+A1B2C-D3E4F-G5H6I-J7K8L
 ```
 
-4 groups of 4 alphanumeric chars separated by hyphen (A-Z, 0-9)
+4 groups of 5 alphanumeric chars separated by hyphen (A-Z, 0-9)
 
 
 ## Interactive Documentation

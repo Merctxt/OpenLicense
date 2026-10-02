@@ -11,8 +11,8 @@ public class LicenseService : ILicenseService
 {
     private readonly AppDbContext _dbContext;
     private const string LicenseKeyChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private const int LicenseKeyBlockLength = 4;
-    private const int LicenseKeyLength = 16;
+    private const int LicenseKeyBlockLength = 5;
+    private const int LicenseKeyLength = 20;
     public LicenseService(AppDbContext dbContext)
     {
         _dbContext = dbContext;
