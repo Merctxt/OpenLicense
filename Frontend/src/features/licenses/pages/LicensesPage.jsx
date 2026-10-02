@@ -80,6 +80,7 @@ export default function LicensesPage() {
           handleCreateLicense={handleCreateLicense}
           handleEditLicense={handleEditLicense}
           submitting={submitting}
+          products={products}
         />
       )}
 

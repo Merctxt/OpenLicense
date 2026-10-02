@@ -1,6 +1,6 @@
 import Modal from '../../../../shared/components/Modal/Modal'
 
-export default function LicenseFormModal({ licenseModal, handleLicenseModalClose, handleCreateLicense, handleEditLicense, submitting }) {
+export default function LicenseFormModal({ licenseModal, handleLicenseModalClose, handleCreateLicense, handleEditLicense, submitting, products }) {
   return (
     <Modal
       title={licenseModal.mode === 'create' ? 'New License' : 'Edit License'}
@@ -27,6 +27,17 @@ export default function LicenseFormModal({ licenseModal, handleLicenseModalClose
         </div>
       ) : (
         <form id="license-form" onSubmit={licenseModal.mode === 'create' ? handleCreateLicense : handleEditLicense}>
+          {licenseModal.mode === 'create' && (
+            <div className="mb-3">
+              <label className="form-label">Product</label>
+              <select className="form-select" name="productId" defaultValue={licenseModal.productId || (products[0] && products[0].id) || ''} required>
+                <option value="">Select a product</option>
+                {products.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className="mb-3">
             <label className="form-label">Name</label>
             <input className="form-control" name="name" defaultValue={licenseModal.license?.name || ''} required />

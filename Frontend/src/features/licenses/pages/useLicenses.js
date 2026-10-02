@@ -76,7 +76,7 @@ export default function useLicenses() {
     try {
       const fd = new FormData(e.target)
       const payload = {
-        productId: licenseModal.productId,
+        productId: fd.get('productId'),
         name: fd.get('name'),
         maxActivations: parseInt(fd.get('maxActivations')) || 1,
       }
