@@ -28,8 +28,8 @@ if ! command -v npm &> /dev/null; then
 fi
 
 echo -e "\n${CYAN}=== Iniciando OpenLicense ===${NC}"
-echo -e "${YELLOW}Backend:  dotnet run (Backend/OpenLicense.Api/)${NC}"
-echo -e "${YELLOW}Frontend: npm run dev (Frontend/)\n${NC}"
+echo -e "${YELLOW}Backend: (Backend/OpenLicense.Api/)${NC}"
+echo -e "${YELLOW}Frontend: (Frontend/)\n${NC}"
 
 # PIDs monitorados
 pids=()
@@ -57,7 +57,7 @@ trap cleanup SIGINT SIGTERM
 # Inicia backend
 (
     cd Backend/OpenLicense.Api
-    dotnet run
+    dotnet watch run
 ) &
 pids+=($!)
 
