@@ -4,6 +4,7 @@ import { resetPassword } from '../../../../shared/api/endpoints'
 import { useAuth } from '../../../../shared/context/AuthContext'
 import { useAlert } from '../../../../shared/context/AlertContext'
 import { validatePassword } from '../../../../shared/components/PasswordValidation/PasswordValidation'
+import { handleError, MESSAGES } from '../../../../shared/utils/useApiError'
 
 export default function useResetPassword() {
   const [password, setPassword] = useState('')
@@ -40,9 +41,9 @@ export default function useResetPassword() {
     setSubmitting(true)
     try {
       await resetPassword({ email, token, password })
-      navigate('/login', { state: { successMessage: 'Password reset successfully! Please sign in.' } })
+      navigate('/login', { state: { successMessage: MESSAGES.auth.passwordReset } })
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to reset password')
+      showError(handleError(err, 'recovery.resetFailed', MESSAGES.recovery.resetFailed))
     } finally {
       setSubmitting(false)
     }

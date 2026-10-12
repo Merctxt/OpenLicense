@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useAuth } from '../../../shared/context/AuthContext'
 import { useAlert } from '../../../shared/context/AlertContext'
 import { useConfirmation } from '../../../shared/context/ConfirmationContext'
 import { updateAccount, deleteAccount, createApiKey, deleteApiKey, toggleApiKey, updateReportPreferences } from '../../../shared/api/endpoints'
 import { useNavigate } from 'react-router-dom'
 import { validatePassword } from '../../../shared/components/PasswordValidation/PasswordValidation'
+import { handleError, MESSAGES } from '../../../shared/utils/useApiError'
 
 export default function useAccount() {
   const { user, logout, loadUser } = useAuth()
@@ -20,7 +21,7 @@ export default function useAccount() {
   const [email, setEmail] = useState(user?.email || '')
   const [password, setPassword] = useState('')
 
-  const { allPassed: pwAllPassed } = validatePassword(password)
+  const pwAllPassed = useMemo(() => validatePassword(password).allPassed, [password])
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault()
@@ -29,9 +30,9 @@ export default function useAccount() {
       await updateAccount({ name, email, password: password || undefined })
       await loadUser()
       setEditing(false)
-      showSuccess('Profile updated')
+      showSuccess(MESSAGES.account.profileUpdated)
     } catch (err) {
-      const msg = err.response?.data?.message || 'Failed to update profile'
+      const msg = handleError(err, 'account.profileUpdated', MESSAGES.account.profileUpdated)
       if (msg.toLowerCase().includes('email change') || msg.toLowerCase().includes('maximum')) {
         showInfo(msg)
       } else {
@@ -51,7 +52,7 @@ export default function useAccount() {
       logout()
       navigate('/login')
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to delete account')
+      showError(handleError(err, 'account.deleteFailed', MESSAGES.account.deleteFailed))
     } finally {
       setSubmitting(false)
     }
@@ -65,7 +66,7 @@ export default function useAccount() {
       setCreatedKey(res.data.apiKey)
       await loadUser()
     } catch (err) {
-      const msg = err.response?.data?.message || 'Failed to create API key'
+      const msg = handleError(err, 'account.apikeyCreateFailed', MESSAGES.account.apikeyCreateFailed)
       if (msg.toLowerCase().includes('limit reached')) {
         showInfo(msg)
       } else {
@@ -82,9 +83,9 @@ export default function useAccount() {
     try {
       await deleteApiKey({ apiKeyId: id })
       await loadUser()
-      showSuccess('API key deleted')
+      showSuccess(MESSAGES.account.apiKeyDeleted)
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to delete API key')
+      showError(handleError(err, 'account.apiKeyDeleted', MESSAGES.account.apiKeyDeleted))
     }
   }
 
@@ -101,7 +102,8 @@ export default function useAccount() {
       await loadUser()
       showSuccess(`API key ${action === 'disable' ? 'disabled' : 'enabled'}`)
     } catch (err) {
-      showError(err.response?.data?.message || `Failed to ${action} API key`)
+      const actionLabel = action === 'disable' ? 'disable' : 'enable'
+      showError(handleError(err, 'account.apikeyToggleFailed', MESSAGES.account.apikeyToggleFailed(actionLabel)))
     } finally {
       setSubmitting(false)
     }
@@ -112,9 +114,9 @@ export default function useAccount() {
     try {
       await updateReportPreferences(value)
       await loadUser()
-      showSuccess(value ? 'You\'ll now receive report emails.' : 'Report emails disabled.')
+      showSuccess(value ? MESSAGES.account.reportsEnabled : MESSAGES.account.reportsDisabled)
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to update preferences')
+      showError(handleError(err, 'account.preferencesFailed', MESSAGES.account.preferencesFailed))
     } finally {
       setSubmitting(false)
     }

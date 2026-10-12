@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { verifyToken } from '../../../../shared/api/endpoints'
 import { useAlert } from '../../../../shared/context/AlertContext'
+import { handleError, MESSAGES } from '../../../../shared/utils/useApiError'
 
 export default function useVerifyToken() {
   const [token, setToken] = useState('')
@@ -17,12 +18,12 @@ export default function useVerifyToken() {
     setSubmitting(true)
     try {
       await verifyToken({ email, token })
-      showSuccess('Token verified! Redirecting...')
+      showSuccess(MESSAGES.auth.passwordResetSuccess)
       setTimeout(() => {
         navigate('/reset-password', { state: { email, token } })
       }, 1500)
     } catch (err) {
-      showError(err.response?.data?.message || 'Invalid token')
+      showError(handleError(err, 'recovery.invalidToken', MESSAGES.recovery.invalidToken))
     } finally {
       setSubmitting(false)
     }

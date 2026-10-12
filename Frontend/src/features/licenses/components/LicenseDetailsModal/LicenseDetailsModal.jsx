@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Modal from '../../../../shared/components/Modal/Modal'
 import { EmptyState } from '../../../../shared/components/EmptyState/EmptyState'
 import { LoadingState } from '../../../../shared/components/LoadingState/LoadingState'
@@ -6,6 +6,7 @@ import { UserX, UserCheck } from 'lucide-react'
 import { getLicenseActivations, deactivateLicense, toggleActivation } from '../../../../shared/api/endpoints'
 import { useAlert } from '../../../../shared/context/AlertContext'
 import { useConfirmation } from '../../../../shared/context/ConfirmationContext'
+import { handleError, MESSAGES } from '../../../../shared/utils/useApiError'
 
 export function LicenseDetailsModal({ license, onClose }) {
   const [activations, setActivations] = useState([])
@@ -19,18 +20,18 @@ export function LicenseDetailsModal({ license, onClose }) {
     loadActivations()
   }, [license])
 
-  const loadActivations = async () => {
+  const loadActivations = useCallback(async () => {
     if (!license) return
     setActivationsLoading(true)
     try {
       const res = await getLicenseActivations(license.id)
       setActivations(res.data)
     } catch {
-      showError('Failed to load activations')
+      showError(handleError(null, 'activations.loadFailed', MESSAGES.activations.loadFailed))
     } finally {
       setActivationsLoading(false)
     }
-  }
+  }, [license, showError])
 
   const handleToggleActivation = async (hardwareId) => {
     if (!license) return
@@ -43,9 +44,9 @@ export function LicenseDetailsModal({ license, onClose }) {
     try {
       await toggleActivation({ licenseId: license.id, hardwareId })
       await loadActivations()
-      showSuccess(`Activation ${action === 'deactivate' ? 'deactivated' : 'activated'}`)
+      showSuccess(MESSAGES.activations.toggled(action))
     } catch (err) {
-      showError(err.response?.data?.message || `Failed to ${action} activation`)
+      showError(handleError(err, 'activations.toggleFailed', MESSAGES.activations.toggleFailed(action)))
     } finally {
       setRemoveLoading(null)
     }
@@ -57,9 +58,9 @@ export function LicenseDetailsModal({ license, onClose }) {
     try {
       await deactivateLicense({ licenseKey: license.licenseKey, hardwareId })
       await loadActivations()
-      showSuccess('Activation removed')
+      showSuccess(MESSAGES.activations.removed)
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to remove activation')
+      showError(handleError(err, 'activations.removed', MESSAGES.activations.removed))
     } finally {
       setRemoveLoading(null)
     }

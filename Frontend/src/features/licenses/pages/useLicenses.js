@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { getProducts, createLicense, updateLicense, deleteLicense } from '../../../shared/api/endpoints'
 import { useAlert } from '../../../shared/context/AlertContext'
 import { useConfirmation } from '../../../shared/context/ConfirmationContext'
+import { handleError, MESSAGES } from '../../../shared/utils/useApiError'
 
 export default function useLicenses() {
   const [products, setProducts] = useState([])
@@ -21,7 +22,7 @@ export default function useLicenses() {
       const res = await getProducts()
       setProducts(res.data)
     } catch {
-      showError('Failed to load licenses')
+      showError(handleError(null, 'licenses.loadFailed', MESSAGES.licenses.loadFailed))
     } finally {
       setLoading(false)
     }
@@ -86,7 +87,7 @@ export default function useLicenses() {
       setLicenseModal({ ...licenseModal, createdKey: res.data.licenseKey })
       await load()
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to create license')
+      showError(handleError(err, 'licenses.createFailed', MESSAGES.licenses.createFailed))
     } finally {
       setSubmitting(false)
     }
@@ -105,7 +106,7 @@ export default function useLicenses() {
       const expires = fd.get('expiresAt')
       if (name) payload.name = name
       if (maxAct) payload.maxActivations = parseInt(maxAct)
-      if (statusRaw !== '' && statusRaw !== null) {
+      if (statusRaw !== '') {
         const novoStatus = statusRaw === 'true'
         if (novoStatus === statusAtual) {
           payload.status = null
@@ -117,9 +118,9 @@ export default function useLicenses() {
       await updateLicense(payload)
       setLicenseModal(null)
       await load()
-      showSuccess('License updated')
+      showSuccess(MESSAGES.licenses.updated)
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to update license')
+      showError(handleError(err, 'licenses.updateFailed', MESSAGES.licenses.updateFailed))
     } finally {
       setSubmitting(false)
     }
@@ -132,9 +133,9 @@ export default function useLicenses() {
       await deleteLicense({ licenseId: id })
       setLicenseModal(null)
       await load()
-      showSuccess('License deleted')
+      showSuccess(MESSAGES.licenses.deleted)
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to delete license')
+      showError(handleError(err, 'licenses.deleteFailed', MESSAGES.licenses.deleteFailed))
     }
   }
 

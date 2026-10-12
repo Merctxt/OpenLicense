@@ -4,6 +4,7 @@ import { register } from '../../../../shared/api/endpoints'
 import { useAuth } from '../../../../shared/context/AuthContext'
 import { useAlert } from '../../../../shared/context/AlertContext'
 import { validatePassword } from '../../../../shared/components/PasswordValidation/PasswordValidation'
+import { handleError, MESSAGES } from '../../../../shared/utils/useApiError'
 
 export default function useRegister() {
   const [name, setName] = useState('')
@@ -21,9 +22,9 @@ export default function useRegister() {
     setSubmitting(true)
     try {
       await register({ name, email, password })
-      navigate('/login', { state: { successMessage: 'Account created successfully! Please sign in.' } })
+      navigate('/login', { state: { successMessage: MESSAGES.auth.accountCreated } })
     } catch (err) {
-      showError(err.response?.data?.message || err.response?.data?.error?.join(' ') || 'Registration failed')
+      showError(handleError(err, 'auth.registrationFailed', MESSAGES.auth.registrationFailed))
     } finally {
       setSubmitting(false)
     }

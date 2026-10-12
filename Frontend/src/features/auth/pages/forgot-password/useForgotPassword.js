@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { forgotPassword } from '../../../../shared/api/endpoints'
 import { useAlert } from '../../../../shared/context/AlertContext'
+import { handleError, MESSAGES } from '../../../../shared/utils/useApiError'
 
 export default function useForgotPassword() {
   const [email, setEmail] = useState('')
@@ -16,7 +17,7 @@ export default function useForgotPassword() {
       await forgotPassword({ email })
       navigate('/verify-token', { state: { email } })
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to send recovery email')
+      showError(handleError(err, 'recovery.emailFailed', MESSAGES.recovery.emailFailed))
     } finally {
       setSubmitting(false)
     }

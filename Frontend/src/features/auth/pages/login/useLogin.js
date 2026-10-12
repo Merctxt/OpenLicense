@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { login } from '../../../../shared/api/endpoints'
 import { useAuth } from '../../../../shared/context/AuthContext'
 import { useAlert } from '../../../../shared/context/AlertContext'
+import { handleError, MESSAGES } from '../../../../shared/utils/useApiError'
 
 export default function useLogin() {
   const [email, setEmail] = useState('')
@@ -31,7 +32,7 @@ export default function useLogin() {
       await loadUser()
       navigate('/')
     } catch (err) {
-      showError(err.response?.data?.message || 'Invalid credentials')
+      showError(handleError(err, 'auth.invalidCredentials', MESSAGES.auth.invalidCredentials))
     } finally {
       setSubmitting(false)
     }

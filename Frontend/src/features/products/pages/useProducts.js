@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../../../shared/api/endpoints'
 import { useAlert } from '../../../shared/context/AlertContext'
 import { useConfirmation } from '../../../shared/context/ConfirmationContext'
+import { handleError, MESSAGES } from '../../../shared/utils/useApiError'
 
 export default function useProducts() {
   const [products, setProducts] = useState([])
@@ -16,7 +17,7 @@ export default function useProducts() {
       const res = await getProducts()
       setProducts(res.data)
     } catch {
-      showError('Failed to load products')
+      showError(handleError(null, 'products.loadFailed', MESSAGES.products.loadFailed))
     } finally {
       setLoading(false)
     }
@@ -32,9 +33,9 @@ export default function useProducts() {
       await createProduct({ name: fd.get('name'), description: fd.get('description') || undefined })
       setProductModal(null)
       await load()
-      showSuccess('Product created')
+      showSuccess(MESSAGES.products.created)
     } catch (err) {
-      const msg = err.response?.data?.message || 'Failed to create product'
+      const msg = handleError(err, 'products.createFailed', MESSAGES.products.createFailed)
       if (msg.toLowerCase().includes('limit reached')) {
         showInfo(msg)
       } else {
@@ -53,9 +54,9 @@ export default function useProducts() {
       await updateProduct({ productId: productModal.product.id, name: fd.get('name'), description: fd.get('description') || undefined })
       setProductModal(null)
       await load()
-      showSuccess('Product updated')
+      showSuccess(MESSAGES.products.updated)
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to update product')
+      showError(handleError(err, 'products.updateFailed', MESSAGES.products.updateFailed))
     } finally {
       setSubmitting(false)
     }
@@ -67,9 +68,9 @@ export default function useProducts() {
     try {
       await deleteProduct({ productId: id })
       await load()
-      showSuccess('Product deleted')
+      showSuccess(MESSAGES.products.deleted)
     } catch (err) {
-      showError(err.response?.data?.message || 'Failed to delete product')
+      showError(handleError(err, 'products.deleteFailed', MESSAGES.products.deleteFailed))
     }
   }
 
