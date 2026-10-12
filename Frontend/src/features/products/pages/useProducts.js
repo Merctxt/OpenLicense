@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../../../shared/api/endpoints'
 import { useAlert } from '../../../shared/context/AlertContext'
 import { useConfirmation } from '../../../shared/context/ConfirmationContext'
 import { handleError, MESSAGES } from '../../../shared/utils/useApiError'
+import { useMountEffect } from '../../../shared/hooks/useMountEffect'
 
 export default function useProducts() {
   const [products, setProducts] = useState([])
@@ -23,7 +24,7 @@ export default function useProducts() {
     }
   }, [showError])
 
-  useEffect(() => { load() }, [load])
+  useMountEffect(load)
 
   const handleCreateProduct = async (e) => {
     e.preventDefault()

@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { getProducts, createLicense, updateLicense, deleteLicense } from '../../../shared/api/endpoints'
 import { useAlert } from '../../../shared/context/AlertContext'
 import { useConfirmation } from '../../../shared/context/ConfirmationContext'
 import { handleError, MESSAGES } from '../../../shared/utils/useApiError'
+import { useMountEffect } from '../../../shared/hooks/useMountEffect'
 
 export default function useLicenses() {
   const [products, setProducts] = useState([])
@@ -28,7 +29,7 @@ export default function useLicenses() {
     }
   }, [showError])
 
-  useEffect(() => { load() }, [load])
+  useMountEffect(load)
 
   const allLicenses = useMemo(() => {
     const licenses = []

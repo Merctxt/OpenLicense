@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '../../../shared/context/AuthContext'
 import { useAlert } from '../../../shared/context/AlertContext'
 import { useConfirmation } from '../../../shared/context/ConfirmationContext'
@@ -20,6 +20,13 @@ export default function useAccount() {
   const [name, setName] = useState(user?.name || '')
   const [email, setEmail] = useState(user?.email || '')
   const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '')
+      setEmail(user.email || '')
+    }
+  }, [user])
 
   const pwAllPassed = useMemo(() => validatePassword(password).allPassed, [password])
 
