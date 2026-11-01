@@ -1,12 +1,9 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import Modal from '../../../shared/components/Modal/Modal'
 import { EmptyState } from '../../../shared/components/EmptyState/EmptyState'
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState'
-import { generateReportPdf } from '../../../shared/api/endpoints'
-import { handleError, MESSAGES } from '../../../shared/utils/useApiError'
-import { useAlert } from '../../../shared/context/AlertContext'
 import useProducts from './useProducts'
-import { FileText, FileDown } from 'lucide-react'
+import { FileText } from 'lucide-react'
 
 export default function Products() {
   const {
@@ -16,28 +13,11 @@ export default function Products() {
     handleCreateProduct,
     handleEditProduct,
     handleDeleteProduct,
+    reportLoading,
+    handleGenerateReport,
   } = useProducts()
 
-  const { showSuccess, showError } = useAlert()
-  const [reportLoading, setReportLoading] = useState(false)
-
   const handleProductModalClose = useCallback(() => setProductModal(null), [setProductModal])
-
-  const handleGenerateReport = async () => {
-    setReportLoading(true)
-    try {
-      const response = await generateReportPdf()
-      const blob = new Blob([response.data], { type: 'application/pdf' })
-      const url = URL.createObjectURL(blob)
-      window.open(url, '_blank')
-      URL.revokeObjectURL(url)
-      showSuccess(MESSAGES.account.reportGenerated)
-    } catch (err) {
-      showError(handleError(err, 'account.reportGenerated', MESSAGES.account.reportGenerated))
-    } finally {
-      setReportLoading(false)
-    }
-  }
 
   if (loading) {
     return <LoadingState full message="Loading products..." />

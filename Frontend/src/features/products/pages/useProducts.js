@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { getProducts, createProduct, updateProduct, deleteProduct } from '../../../shared/api/endpoints'
+import { getProducts, createProduct, updateProduct, deleteProduct, generateReportPdf } from '../../../shared/api/endpoints'
 import { useAlert } from '../../../shared/context/AlertContext'
 import { useConfirmation } from '../../../shared/context/ConfirmationContext'
 import { handleError, MESSAGES } from '../../../shared/utils/useApiError'
@@ -10,6 +10,7 @@ export default function useProducts() {
   const [loading, setLoading] = useState(true)
   const [productModal, setProductModal] = useState(null)
   const [submitting, setSubmitting] = useState(false)
+  const [reportLoading, setReportLoading] = useState(false)
   const { showError, showSuccess, showInfo } = useAlert()
   const { confirm } = useConfirmation()
 
@@ -75,6 +76,22 @@ export default function useProducts() {
     }
   }
 
+  const handleGenerateReport = async () => {
+    try {
+      setReportLoading(true)
+      const response = await generateReportPdf()
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_blank')
+      URL.revokeObjectURL(url)
+      showSuccess(MESSAGES.account.reportGenerated)
+    } catch (err) {
+      showError(handleError(err, 'account.reportGenerated', MESSAGES.account.reportGenerated))
+    } finally {
+      setReportLoading(false)
+    }
+  }
+
   return {
     products, loading,
     productModal, setProductModal,
@@ -83,5 +100,7 @@ export default function useProducts() {
     handleEditProduct,
     handleDeleteProduct,
     load,
+    reportLoading,
+    handleGenerateReport,
   }
 }
