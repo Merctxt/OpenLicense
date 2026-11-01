@@ -38,22 +38,26 @@ public class PdfReportService : IPdfReportService
                 {
                     col.Item().Row(hr =>
                     {
-                        hr.ConstantItem(60).Background(Colors.Blue.Medium);
+                        hr.ConstantItem(4).Background(Colors.Blue.Medium);
+                        hr.ConstantItem(6);
                         hr.RelativeItem().Text("OpenLicense").FontColor(Colors.Grey.Darken3).Bold().FontSize(26);
                     });
                     col.Item().PaddingTop(8).Row(hr2 =>
                     {
-                        hr2.ConstantItem(60).Background(Colors.Blue.Medium);
+                        hr2.ConstantItem(4).Background(Colors.Blue.Medium);
+                        hr2.ConstantItem(6);
                         hr2.RelativeItem().Text("License Report").FontColor(Colors.Grey.Darken2).Bold().FontSize(16);
                     });
                     col.Item().PaddingTop(4).Row(hr3 =>
                     {
-                        hr3.ConstantItem(60).Background(Colors.Blue.Medium);
+                        hr3.ConstantItem(4).Background(Colors.Blue.Medium);
+                        hr3.ConstantItem(6);
                         hr3.RelativeItem().Text($"Generated: {report.GeneratedAt:dddd, MMMM dd, yyyy 'at' HH:mm:ss UTC}").FontColor(Colors.Grey.Medium).FontSize(10);
                     });
                     col.Item().PaddingTop(2).Row(hr4 =>
                     {
-                        hr4.ConstantItem(60).Background(Colors.Blue.Medium);
+                        hr4.ConstantItem(4).Background(Colors.Blue.Medium);
+                        hr4.ConstantItem(6);
                         hr4.RelativeItem().Text($"User: {report.UserName}").FontColor(Colors.Grey.Medium).FontSize(10);
                     });
                 });
@@ -103,8 +107,19 @@ public class PdfReportService : IPdfReportService
                                 table.Cell().Border(1).BorderColor(Colors.Grey.Lighten2).Background(Colors.White).Padding(6).Text(item.SuspendedLicenses.ToString());
                                 table.Cell().Border(1).BorderColor(Colors.Grey.Lighten2).Padding(6).Row(barRow =>
                                 {
-                                    barRow.ConstantItem(pctVal).Background(barColor);
-                                    barRow.RelativeItem();
+                                    if (pctVal == 0)
+                                    {
+                                        barRow.RelativeItem().Background(Colors.Grey.Lighten3);
+                                    }
+                                    else if (pctVal == 100)
+                                    {
+                                        barRow.RelativeItem().Background(barColor);
+                                    }
+                                    else
+                                    {
+                                        barRow.RelativeItem(pctVal / 100f).Background(barColor);
+                                        barRow.RelativeItem(1f - pctVal / 100f).Background(Colors.Grey.Lighten3);
+                                    }
                                 });
                             }
                         }
@@ -174,12 +189,14 @@ public class PdfReportService : IPdfReportService
                 {
                     col.Item().PaddingTop(24).Row(fr =>
                     {
-                        fr.ConstantItem(60).Background(Colors.Blue.Medium);
+                        fr.ConstantItem(4).Background(Colors.Blue.Medium);
+                        fr.ConstantItem(6);
                         fr.RelativeItem().Text("OpenLicense — License Management System").FontColor(Colors.Grey.Medium).FontSize(8);
                     });
                     col.Item().PaddingTop(8).Row(fr2 =>
                     {
-                        fr2.ConstantItem(60).Background(Colors.Blue.Medium);
+                        fr2.ConstantItem(4).Background(Colors.Blue.Medium);
+                        fr2.ConstantItem(6);
                         fr2.RelativeItem().Text($"© {DateTime.UtcNow:yyyy} OpenLicense. Confidential.").FontColor(Colors.Grey.Medium).FontSize(8);
                     });
                 });
@@ -199,7 +216,9 @@ public class PdfReportService : IPdfReportService
 
     private static string FormatKey(string key)
     {
-        if (string.IsNullOrEmpty(key) || key.Length != 20) return string.Empty;
-        return $"{key[..4]}-{key[4..8]}-{key[8..12]}-{key[12..16]}-{key[16..]}";
+        if (string.IsNullOrEmpty(key)) return string.Empty;
+        if (key.Length == 20 && !key.Contains('-'))
+            return $"{key[..4]}-{key[4..8]}-{key[8..12]}-{key[12..16]}-{key[16..]}";
+        return key;
     }
 }
