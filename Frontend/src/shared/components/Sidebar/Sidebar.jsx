@@ -18,7 +18,9 @@ import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
 import Background from '../Background/Background'
 
+const statusUrl = import.meta.env.VITE_STATUS_URL
 const sourceUrl = import.meta.env.VITE_SOURCE_URL
+const apiUrl = import.meta.env.VITE_API_URL
 
 const sidebarCategories = [
   {
@@ -31,10 +33,10 @@ const sidebarCategories = [
   {
     label: 'Resources',
     links: [
-      { href: import.meta.env.VITE_STATUS_URL, label: 'Status', icon: Activity, external: true },
-      { href: sourceUrl, label: 'Docs', icon: Code2, external: true },
-      { href: `${import.meta.env.VITE_API_URL}/scalar/v1`, label: 'API', icon: Zap, external: true },
-    ],
+      statusUrl ? { href: statusUrl, label: 'Status', icon: Activity, external: true } : null,
+      sourceUrl ? { href: sourceUrl, label: 'Docs', icon: Code2, external: true } : null,
+      apiUrl ? { href: `${apiUrl}/scalar/v1`, label: 'API', icon: Zap, external: true } : null,
+    ].filter(Boolean),
   },
 ]
 
@@ -240,7 +242,7 @@ export default function Sidebar({ children }) {
           <div className="d-flex flex-column justify-content-between pt-0 px-3 flex-grow-1">
             <div>
               <hr className="mt-0" />
-              {user && sidebarCategories.map((category) => (
+              {user && sidebarCategories.filter(c => c.links.length > 0).map((category) => (
                 <div key={category.label} className="mb-3">
                   <small className="text-body-secondary text-uppercase fw-semibold" style={{ fontSize: '0.7rem', letterSpacing: '0.05rem' }}>
                     {category.label}
