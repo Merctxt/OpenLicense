@@ -14,4 +14,3 @@ public record ToggleApiKeyCommand(Guid UserId, Guid ApiKeyId) : IRequest<bool>;
 public record ForgotPasswordCommand(string Email) : IRequest;
 public record VerifyResetTokenCommand(string Email, string Token) : IRequest<bool>;
 public record ResetPasswordCommand(string Email, string Token, string NewPassword) : IRequest;
-public record UpdateReportPreferencesCommand(Guid UserId, bool ReportsOptIn) : IRequest<User>;

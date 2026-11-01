@@ -400,20 +400,4 @@ public class AuthService : IAuthService
         return new string(result);
     }
     #endregion
-
-    public async Task<User> UpdateReportPreferencesAsync(Guid userId, bool reportsOptIn)
-    {
-        await EnsureUserActiveAsync(userId);
-
-        var user = await _dbContext.Users.FindAsync(userId);
-        if (user == null)
-        {
-            throw new KeyNotFoundException("User not found.");
-        }
-
-        user.ReportsOptIn = reportsOptIn;
-        await _dbContext.SaveChangesAsync();
-
-        return user;
-    }
 }

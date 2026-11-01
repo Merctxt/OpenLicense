@@ -171,18 +171,3 @@ public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand>
         await _authService.ResetPasswordAsync(request.Email, request.Token, request.NewPassword);
     }
 }
-
-public class UpdateReportPreferencesCommandHandler : IRequestHandler<UpdateReportPreferencesCommand, User>
-{
-    private readonly IAuthService _authService;
-
-    public UpdateReportPreferencesCommandHandler(IAuthService authService)
-    {
-        _authService = authService;
-    }
-
-    public async Task<User> Handle(UpdateReportPreferencesCommand request, CancellationToken cancellationToken)
-    {
-        return await _authService.UpdateReportPreferencesAsync(request.UserId, request.ReportsOptIn);
-    }
-}

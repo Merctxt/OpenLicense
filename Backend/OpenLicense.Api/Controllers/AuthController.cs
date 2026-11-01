@@ -146,12 +146,4 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Password reset successfully." });
     }
 
-    [Authorize]
-    [HttpPut("report-preferences")]
-    public async Task<IActionResult> UpdateReportPreferences([FromBody] UpdateReportPreferencesRequest request)
-    {
-        var command = new UpdateReportPreferencesCommand(User.GetUserId(), request.ReportsOptIn);
-        var user = await _mediator.Send(command);
-        return Ok(new { reportsOptIn = user.ReportsOptIn });
-    }
 }
