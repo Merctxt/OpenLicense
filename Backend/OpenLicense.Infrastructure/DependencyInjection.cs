@@ -36,9 +36,8 @@ public static class DependencyInjection
         services.Configure<EmailSettings>(configuration.GetSection("Email"));
         services.AddScoped<IEmailService, EmailService>();
 
-        services.Configure<ReportSettings>(configuration.GetSection("ReportSettings"));
         services.AddScoped<IReportService, ReportService>();
-        services.AddHostedService<ReportEmailBackgroundService>();
+        services.AddScoped<IPdfReportService, PdfReportService>();
 
         // Auth
         services.AddAuthenticationServices(configuration);
