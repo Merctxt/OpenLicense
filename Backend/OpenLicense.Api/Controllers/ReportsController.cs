@@ -1,7 +1,8 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenLicense.Api;
-using OpenLicense.Application.Services.Interfaces;
+using OpenLicense.Application.Queries.Reports;
 
 namespace OpenLicense.Api.Controllers;
 
@@ -11,22 +12,19 @@ namespace OpenLicense.Api.Controllers;
 [Route("api/v{version:apiVersion}/reports")]
 public class ReportsController : ControllerBase
 {
-    private readonly IReportService _reportService;
-    private readonly IPdfReportService _pdfService;
+    private readonly ISender _mediator;
 
-    public ReportsController(IReportService reportService, IPdfReportService pdfService)
+    public ReportsController(ISender mediator)
     {
-        _reportService = reportService;
-        _pdfService = pdfService;
+        _mediator = mediator;
     }
 
     [Authorize]
     [HttpGet("generate")]
-    public async Task<IActionResult> GenerateReport([FromQuery] int? expiringDaysWarning = 7)
+    public async Task<IActionResult> Generate([FromQuery] int? expiringDaysWarning = 7)
     {
         var userId = User.GetUserId();
-        var report = await _reportService.GenerateReportForUserAsync(userId, expiringDaysWarning ?? 7);
-        var pdfBytes = await _pdfService.GenerateReportPdfAsync(report);
+        var pdfBytes = await _mediator.Send(new GenerateReportQuery(userId, expiringDaysWarning ?? 7));
 
         var fileName = $"OpenLicense_Report_{DateTime.UtcNow:yyyy-MM-dd}.pdf";
         return File(pdfBytes, "application/pdf", fileName);
