@@ -231,7 +231,7 @@ export default function Sidebar({ children }) {
           <div className="d-flex align-items-center justify-content-between px-3 pt-3 pb-2">
             <Link to="/" className="link-body-emphasis d-flex align-items-center me-md-auto text-decoration-none">
               <img src="/favicon.svg" alt="OpenLicense logo" style={{ width: '24px', height: '24px', marginRight: '0.75rem' }} />
-              <span className="fs-4">OpenLicense</span>
+              <span className="fs-4" style={{ fontFamily: "'DynaPuff', cursive", fontWeight: '600' }}>OpenLicense</span>
             </Link>
 
             {isMobile && (
@@ -276,9 +276,9 @@ export default function Sidebar({ children }) {
         <div className="flex-grow-1 d-flex flex-column" style={{ minWidth: 0 }}>
           {isMobile && (
             <div className="d-flex align-items-center justify-content-between p-3 border-bottom bg-body" style={{ height: '56px', minHeight: '56px' }}>
-              <Link to="/" className="text-decoration-none text-body fw-bold d-flex align-items-center gap-2">
+              <Link to="/" className="text-decoration-none text-body d-flex align-items-center gap-2">
                 <img src="/favicon.svg" alt="OpenLicense" style={{ height: '18px' }} />
-                OpenLicense
+                <span style={{ fontFamily: "'DynaPuff', cursive", fontWeight: '600' }}>OpenLicense</span>
               </Link>
               <button type="button" className="btn btn-link text-body p-0 border-0" onClick={() => setMobileOpen((previous) => !previous)} aria-label={mobileOpen ? 'Close menu' : 'Open menu'}>
                 {mobileOpen ? <X size={22} /> : <Menu size={22} />}
