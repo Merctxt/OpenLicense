@@ -1,8 +1,12 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import Modal from '../../../shared/components/Modal/Modal'
 import { EmptyState } from '../../../shared/components/EmptyState/EmptyState'
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState'
+import { generateReportPdf } from '../../../shared/api/endpoints'
+import { handleError, MESSAGES } from '../../../shared/utils/useApiError'
+import { useAlert } from '../../../shared/context/AlertContext'
 import useProducts from './useProducts'
+import { FileText, FileDown } from 'lucide-react'
 
 export default function Products() {
   const {
@@ -14,7 +18,26 @@ export default function Products() {
     handleDeleteProduct,
   } = useProducts()
 
+  const { showSuccess, showError } = useAlert()
+  const [reportLoading, setReportLoading] = useState(false)
+
   const handleProductModalClose = useCallback(() => setProductModal(null), [setProductModal])
+
+  const handleGenerateReport = async () => {
+    setReportLoading(true)
+    try {
+      const response = await generateReportPdf()
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_blank')
+      URL.revokeObjectURL(url)
+      showSuccess(MESSAGES.account.reportGenerated)
+    } catch (err) {
+      showError(handleError(err, 'account.reportGenerated', MESSAGES.account.reportGenerated))
+    } finally {
+      setReportLoading(false)
+    }
+  }
 
   if (loading) {
     return <LoadingState full message="Loading products..." />
@@ -25,6 +48,35 @@ export default function Products() {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h1 className="h4 mb-0">Products</h1>
         <button className="btn btn-primary btn-sm" onClick={() => setProductModal({ mode: 'create' })}>+ New Product</button>
+      </div>
+
+      {/* Report Section */}
+      <div className="card mb-3">
+        <div className="card-header d-flex justify-content-between align-items-center">
+          <span className="fw-semibold d-flex align-items-center gap-2">
+            <FileText size={18} /> License Report
+          </span>
+          <button 
+            className="btn btn-primary btn-sm" 
+            onClick={handleGenerateReport}
+            disabled={reportLoading}
+          >
+            {reportLoading ? 'Generating...' : 'Generate PDF'}
+          </button>
+        </div>
+        <div className="card-body">
+          <p className="text-body-secondary small mb-3">
+            Generate a comprehensive PDF report of all your licenses. 
+            The report includes license summaries by product, expiration status, and detailed license information.
+          </p>
+          <div className="d-flex gap-2">
+            <span className="text-body-secondary small align-self-center">
+              {products.length > 0 
+                ? `Ready — ${products.length} product(s), ${products.reduce((acc, p) => acc + (p.licenses || []).length, 0)} license(s) total`
+                : 'No products yet — create a product to generate reports.'}
+            </span>
+          </div>
+        </div>
       </div>
 
       {products.length === 0 ? (

@@ -14,7 +14,7 @@ export default function AccountPage() {
     editing, setEditing, submitting,
     name, setName, email, setEmail, password, setPassword, pwAllPassed,
     handleUpdateProfile, handleDeleteAccount,
-    handleCreateApiKey, handleDeleteApiKey, handleToggleApiKey, handleToggleReports,
+    handleCreateApiKey, handleDeleteApiKey, handleToggleApiKey,
   } = useAccount()
 
   const handleModalClose = useCallback(() => setApiKeyModal(false), [setApiKeyModal])
@@ -52,11 +52,7 @@ export default function AccountPage() {
         handleModalClose={handleModalClose}
       />
 
-      <AccountReportsCard
-        user={user}
-        submitting={submitting}
-        handleToggleReports={handleToggleReports}
-      />
+      <AccountReportsCard user={user} />
 
       <AccountLimitsCard user={user} />
 

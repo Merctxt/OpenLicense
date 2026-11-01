@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '../../../shared/context/AuthContext'
 import { useAlert } from '../../../shared/context/AlertContext'
 import { useConfirmation } from '../../../shared/context/ConfirmationContext'
-import { updateAccount, deleteAccount, createApiKey, deleteApiKey, toggleApiKey, updateReportPreferences } from '../../../shared/api/endpoints'
+import { updateAccount, deleteAccount, createApiKey, deleteApiKey, toggleApiKey } from '../../../shared/api/endpoints'
 import { useNavigate } from 'react-router-dom'
 import { validatePassword } from '../../../shared/components/PasswordValidation/PasswordValidation'
 import { handleError, MESSAGES } from '../../../shared/utils/useApiError'
@@ -116,19 +116,6 @@ export default function useAccount() {
     }
   }
 
-  const handleToggleReports = async (value) => {
-    setSubmitting(true)
-    try {
-      await updateReportPreferences(value)
-      await loadUser()
-      showSuccess(value ? MESSAGES.account.reportsEnabled : MESSAGES.account.reportsDisabled)
-    } catch (err) {
-      showError(handleError(err, 'account.preferencesFailed', MESSAGES.account.preferencesFailed))
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
   return {
     user,
     apiKeyModal, setApiKeyModal,
@@ -145,6 +132,5 @@ export default function useAccount() {
     handleCreateApiKey,
     handleDeleteApiKey,
     handleToggleApiKey,
-    handleToggleReports,
   }
 }

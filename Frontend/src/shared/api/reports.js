@@ -3,6 +3,8 @@ import { API_VERSION } from './version'
 
 const apiPrefix = `/api/${API_VERSION}`
 
-export function updateReportPreferences(reportsOptIn) {
-  return api.put(`${apiPrefix}/auth/report-preferences`, { reportsOptIn })
+export function generateReportPdf() {
+  return api.get(`${apiPrefix}/reports/generate`, {
+    responseType: 'blob',
+  })
 }

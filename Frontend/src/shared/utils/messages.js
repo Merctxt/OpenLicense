@@ -42,9 +42,7 @@ export const MESSAGES = {
     apikeyCreateFailed: 'Failed to create API key',
     apikeyToggleFailed: (action) => `Failed to ${action} API key`,
     apikeyLimitReached: null,
-    reportsEnabled: "You'll now receive report emails.",
-    reportsDisabled: 'Report emails disabled.',
-    preferencesFailed: 'Failed to update preferences',
+    reportGenerated: 'Report generated successfully!',
   },
   recovery: {
     emailFailed: 'Failed to send recovery email',
