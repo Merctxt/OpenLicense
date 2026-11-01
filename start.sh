@@ -27,12 +27,31 @@ if ! command -v npm &> /dev/null; then
     exit 1
 fi
 
+# --- Função: mata processo na porta ---
+kill_port() {
+    local port=$1
+    local pid
+    pid=$(lsof -ti:${port} 2>/dev/null)
+    if [ -n "$pid" ]; then
+        echo -e "${YELLOW}Mata processo na porta ${port} (PID: ${pid})${NC}"
+        kill -9 ${pid} 2>/dev/null || true
+        sleep 1
+    else
+        echo -e "${GREEN}Porta ${port} livre${NC}"
+    fi
+}
+
 echo -e "\n${CYAN}=== Iniciando OpenLicense ===${NC}"
 echo -e "${YELLOW}Backend: (Backend/OpenLicense.Api/)${NC}"
 echo -e "${YELLOW}Frontend: (Frontend/)\n${NC}"
 
 # PIDs monitorados
 pids=()
+
+# Mata as portas padrão se estiverem ocupadas
+echo -e "${GRAY}Verificando portas...${NC}"
+kill_port 5049  # backend
+kill_port 3000  # frontend
 
 cleanup() {
     echo -e "\n${YELLOW}Encerrando processos...${NC}"
