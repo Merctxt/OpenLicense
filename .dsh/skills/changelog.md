@@ -34,3 +34,4 @@ Generate a release changelog from the last N commits since the previous release.
 - If a commit is a fix (bugfix, typo, error), include it under Fixes
 - If a commit is a refactor without behavioral change, include it under Features
 - Always output inside a markdown code block (````md ... ````)
+- Never wrap the short hash in backticks, quotes, or any other characters — output it raw (e.g. `- 03d75c3 Enhance modals`, NOT `- \`03d75c3\` Enhance modals`)
