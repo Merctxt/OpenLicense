@@ -5,6 +5,7 @@ public abstract class TestBase : IAsyncLifetime
     protected WebApplicationFactory<Program>? _factory;
     private HttpClient? _client;
     private string? _jwtSecret;
+    private string? _dbPath;
 
     public HttpClient Client => _client ?? throw new InvalidOperationException("Factory not initialized.");
 
@@ -15,12 +16,11 @@ public abstract class TestBase : IAsyncLifetime
         _jwtSecret = config["Jwt:SecretKey"] 
             ?? throw new InvalidOperationException("Jwt:SecretKey not found in appsettings.json");
 
-        var connectionString = config.GetConnectionString("DefaultConnection")
-            ?? throw new InvalidOperationException("DefaultConnection not found in appsettings.json");
+        _dbPath = Path.Combine(AppContext.BaseDirectory, $"test_{Guid.NewGuid():N}.db");
+        var connStr = $"Data Source={_dbPath}";
 
         _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
-            builder.UseSetting("database_connection", connectionString);
             builder.UseSetting("Jwt:SecretKey", _jwtSecret!);
             builder.UseSetting("Jwt:Issuer", config["Jwt:Issuer"] ?? "OpenLicenseApi");
             builder.UseSetting("Jwt:Audience", config["Jwt:Audience"] ?? "OpenLicenseApiUsers");
@@ -29,13 +29,13 @@ public abstract class TestBase : IAsyncLifetime
             {
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
-
                 if (descriptor != null)
                     services.Remove(descriptor);
 
-                services.AddDbContext<AppDbContext>(options =>
-                    options.UseNpgsql(connectionString, npgsql =>
-                        npgsql.EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null)));
+                var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+                optionsBuilder.UseSqlite(connStr);
+
+                services.Replace(ServiceDescriptor.Scoped<AppDbContext>(sp => new AppDbContext(optionsBuilder.Options)));
             });
         });
 
@@ -44,7 +44,9 @@ public abstract class TestBase : IAsyncLifetime
             AllowAutoRedirect = false
         });
 
-        await CleanDatabase();
+        using var initScope = _factory!.Services.CreateScope();
+        var initDb = initScope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await initDb.Database.EnsureCreatedAsync();
     }
 
     private static IConfiguration LoadConfiguration()
@@ -56,28 +58,18 @@ public abstract class TestBase : IAsyncLifetime
         return builder.Build();
     }
 
-    private async Task CleanDatabase()
-    {
-        using var scope = _factory!.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        await dbContext.Database.EnsureCreatedAsync();
-
-        var tables = new[] { "Activation", "ApiKey", "License", "Products", "Users" };
-        foreach (var table in tables)
-        {
-            try
-            {
-                await dbContext.Database.ExecuteSqlRawAsync($"DELETE FROM \"{table}\" CASCADE;");
-            }
-            catch { }
-        }
-    }
-
     public async Task DisposeAsync()
     {
         _client?.Dispose();
-        _factory?.Dispose();
+
+        if (_factory != null)
+        {
+            var dbPath = _dbPath;
+            try { await _factory.DisposeAsync(); } catch { }
+            _factory = null;
+        }
+
+        _client = null;
     }
 
     public async Task<User> RegisterUser(string? email = null, string? name = null, string? password = null)
