@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import AccountProfileCard from '../components/AccountProfileCard/AccountProfileCard'
 import AccountApiKeysCard from '../components/AccountApiKeysCard/AccountApiKeysCard'
 import AccountApiKeyModal from '../components/AccountApiKeyModal/AccountApiKeyModal'
-import AccountReportsCard from '../components/AccountReportsCard/AccountReportsCard'
 import AccountLimitsCard from '../components/AccountLimitsCard/AccountLimitsCard'
 import AccountDangerZone from '../components/AccountDangerZone/AccountDangerZone'
 import useAccount from './useAccount'
@@ -51,8 +50,6 @@ export default function AccountPage() {
         handleCreateApiKey={handleCreateApiKey}
         handleModalClose={handleModalClose}
       />
-
-      <AccountReportsCard user={user} />
 
       <AccountLimitsCard user={user} />
 
