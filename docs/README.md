@@ -24,7 +24,7 @@ graph TD
             Api["OpenLicense.Api\n(Controllers, Program.cs)"]
         end
         Frontend["Frontend\n(React 19 + Vite)"]
-        Tests["Tests\n(xUnit + FluentAssertions)"]
+        Tests["Tests\n(xUnit + FluentAssertions + SQLite)"]
         Docs["docs/"]
         Docker["docker-compose.yml"]
         Start["start.sh"]
@@ -49,9 +49,11 @@ pie showData
     "ASP.NET Core 9.0" : 25
     "Entity Framework Core 9.0" : 20
     "PostgreSQL 15+" : 15
+    "SQLite (tests)" : 5
     "React 19.2" : 20
-    "xUnit + FluentAssertions" : 10
-    "OpenTelemetry / OpenObserve" : 10
+    "xUnit + FluentAssertions" : 5
+    "QuestPDF" : 5
+    "OpenTelemetry / OpenObserve" : 5
 ```
 
 | Layer | Technology | Version |
@@ -60,7 +62,9 @@ pie showData
 | **Language** | C# | 12+ |
 | **ORM** | Entity Framework Core | 9.0.17 |
 | **Database** | PostgreSQL | 15+ |
+| **Testing DB** | SQLite | (file-based, disposable) |
 | **Auth** | JWT Bearer + API Key | - |
+| **PDF** | QuestPDF | 2024.10.0 |
 | **Email** | MailKit / MimeKit | 4.17.0 |
 | **Testing** | xUnit + FluentAssertions | 2.9.2 |
 | **Frontend** | React | 19.2 |

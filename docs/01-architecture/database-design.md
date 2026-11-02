@@ -2,6 +2,8 @@
 
 OpenLicense uses **PostgreSQL** with **Entity Framework Core** 9.0 and **Npgsql** 9.0.4.
 
+Tests use **SQLite** (file-based, disposable) for fast, self-contained integration testing. Each test creates its own `test_{guid}.db` file with `Pooling=false`, which is automatically deleted when the test suite completes.
+
 ## Entity Framework Core Setup
 
 The `AppDbContext` in `Infrastructure/Persistence/AppDbContext.cs` defines DbSet properties for all five entities (Users, Products, Licenses, ApiKeys, Activations) and configures unique indexes on the LicenseKey and KeyHash fields in the OnModelCreating method.
@@ -20,7 +22,6 @@ erDiagram
         string name
         string email
         string passwordHash
-        bool reportsOptIn
         bool isSuspended
         int productLimit
         int licenseLimit

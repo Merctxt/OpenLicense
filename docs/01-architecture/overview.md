@@ -19,7 +19,7 @@ graph TD
             Domain["OpenLicense.Domain\n(Entities only)\nNO dependencies"]
         end
         subgraph "Infrastructure Layer"
-            Infra["OpenLicense.Infrastructure\n(DB, Auth, Background\nServices)"]
+            Infra["OpenLicense.Infrastructure\n(DB, Services, Auth, Middleware)"]
         end
     end
 
@@ -61,7 +61,7 @@ graph TD
 
 ### 3. Infrastructure (`OpenLicense.Infrastructure`)
 
-- **Responsibility:** Concrete implementations — database, email, auth, background services
+- **Responsibility:** Concrete implementations — database, auth, middleware
 - **Dependencies:** Application, Domain
 - **Contains:** Implemented services, DbContext, Auth handlers
 

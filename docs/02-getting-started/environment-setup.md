@@ -4,7 +4,7 @@
 
 - [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
 - [Node.js 20+](https://nodejs.org/)
-- [PostgreSQL 15+](https://www.postgresql.org/)
+- [PostgreSQL 15+](https://www.postgresql.org/) (production database)
 - [Docker](https://www.docker.com/) (optional but recommended)
 - [VS Code](https://code.visualstudio.com/) or Visual Studio 2022
 - [Git](https://git-scm.com/)
@@ -81,6 +81,10 @@ Run PostgreSQL in a Docker container using `docker compose up` from the project 
 ### Option C: Managed PostgreSQL (Production)
 
 Use a cloud provider such as Azure Database for PostgreSQL, AWS RDS PostgreSQL, DigitalOcean Managed PostgreSQL, or Heroku Postgres.
+
+### Test Database (SQLite)
+
+Tests use SQLite file-based databases created automatically per test run. No setup required — each test creates its own `test_{guid}.db` file in the test output directory, which is cleaned up when the test suite finishes.
 
 
 ## Environment Variables in Docker

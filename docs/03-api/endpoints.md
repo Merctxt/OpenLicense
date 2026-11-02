@@ -82,7 +82,10 @@ graph TD
         A10["POST /forgot-password\nNone"]
         A11["POST /reset-password/verify\nNone"]
         A12["POST /reset-password\nNone"]
-        A13["PUT /report-preferences\nJWT"]
+    end
+
+    subgraph Reports["Reports"]
+        R1["POST /reports\nJWT"]
     end
 
     subgraph Products["Products"]
@@ -112,12 +115,14 @@ graph TD
     classDef product fill:#fff3e0,stroke:#e65100
     classDef license fill:#e8f5e9,stroke:#1b5e20
     classDef health fill:#f3e5f5,stroke:#4a148c
+    classDef reports fill:#fff8e1,stroke:#f57f17
     classDef nodetext color:#333;
 
     class A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13 auth,nodetext
     class P1,P2,P3,P4 product,nodetext
     class L1,L2,L3,L4,L5,L6,L7,L8,L9 license,nodetext
     class H1 health,nodetext
+    class R1 reports,nodetext
 ```
 
 
@@ -311,16 +316,6 @@ Enable/disable API key.
 - **POST** `/api/v1/auth/reset-password/verify` -- Validates reset token
 - **POST** `/api/v1/auth/reset-password` -- Resets password with valid token
 
-#### PUT `/api/v1/auth/report-preferences`
-
-Update preferences for periodic email reports.
-
-**Body:**
-```json
-{
-  "reportsOptIn": true
-}
-```
 
 ---
 
@@ -583,6 +578,30 @@ Health check (excluded from OpenAPI documentation).
 }
 ```
 
+---
+
+### Reports
+
+#### POST `/api/v1/reports`
+
+Generate a PDF report for the authenticated user.
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Query Parameters:**
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `expiringDaysWarning` | int | 7 | Days before expiry to warn |
+
+**Response:** `application/pdf` — PDF document (binary) containing a summary of products, licenses, and upcoming expirations.
+
+**Errors:**
+- 401 -- Not authenticated
+
+---
 
 ## Rate Limiting
 
