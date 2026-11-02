@@ -6,18 +6,21 @@ public abstract class TestBase : IAsyncLifetime
     private HttpClient? _client;
     private string? _jwtSecret;
     private string? _dbPath;
+    private static int _runningTests = 0;
 
     public HttpClient Client => _client ?? throw new InvalidOperationException("Factory not initialized.");
 
     public async Task InitializeAsync()
     {
+        Interlocked.Increment(ref _runningTests);
+        
         var config = LoadConfiguration();
         
         _jwtSecret = config["Jwt:SecretKey"] 
             ?? throw new InvalidOperationException("Jwt:SecretKey not found in appsettings.json");
 
         _dbPath = Path.Combine(AppContext.BaseDirectory, $"test_{Guid.NewGuid():N}.db");
-        var connStr = $"Data Source={_dbPath}";
+        var connStr = $"Data Source={_dbPath};Pooling=false";
 
         _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
@@ -58,18 +61,33 @@ public abstract class TestBase : IAsyncLifetime
         return builder.Build();
     }
 
-    public async Task DisposeAsync()
+    public Task DisposeAsync()
     {
         _client?.Dispose();
 
         if (_factory != null)
         {
-            var dbPath = _dbPath;
-            try { await _factory.DisposeAsync(); } catch { }
+            _factory.Dispose();
             _factory = null;
         }
 
         _client = null;
+
+        if (Interlocked.Decrement(ref _runningTests) == 0)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+            Thread.Sleep(1000);
+
+            var dir = AppContext.BaseDirectory;
+            foreach (var file in Directory.GetFiles(dir, "test_*.db*"))
+            {
+                try { File.Delete(file); } catch { }
+            }
+        }
+
+        return Task.CompletedTask;
     }
 
     public async Task<User> RegisterUser(string? email = null, string? name = null, string? password = null)
