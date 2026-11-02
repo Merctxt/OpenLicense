@@ -8,19 +8,25 @@ export default function ConfirmationModal({ title, message, onConfirm, onClose, 
   useEffect(() => {
     const el = modalRef.current
     if (!el) return
+
+    const prevOverflow = document.body.style.overflow
     const bsModal = new BsModal(el, { backdrop: 'static', keyboard: true })
     bsModal.show()
 
-    const handleHidden = () => onClose()
+    const handleHidden = () => {
+      document.body.style.overflow = prevOverflow
+      onClose()
+    }
     el.addEventListener('hidden.bs.modal', handleHidden)
     return () => {
       el.removeEventListener('hidden.bs.modal', handleHidden)
+      document.body.style.overflow = prevOverflow
       bsModal.dispose()
     }
   }, [onClose])
 
   return (
-    <div className="modal fade" ref={modalRef} tabIndex="-1">
+    <div className="modal" ref={modalRef} tabIndex="-1">
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header border-bottom">
