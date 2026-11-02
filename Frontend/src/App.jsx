@@ -2,7 +2,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './shared/context/AuthContext'
 import { AlertProvider } from './shared/context/AlertContext'
 import { ConfirmationProvider } from './shared/context/ConfirmationContext'
-import UseTitle from './shared/hooks/UseTitle'
 import Router from './router'
 
 export default function App() {
@@ -11,7 +10,6 @@ export default function App() {
       <AlertProvider>
         <AuthProvider>
           <BrowserRouter>
-            <UseTitle />
             <Router />
           </BrowserRouter>
         </AuthProvider>

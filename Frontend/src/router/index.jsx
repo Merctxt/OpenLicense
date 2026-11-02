@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import UseTitle from '../shared/hooks/UseTitle'
+import { useEffect } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import AppLayout from '../layouts/AppLayout'
 import ProtectedRoute from '../layouts/ProtectedRoute'
 import LoginPage from '../features/auth/pages/login/LoginPage'
@@ -13,21 +13,48 @@ import AccountPage from '../features/account/pages/AccountPage'
 
 const registrationEnabled = import.meta.env.VITE_REGISTRATION_ENABLED !== 'false'
 
-export default function Router() {
+const titleMap = {
+  '/login': 'Login',
+  '/register': 'Register',
+  '/forgot-password': 'Forgot Password',
+  '/verify-token': 'Verify Token',
+  '/reset-password': 'Reset Password',
+  '/products': 'Products',
+  '/licenses': 'Licenses',
+  '/account': 'Account',
+}
+
+function RouteTitle() {
+  const { pathname } = useLocation()
+  const title = titleMap[pathname]
+
+  useEffect(() => {
+    document.title = title ? `OpenLicense — ${title}` : 'OpenLicense'
+  }, [title])
+
+  return null
+}
+
+function Router() {
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      {registrationEnabled && <Route path="/register" element={<RegisterPage />} />}
-      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/verify-token" element={<VerifyTokenPage />} />
-      <Route path="/reset-password" element={<ResetPasswordPage />} />
-      <Route element={<AppLayout />}>
-        <Route path="/" element={<Navigate to="/products" replace />} />
-        <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
-        <Route path="/licenses" element={<ProtectedRoute><LicensesPage /></ProtectedRoute>} />
-        <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
-      </Route>
-      <Route path="*" element={<Navigate to="/products" replace />} />
-    </Routes>
+    <>
+      <RouteTitle />
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        {registrationEnabled && <Route path="/register" element={<RegisterPage />} />}
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/verify-token" element={<VerifyTokenPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Navigate to="/products" replace />} />
+          <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
+          <Route path="/licenses" element={<ProtectedRoute><LicensesPage /></ProtectedRoute>} />
+          <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+        </Route>
+        <Route path="*" element={<Navigate to="/products" replace />} />
+      </Routes>
+    </>
   )
 }
+
+export default Router
