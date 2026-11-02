@@ -6,17 +6,14 @@ public abstract class TestBase : IAsyncLifetime
     private HttpClient? _client;
     private string? _jwtSecret;
     private string? _dbPath;
-    private static int _runningTests = 0;
 
     public HttpClient Client => _client ?? throw new InvalidOperationException("Factory not initialized.");
 
     public async Task InitializeAsync()
     {
-        Interlocked.Increment(ref _runningTests);
-        
         var config = LoadConfiguration();
-        
-        _jwtSecret = config["Jwt:SecretKey"] 
+
+        _jwtSecret = config["Jwt:SecretKey"]
             ?? throw new InvalidOperationException("Jwt:SecretKey not found in appsettings.json");
 
         _dbPath = Path.Combine(AppContext.BaseDirectory, $"test_{Guid.NewGuid():N}.db");
@@ -64,27 +61,20 @@ public abstract class TestBase : IAsyncLifetime
     public Task DisposeAsync()
     {
         _client?.Dispose();
-
-        if (_factory != null)
-        {
-            _factory.Dispose();
-            _factory = null;
-        }
-
+        _factory?.Dispose();
+        _factory = null;
         _client = null;
 
-        if (Interlocked.Decrement(ref _runningTests) == 0)
+        if (_dbPath != null)
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
 
-            var dir = AppContext.BaseDirectory;
-            foreach (var file in Directory.GetFiles(dir, "test_*.db*"))
-            {
-                try { File.Delete(file); } catch { }
-            }
+            try { File.Delete(_dbPath); } catch { }
+            try { File.Delete(_dbPath + ".wal"); } catch { }
+            try { File.Delete(_dbPath + ".shm"); } catch { }
         }
 
         return Task.CompletedTask;
@@ -125,7 +115,7 @@ public abstract class TestBase : IAsyncLifetime
         var userEmail = email ?? $"test.{uniqueId}@test.com";
         var userName = name;
         var userPassword = password ?? "TestPass1!";
-        
+
         var user = await RegisterUser(userEmail, userName, userPassword);
         var token = await LoginAndGetToken(user.Email, userPassword);
         return (token, user);
