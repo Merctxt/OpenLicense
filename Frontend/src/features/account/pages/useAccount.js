@@ -5,7 +5,7 @@ import { useConfirmation } from '../../../shared/context/ConfirmationContext'
 import { updateAccount, deleteAccount, createApiKey, deleteApiKey, toggleApiKey } from '../../../shared/api/endpoints'
 import { useNavigate } from 'react-router-dom'
 import { validatePassword } from '../../../shared/components/PasswordValidation/PasswordValidation'
-import { handleError, MESSAGES } from '../../../shared/utils/useApiError'
+import { MESSAGES, handleError } from '../../../shared/utils/messages'
 
 export default function useAccount() {
   const { user, logout, loadUser } = useAuth()

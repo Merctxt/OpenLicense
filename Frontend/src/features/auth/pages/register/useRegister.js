@@ -4,7 +4,7 @@ import { register } from '../../../../shared/api/endpoints'
 import { useAuth } from '../../../../shared/context/AuthContext'
 import { useAlert } from '../../../../shared/context/AlertContext'
 import { validatePassword } from '../../../../shared/components/PasswordValidation/PasswordValidation'
-import { handleError, MESSAGES } from '../../../../shared/utils/useApiError'
+import { MESSAGES, handleError } from '../../../../shared/utils/messages'
 
 export default function useRegister() {
   const [name, setName] = useState('')

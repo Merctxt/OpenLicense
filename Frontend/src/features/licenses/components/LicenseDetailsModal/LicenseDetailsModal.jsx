@@ -6,7 +6,7 @@ import { UserX, UserCheck } from 'lucide-react'
 import { getLicenseActivations, deactivateLicense, toggleActivation } from '../../../../shared/api/endpoints'
 import { useAlert } from '../../../../shared/context/AlertContext'
 import { useConfirmation } from '../../../../shared/context/ConfirmationContext'
-import { handleError, MESSAGES } from '../../../../shared/utils/useApiError'
+import { MESSAGES, handleError } from '../../../../shared/utils/messages'
 
 export function LicenseDetailsModal({ license, onClose }) {
   const [activations, setActivations] = useState([])

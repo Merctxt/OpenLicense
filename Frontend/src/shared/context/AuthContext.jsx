@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { getMe } from '../api/endpoints'
-import { useMountEffect } from '../hooks/useMountEffect'
 
 const AuthContext = createContext(null)
 
@@ -19,7 +18,7 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  useMountEffect(loadUser)
+  useEffect(() => { loadUser() }, [])
 
   const logout = useCallback(async () => {
     setUser(null)

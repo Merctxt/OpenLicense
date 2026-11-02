@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { verifyToken } from '../../../../shared/api/endpoints'
 import { useAlert } from '../../../../shared/context/AlertContext'
-import { handleError, MESSAGES } from '../../../../shared/utils/useApiError'
+import { MESSAGES, handleError } from '../../../../shared/utils/messages'
 
 export default function useVerifyToken() {
   const [token, setToken] = useState('')

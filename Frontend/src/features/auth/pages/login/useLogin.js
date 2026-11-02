@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { login } from '../../../../shared/api/endpoints'
 import { useAuth } from '../../../../shared/context/AuthContext'
 import { useAlert } from '../../../../shared/context/AlertContext'
-import { handleError, MESSAGES } from '../../../../shared/utils/useApiError'
+import { MESSAGES, handleError } from '../../../../shared/utils/messages'
 
 export default function useLogin() {
   const [email, setEmail] = useState('')
