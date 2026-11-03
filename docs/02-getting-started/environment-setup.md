@@ -33,7 +33,7 @@ Edit `.env` with your credentials, setting values for:
 - **Registration:** `REGISTRATION_ENABLED` (true/false)
 - **Email (SMTP):** `Email__Host`, `Email__Port`, `Email__Secure`, `Email__Username`, `Email__Password`, `Email__From`
 - **OpenTelemetry:** `OTEL_EXPORTER_OTLP_ENDPOINT` and `OTEL_EXPORTER_OTLP_HEADERS` for trace/metric export
-- **Frontend URLs:** `VITE_API_URL`, `VITE_STATUS_URL`, `VITE_SOURCE_URL`
+- **Frontend URLs:** `VITE_API_URL`, `VITE_SOURCE_URL`
 
 ### 2. Backend Configuration
 
@@ -63,7 +63,6 @@ In `Frontend/.env.development`, set:
 
 ```text
 VITE_API_URL=http://localhost:5000
-VITE_STATUS_URL=https://status.example.com
 VITE_SOURCE_URL=https://github.com/Merctxt/OpenLicense
 VITE_REGISTRATION_ENABLED=true
 ```

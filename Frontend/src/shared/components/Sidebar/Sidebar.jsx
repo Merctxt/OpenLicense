@@ -18,7 +18,6 @@ import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
 import Background from '../Background/Background'
 
-const statusUrl = import.meta.env.VITE_STATUS_URL
 const sourceUrl = import.meta.env.VITE_SOURCE_URL
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -33,7 +32,6 @@ const sidebarCategories = [
   {
     label: 'Resources',
     links: [
-      statusUrl ? { href: statusUrl, label: 'Status', icon: Activity, external: true } : null,
       sourceUrl ? { href: sourceUrl, label: 'Docs', icon: Code2, external: true } : null,
       apiUrl ? { href: `${apiUrl}/scalar/v1`, label: 'API', icon: Zap, external: true } : null,
     ].filter(Boolean),

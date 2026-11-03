@@ -46,7 +46,6 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL}
-        VITE_STATUS_URL: ${VITE_STATUS_URL}
         VITE_SOURCE_URL: ${VITE_SOURCE_URL}
         VITE_REGISTRATION_ENABLED: ${VITE_REGISTRATION_ENABLED:-true}
     ports:
