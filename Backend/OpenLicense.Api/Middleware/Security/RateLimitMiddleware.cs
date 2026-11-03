@@ -5,7 +5,7 @@ using OpenLicense.Application.Services.Interfaces;
 namespace OpenLicense.Api.Middleware.Security
 {
     /// <summary>
-    /// Middleware that applies rate limiting to /api/auth/login and /api/auth/register.
+    /// Middleware that applies rate limiting to /api/v1/auth/login and /api/v1/auth/register.
     /// Uses IP-based sliding windows — no external dependencies.
     /// </summary>
     public class RateLimitMiddleware
@@ -16,11 +16,11 @@ namespace OpenLicense.Api.Middleware.Security
         // Rate limits: per endpoint path prefix -> (maxRequests, window)
         private static readonly Dictionary<string, (int Max, TimeSpan Window)> _limits = new()
         {
-            { "/api/auth/login", (10, TimeSpan.FromMinutes(1)) },          // 10 attempts/min
-            { "/api/auth/register", (5, TimeSpan.FromMinutes(5)) },       // 5 requests/5min
-            { "/api/auth/forgot-password", (3, TimeSpan.FromMinutes(5)) }, // 3 requests/5min
-            { "/api/auth/reset-password/verify", (6, TimeSpan.FromMinutes(5)) }, // 6 requests/5min
-            { "/api/auth/reset-password", (3, TimeSpan.FromMinutes(5)) }   // 3 requests/5min
+            { "/api/v1/auth/login", (10, TimeSpan.FromMinutes(1)) },          // 10 attempts/min
+            { "/api/v1/auth/register", (5, TimeSpan.FromMinutes(5)) },       // 5 requests/5min
+            { "/api/v1/auth/forgot-password", (3, TimeSpan.FromMinutes(5)) }, // 3 requests/5min
+            { "/api/v1/auth/reset-password/verify", (6, TimeSpan.FromMinutes(5)) }, // 6 requests/5min
+            { "/api/v1/auth/reset-password", (3, TimeSpan.FromMinutes(5)) }   // 3 requests/5min
         };
 
         public RateLimitMiddleware(RequestDelegate next, IRateLimiterService rateLimiter)
