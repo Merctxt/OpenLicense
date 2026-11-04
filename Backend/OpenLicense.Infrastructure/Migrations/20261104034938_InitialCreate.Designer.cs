@@ -12,7 +12,7 @@ using OpenLicense.Infrastructure.Data;
 namespace OpenLicense.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261104032837_InitialCreate")]
+    [Migration("20261104034938_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

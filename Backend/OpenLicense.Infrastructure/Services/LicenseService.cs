@@ -206,15 +206,12 @@ public class LicenseService : ILicenseService
                 existingActivation.LastSeenAt = DateTime.UtcNow;
                 await _dbContext.SaveChangesAsync();
 
-                var currentActivations = await _dbContext.Activations
-                    .CountAsync(a => a.LicenseId == license.Id && a.IsActive);
-
                 return new ValidateLicenseResponse
                 {
                     IsValid = true,
                     Message = "License is valid.",
                     ReusedActivation = true,
-                    CurrentActivations = currentActivations,
+                    CurrentActivations = license.ActivationCount,
                     MaxActivations = license.MaxActivations,
                     ExpiresAt = license.ExpiresAt
                 };
@@ -244,6 +241,7 @@ public class LicenseService : ILicenseService
         };
 
         _dbContext.Activations.Add(activation);
+        license.ActivationCount = activationCount + 1;
         await _dbContext.SaveChangesAsync();
 
         return new ValidateLicenseResponse
@@ -251,7 +249,7 @@ public class LicenseService : ILicenseService
             IsValid = true,
             Message = "License is valid.",
             ReusedActivation = false,
-            CurrentActivations = activationCount + 1,
+            CurrentActivations = license.ActivationCount,
             MaxActivations = license.MaxActivations,
             ExpiresAt = license.ExpiresAt
         };
@@ -286,6 +284,7 @@ public class LicenseService : ILicenseService
             throw new KeyNotFoundException("Activation not found for this hardware id.");
         }
 
+        license.ActivationCount = Math.Max(0, license.ActivationCount - 1);
         _dbContext.Activations.Remove(activation);
         await _dbContext.SaveChangesAsync();
     }
@@ -320,7 +319,16 @@ public class LicenseService : ILicenseService
             throw new InvalidOperationException("Cannot reactivate activation for an inactive license.");
         }
 
-        activation.IsActive = !activation.IsActive;
+        if (activation.IsActive)
+        {
+            activation.IsActive = false;
+            license.ActivationCount = Math.Max(0, license.ActivationCount - 1);
+        }
+        else
+        {
+            activation.IsActive = true;
+            license.ActivationCount++;
+        }
         await _dbContext.SaveChangesAsync();
 
         return activation.IsActive;

@@ -30,6 +30,8 @@ public class License
 
     public int MaxActivations { get; set; }
 
+    public int ActivationCount { get; set; } = 0;
+
     [JsonIgnore]
     public ICollection<Activation> Activations { get; set; } = new List<Activation>();
 }
