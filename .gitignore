@@ -5,7 +5,6 @@ env
 node
 bin
 obj
-migrations
 package-lock.json
 appsettings.json
 launch.json
