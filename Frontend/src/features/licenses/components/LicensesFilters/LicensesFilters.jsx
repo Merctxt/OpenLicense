@@ -1,4 +1,6 @@
-export default function LicensesFilters({ licSearch, setLicSearch, licStatusFilter, setLicStatusFilter, selectedProductId, setSelectedProductId, products, setLicPage }) {
+import { Users } from 'lucide-react'
+
+export default function LicensesFilters({ licSearch, setLicSearch, licStatusFilter, setLicStatusFilter, selectedProductId, setSelectedProductId, products, setLicPage, onlyWithActivations, setOnlyWithActivations }) {
   return (
     <div className="d-flex flex-wrap gap-2 mb-3 bg-body-tertiary p-3 rounded border">
       <div className="flex-grow-1 position-relative">
@@ -39,6 +41,23 @@ export default function LicensesFilters({ licSearch, setLicSearch, licStatusFilt
           <option value="active">Active</option>
           <option value="suspended">Suspended</option>
         </select>
+      </div>
+      <div className="d-flex align-items-center gap-2">
+        <label className="form-label mb-0 small text-nowrap">Activations:</label>
+        <div className="form-check form-switch mb-0">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            role="switch"
+            checked={onlyWithActivations}
+            onChange={(e) => { setOnlyWithActivations(e.target.checked); setLicPage(1); }}
+            style={{ width: '40px', height: '20px', cursor: 'pointer' }}
+          />
+        </div>
+        <span className="small text-body-secondary" style={{ fontSize: '0.75rem' }}>
+          <Users size={12} className="me-1" />
+          Only with active users
+        </span>
       </div>
     </div>
   )

@@ -14,6 +14,7 @@ export default function LicensesPage() {
     licenseModal, setLicenseModal,
     licSearch, setLicSearch,
     licStatusFilter, setLicStatusFilter,
+    onlyWithActivations, setOnlyWithActivations,
     setLicPage,
     licPageSize, setLicPageSize,
     selectedProductId, setSelectedProductId,
@@ -43,6 +44,7 @@ export default function LicensesPage() {
         selectedProductId={selectedProductId} setSelectedProductId={setSelectedProductId}
         products={products}
         setLicPage={setLicPage}
+        onlyWithActivations={onlyWithActivations} setOnlyWithActivations={setOnlyWithActivations}
       />
 
       {displayLicenses.length === 0 ? (

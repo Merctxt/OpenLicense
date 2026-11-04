@@ -10,6 +10,7 @@ export default function useLicenses() {
   const [licenseModal, setLicenseModal] = useState(null)
   const [licSearch, setLicSearch] = useState('')
   const [licStatusFilter, setLicStatusFilter] = useState('all')
+  const [onlyWithActivations, setOnlyWithActivations] = useState(false)
   const [licPage, setLicPage] = useState(1)
   const [licPageSize, setLicPageSize] = useState(5)
   const [selectedProductId, setSelectedProductId] = useState('all')
@@ -43,6 +44,10 @@ export default function useLicenses() {
   const filteredLicenses = useMemo(() => {
     let result = allLicenses
 
+    if (onlyWithActivations) {
+      result = result.filter(l => l.activationCount >= 1)
+    }
+
     if (selectedProductId !== 'all') {
       result = result.filter(l => l.productId === selectedProductId)
     }
@@ -63,7 +68,7 @@ export default function useLicenses() {
     }
 
     return result
-  }, [allLicenses, selectedProductId, licSearch, licStatusFilter])
+  }, [allLicenses, selectedProductId, licSearch, licStatusFilter, onlyWithActivations])
 
   const totalItems = filteredLicenses.length
   const totalPages = Math.max(1, Math.ceil(totalItems / licPageSize))
@@ -145,6 +150,7 @@ export default function useLicenses() {
     licenseModal, setLicenseModal,
     licSearch, setLicSearch,
     licStatusFilter, setLicStatusFilter,
+    onlyWithActivations, setOnlyWithActivations,
     licPage, setLicPage,
     licPageSize, setLicPageSize,
     selectedProductId, setSelectedProductId,
