@@ -31,6 +31,7 @@ namespace OpenLicense.Api
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
+            builder.Services.AddMemoryCache();
             builder.Services.AddApiVersioning(options =>
             {
                 options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
