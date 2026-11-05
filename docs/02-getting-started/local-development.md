@@ -28,15 +28,33 @@ The frontend runs on `http://localhost:3000`.
 
 ### Create Migration
 
-Navigate to `Backend/OpenLicense.Api/` and run `dotnet ef migrations add MigrationName` to generate a migration file from model changes.
+Navigate to `Backend/OpenLicense.Infrastructure/` and run:
+
+```bash
+dotnet ef migrations add MigrationName --startup-project ../OpenLicense.Api
+```
+
+This generates a migration file from model changes. The `--startup-project` flag points to the API project which holds the EF configuration.
 
 ### Apply Migration
 
-Navigate to `Backend/OpenLicense.Api/` and run `dotnet ef database update` to apply pending migrations.
+Navigate to `Backend/OpenLicense.Infrastructure/` and run:
+
+```bash
+dotnet ef database update --startup-project ../OpenLicense.Api
+```
+
+This applies pending migrations to the database. For the first deployment, running this command will create the database schema from scratch.
 
 ### Remove Last Migration (local)
 
-Run `dotnet ef migrations remove` to undo the last migration (local development only).
+Navigate to `Backend/OpenLicense.Infrastructure/` and run:
+
+```bash
+dotnet ef migrations remove --startup-project ../OpenLicense.Api
+```
+
+Removes the last migration (local development only, use with caution in shared environments).
 
 ### Generate Migration SQL
 
@@ -103,10 +121,10 @@ flowchart TD
 
 ### Create a New Entity
 
-1. Create class -> `Backend/OpenLicense.Domain/Entities/MyEntity.cs`
-2. Add DbSet -> `Infrastructure/Persistence/AppDbContext.cs`
-3. Create migration -> `dotnet ef migrations add AddMyEntity`
-4. Apply migration -> `dotnet ef database update`
+1. Create entity class -> `Backend/OpenLicense.Domain/Entities/MyEntity.cs`
+2. Add DbSet -> `Backend/OpenLicense.Infrastructure/Persistence/AppDbContext.cs`
+3. Create migration -> from `Backend/OpenLicense.Infrastructure/`: `dotnet ef migrations add AddMyEntity --startup-project ../OpenLicense.Api`
+4. Apply migration -> from `Backend/OpenLicense.Infrastructure/`: `dotnet ef database update --startup-project ../OpenLicense.Api`
 
 ### Validate Requests
 
