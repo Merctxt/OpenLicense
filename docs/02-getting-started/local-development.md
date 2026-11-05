@@ -58,7 +58,13 @@ Removes the last migration (local development only, use with caution in shared e
 
 ### Generate Migration SQL
 
-Run `dotnet ef migrations script --id 20240101000000` to generate a SQL script for a migration.
+Navigate to `Backend/OpenLicense.Infrastructure/` and run:
+
+```bash
+dotnet ef migrations script --id 20240101000000 --startup-project ../OpenLicense.Api
+```
+
+Generates a SQL script from migrations, useful for manual database updates or CI/CD pipelines.
 
 
 ## Default Ports
