@@ -26,10 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Backend\OpenLicense.Api\OpenLicense.Api.csproj" />
-    <ProjectReference Include="..\Backend\OpenLicense.Application\OpenLicense.Application.csproj" />
-    <ProjectReference Include="..\Backend\OpenLicense.Domain\OpenLicense.Domain.csproj" />
-    <ProjectReference Include="..\Backend\OpenLicense.Infrastructure\OpenLicense.Infrastructure.csproj" />
+    <ProjectReference Include="..\OpenLicense.Api\OpenLicense.Api.csproj" />
+    <ProjectReference Include="..\OpenLicense.Application\OpenLicense.Application.csproj" />
+    <ProjectReference Include="..\OpenLicense.Domain\OpenLicense.Domain.csproj" />
+    <ProjectReference Include="..\OpenLicense.Infrastructure\OpenLicense.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
