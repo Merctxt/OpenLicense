@@ -16,10 +16,12 @@ COPY OpenLicense.Domain/OpenLicense.Domain.csproj OpenLicense.Domain/
 COPY OpenLicense.Application/OpenLicense.Application.csproj OpenLicense.Application/
 COPY OpenLicense.Infrastructure/OpenLicense.Infrastructure.csproj OpenLicense.Infrastructure/
 COPY OpenLicense.Api/OpenLicense.Api.csproj OpenLicense.Api/
+COPY OpenLicense.Tests/OpenLicense.Tests.csproj OpenLicense.Tests/
 RUN dotnet restore "OpenLicense.Api/OpenLicense.Api.csproj"
 COPY . .
 WORKDIR "/src/OpenLicense.Api"
 RUN dotnet build "OpenLicense.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet test "../OpenLicense.Tests/OpenLicense.Tests.csproj" --verbosity normal
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
