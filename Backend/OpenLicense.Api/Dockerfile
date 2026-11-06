@@ -18,14 +18,7 @@ RUN dotnet restore OpenLicense.sln
 
 COPY . .
 
-RUN KEY="${JWT_SECRET_KEY:-$(head -c 32 /dev/urandom | base64)}" && \
-    mkdir -p OpenLicense.Tests/bin/$BUILD_CONFIGURATION/net9.0 && \
-    printf '{"Jwt":{"SecretKey":"%s","Issuer":"%s","Audience":"%s"},"RegistrationEnabled":%s}\n' \
-      "$KEY" \
-      "${JWT_ISSUER:-OpenLicenseApi}" \
-      "${JWT_AUDIENCE:-OpenLicenseApiUsers}" \
-      "${REGISTRATION_ENABLED:-true}" > OpenLicense.Tests/bin/$BUILD_CONFIGURATION/net9.0/appsettings.json && \
-    dotnet test OpenLicense.Tests/OpenLicense.Tests.csproj -c $BUILD_CONFIGURATION --verbosity normal
+RUN dotnet test OpenLicense.Tests/OpenLicense.Tests.csproj -c $BUILD_CONFIGURATION --verbosity normal
 
 RUN dotnet publish OpenLicense.Api/OpenLicense.Api.csproj -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 

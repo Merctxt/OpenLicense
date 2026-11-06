@@ -11,19 +11,18 @@ public abstract class TestBase : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        var config = LoadConfiguration();
-
-        _jwtSecret = config["Jwt:SecretKey"]
-            ?? throw new InvalidOperationException("Jwt:SecretKey not found in appsettings.json");
+        _jwtSecret = TestEnvironment.JwtSecret;
 
         _dbPath = Path.Combine(AppContext.BaseDirectory, $"test_{Guid.NewGuid():N}.db");
         var connStr = $"Data Source={_dbPath};Pooling=false";
 
         _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
+            builder.UseSetting("ConnectionStrings:DefaultConnection", TestEnvironment.DatabaseConnection);
             builder.UseSetting("Jwt:SecretKey", _jwtSecret!);
-            builder.UseSetting("Jwt:Issuer", config["Jwt:Issuer"] ?? "OpenLicenseApi");
-            builder.UseSetting("Jwt:Audience", config["Jwt:Audience"] ?? "OpenLicenseApiUsers");
+            builder.UseSetting("Jwt:Issuer", TestEnvironment.JwtIssuer);
+            builder.UseSetting("Jwt:Audience", TestEnvironment.JwtAudience);
+            builder.UseSetting("RegistrationEnabled", "true");
 
             builder.ConfigureServices(services =>
             {
@@ -47,15 +46,6 @@ public abstract class TestBase : IAsyncLifetime
         using var initScope = _factory!.Services.CreateScope();
         var initDb = initScope.ServiceProvider.GetRequiredService<AppDbContext>();
         await initDb.Database.EnsureCreatedAsync();
-    }
-
-    private static IConfiguration LoadConfiguration()
-    {
-        var builder = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-
-        return builder.Build();
     }
 
     public Task DisposeAsync()
