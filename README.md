@@ -48,22 +48,6 @@ cp .env.example .env
 docker compose up -d
 ```
 
-
-## Deployment options
-
-| Mode | Compose file | Source |
-|---|---|---|
-| Latest | `docker-compose.yml` | Local source code |
-| Release | `docker-compose.release.yml` | Git tag or branch from GitHub |
-
-```bash
-# Deploy from a release tag (downloads and builds from GitHub)
-RELEASE_VERSION=v1.0.1 docker compose -f docker-compose.release.yml up -d
-
-# Deploy from main branch (latest code from GitHub)
-RELEASE_VERSION=main docker compose -f docker-compose.release.yml up -d
-```
-
 ## Documentation
 
 | Topic | Location |
