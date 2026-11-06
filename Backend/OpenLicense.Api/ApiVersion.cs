@@ -3,5 +3,6 @@ namespace OpenLicense.Api
     public static class ApiVersion
     {
         public const string Current = "1.0";
+        public const string Path = "/api/v1";
     }
 }
