@@ -4,8 +4,10 @@ import { login } from '../../../../shared/api/endpoints'
 import { useAuth } from '../../../../shared/context/AuthContext'
 import { useAlert } from '../../../../shared/context/AlertContext'
 import { MESSAGES, handleError } from '../../../../shared/utils/messages'
+import { useTheme } from '../../../../shared/context/ThemeContext'
 
 export default function useLogin() {
+  const { theme, setTheme, toggleTheme } = useTheme()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -39,6 +41,7 @@ export default function useLogin() {
   }
 
   return {
+    theme, setTheme, toggleTheme,
     email, setEmail,
     password, setPassword,
     submitting,

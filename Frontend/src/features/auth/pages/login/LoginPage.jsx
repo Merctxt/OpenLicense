@@ -1,17 +1,18 @@
 import { Link, Navigate } from 'react-router-dom'
-import { UserPlus } from 'lucide-react'
+import { UserPlus, Sun, Moon } from 'lucide-react'
 import useLogin from './useLogin'
 import Background from '../../../../shared/components/Background/Background'
 
 const registrationEnabled = import.meta.env.VITE_REGISTRATION_ENABLED !== 'false'
 
 export default function Login() {
-  const {
+  const {    
     email, setEmail,
     password, setPassword,
     submitting,
     user, loading,
     handleSubmit,
+    theme, setTheme, toggleTheme
   } = useLogin()
 
   if (loading) {
@@ -32,6 +33,25 @@ export default function Login() {
     <Background variant="auth">
       <div className="card shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
         <div className="card-body p-4">
+          {theme === 'dark' ? (
+            <button
+              className="btn btn-sm btn-outline-light"
+              style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
+              onClick={(e) => toggleTheme('light', e)}
+            >
+              <Sun size={12} className="me-1" />
+              Light
+            </button>
+          ) : (
+            <button
+              className="btn btn-sm btn-secondary"
+              style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
+              onClick={(e) => toggleTheme('dark', e)}
+            >
+              <Moon size={12} className="me-1" />
+              Dark
+            </button>
+          )}
           <div className="d-flex flex-column justify-content-center align-items-center mb-4">
             <h1 className="h4 d-flex align-items-center gap-2" style={{ fontFamily: "'DynaPuff', cursive", fontWeight: '600' }}><img src="/favicon.svg" alt="" style={{ height: '24px' }} />OpenLicense</h1>
             <p className="text-body-secondary mb-0">Sign in to your account</p>
