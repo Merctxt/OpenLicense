@@ -1,3 +1,16 @@
+/* === Theme circular reveal (View Transitions API) === */
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  z-index: 999;
+}
+
 /* === Table row hover === */
 .table > tbody > tr {
   transition: background-color 0.15s ease;

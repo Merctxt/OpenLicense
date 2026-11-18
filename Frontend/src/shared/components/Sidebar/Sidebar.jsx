@@ -79,7 +79,7 @@ function MenuItem({ link, isActive, onNavigate }) {
 }
 
 function UserMenu({ user, onLogout }) {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, toggleTheme } = useTheme()
   const openRef = useRef(false)
   const [open, setOpen] = useState(false)
   const buttonRef = useRef(null)
@@ -143,7 +143,7 @@ function UserMenu({ user, onLogout }) {
               <button
                 className={`btn btn-sm ${theme === 'light' ? 'btn-primary' : 'btn-outline-secondary'}`}
                 style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
-                onClick={() => setTheme('light')}
+                onClick={(e) => toggleTheme('light', e)}
               >
                 <Sun size={12} className="me-1" />
                 Light
@@ -151,7 +151,7 @@ function UserMenu({ user, onLogout }) {
               <button
                 className={`btn btn-sm ${theme === 'dark' ? 'btn-primary' : 'btn-outline-secondary'}`}
                 style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
-                onClick={() => setTheme('dark')}
+                onClick={(e) => toggleTheme('dark', e)}
               >
                 <Moon size={12} className="me-1" />
                 Dark
@@ -159,7 +159,7 @@ function UserMenu({ user, onLogout }) {
               <button
                 className={`btn btn-sm ${theme === 'system' ? 'btn-primary' : 'btn-outline-secondary'}`}
                 style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
-                onClick={() => setTheme('system')}
+                onClick={(e) => toggleTheme('system', e)}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="me-1"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 Auto
